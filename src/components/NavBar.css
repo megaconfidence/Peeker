@@ -3,7 +3,7 @@
   left: 0;
   z-index: 990;
   width: 264px;
-  height: 100vh;
+  height: 101vh;
   color: #000;
   position: fixed;
   overflow-y: auto;
@@ -54,6 +54,9 @@
   color: black;
   border-radius: 0 25px 25px 0;
 }
+.nav__list__item__link__icon {
+  opacity: 0.5;
+}
 .nav__list__item__link__text {
   overflow: hidden;
   padding-left: 32px;
@@ -64,4 +67,7 @@
 }
 .selected {
   background-color: #feefc3;
+}
+.selected .nav__list__item__link__icon {
+  opacity: 1;
 }

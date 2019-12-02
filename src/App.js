@@ -35,13 +35,7 @@ const App = () => {
     <Router>
       <div onClick={handleNavClick} className='App'>
         <OmniBar />
-        <NavBar labels={label} ref={nav} />
-
-        <img
-          src='/image/icon/hamburger.svg'
-          onClick={handleNavClick}
-          alt='menue'
-        />
+        <NavBar labels={label} ref={nav} onClick={handleNavClick} />
 
         <Switch>
           <Route exact path='/' render={props => <Notes {...props} />} />
