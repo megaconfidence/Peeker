@@ -1,29 +1,36 @@
-.nav {
+.slidein {
   top: 0;
   left: 0;
   z-index: 990;
-  width: 264px;
+  width: 100vw;
   height: 100vh;
-  color: #000;
   position: fixed;
   overflow-y: auto;
   visibility: hidden;
   overflow-x: hidden;
-  padding-right: 5px;
   pointer-events: none;
-  background-color: #fff;
-  transform: translateX(-264px);
+  transform: translateX(-100vh);
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     visibility 0s linear 0.25s;
-  box-shadow: 0 0 16px rgba(0, 0, 0, 0.28);
-  -webkit-box-shadow: 0 0 16px rgba(0, 0, 0, 0.28);
 }
-.nav--active {
+.slidein--active {
   visibility: visible;
   pointer-events: inherit;
   transform: translateX(0);
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     visibility 0s linear 0s;
+}
+
+.nav {
+  width: 264px;
+  height: 100vh;
+  color: #000;
+  display: flex;
+  padding-right: 5px;
+  flex-direction: column;
+  background-color: #fff;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.28);
+  -webkit-box-shadow: 0 0 16px rgba(0, 0, 0, 0.28);
 }
 .nav__name {
   opacity: 1;

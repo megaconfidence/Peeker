@@ -18,19 +18,17 @@ const NoMatchPage = () => {
 const App = () => {
   const nav = useRef(null);
   const omniBarRef = useRef(null);
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  });
 
   const label = [];
   const labelTemps = DataJSON.data.map(i => i.label).filter(i => i !== '');
   labelTemps.forEach(i => (!label.includes(i) ? label.push(i) : undefined));
 
-  const handleNavClick = e => {
-    e.stopPropagation();
-    if (e.target.classList.contains('omnibar__left__icon--menutriger')) {
-      nav.current.classList.add('nav--active');
-    } else if (nav.current.classList.contains('nav--active')) {
-      nav.current.classList.remove('nav--active');
-    }
-  };
   const handleScroll = e => {
     if (window.pageYOffset > 0) {
       omniBarRef.current.classList.add('omnibar__scrolling');
@@ -39,18 +37,25 @@ const App = () => {
     }
   };
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  });
+  const handleNavClick = e => {
+    if (e.target.classList.contains('omnibar__left__icon--menutriger')) {
+      nav.current.classList.add('slidein--active');
+    }
+    if (
+      e.target.classList.contains('slidein--active') ||
+      e.target.classList.contains('nav__list__item__link') ||
+      e.target.classList.contains('nav__list__item__link__text') ||
+      e.target.classList.contains('nav__list__item__link__icon')
+    ) {
+      nav.current.classList.remove('slidein--active');
+    }
+  };
 
   return (
     <Router>
-      <div onClick={handleNavClick} className='App' onScroll={handleScroll}>
-        <OmniBar ref={omniBarRef} />
-        <NavBar labels={label} ref={nav}  />
+      <div className='App'>
+        <OmniBar ref={omniBarRef} onClick={handleNavClick} />
+        <NavBar labels={label} ref={nav} onClick={handleNavClick} />
 
         <Switch>
           <Route exact path='/' render={props => <Notes {...props} />} />

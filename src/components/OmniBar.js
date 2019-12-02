@@ -23,6 +23,7 @@ const OmniBar = forwardRef(({ onClick, location }, ref) => {
           src='/image/icon/hamburger.svg'
           alt='menue'
           className='omnibar__left__icon omnibar__left__icon--menutriger  omnibar__icon'
+          onClick={onClick}
         />
         <div className='omnibar__left__pagename'>
           {currPath ? currPath : 'Peek'}
