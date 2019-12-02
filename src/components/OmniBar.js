@@ -1,19 +1,32 @@
-import React from 'react';
-import './OmniBar.css';
+import React, { forwardRef } from 'react';
 import { withRouter } from 'react-router-dom';
+import './OmniBar.css';
 
-const OmniBar = withRouter((props, { pagename, onClick }) => {
-  let currPath = props.location.pathname.split('/').pop();
+const withRouterAndRef = Wrapped => {
+  const WithRouter = withRouter(({ forwardRef, ...otherProps }) => (
+    <Wrapped ref={forwardRef} {...otherProps} />
+  ));
+  const WithRouterAndRef = forwardRef((props, ref) => (
+    <WithRouter {...props} forwardRef={ref} />
+  ));
+  const name = Wrapped.displayName || Wrapped.name;
+  WithRouterAndRef.displayName = `withRouterAndRef(${name})`;
+  return WithRouterAndRef;
+};
+
+const OmniBar = forwardRef(({ onClick, location }, ref) => {
+  let currPath = location.pathname.split('/').pop();
   return (
-    <div className='omnibar'>
+    <div className='omnibar' ref={ref}>
       <div className='omnibar__left'>
         <img
           src='/image/icon/hamburger.svg'
           alt='menue'
-          className='omnibar__left__icon omnibar__icon'
-          onClick={onClick}
+          className='omnibar__left__icon omnibar__left__icon--menutriger  omnibar__icon'
         />
-        <div className='omnibar__left__pagename'>{currPath?currPath:'Peek'}</div>
+        <div className='omnibar__left__pagename'>
+          {currPath ? currPath : 'Peek'}
+        </div>
       </div>
 
       <div className='omnibar__right'>
@@ -42,4 +55,4 @@ const OmniBar = withRouter((props, { pagename, onClick }) => {
   );
 });
 
-export default OmniBar;
+export default withRouterAndRef(OmniBar);

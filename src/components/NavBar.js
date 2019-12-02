@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { NavLink } from 'react-router-dom';
-import './NavBar.css'
+import './NavBar.css';
 
-const NavBar = React.forwardRef(({ labels }, ref) => {
+const NavBar = forwardRef(({ labels }, ref) => {
   return (
     <>
       <nav className='nav no-select' ref={ref}>
@@ -10,7 +10,12 @@ const NavBar = React.forwardRef(({ labels }, ref) => {
         <div className='nav__group'>
           <ul className='nav__list'>
             <li className='nav__list__item'>
-              <NavLink exact to='/' activeClassName='selected' className='nav__list__item__link'>
+              <NavLink
+                exact
+                to='/'
+                activeClassName='selected'
+                className='nav__list__item__link'
+              >
                 <img
                   src='/image/icon/bulb.svg'
                   alt='icon'
@@ -20,7 +25,12 @@ const NavBar = React.forwardRef(({ labels }, ref) => {
               </NavLink>
             </li>
             <li className='nav__list__item'>
-              <NavLink exact to='/reminders' activeClassName='selected' className='nav__list__item__link'>
+              <NavLink
+                exact
+                to='/reminders'
+                activeClassName='selected'
+                className='nav__list__item__link'
+              >
                 <img
                   src='/image/icon/bell.svg'
                   alt='icon'
@@ -35,9 +45,11 @@ const NavBar = React.forwardRef(({ labels }, ref) => {
           <ul className='nav__list'>
             {labels.map((l, k) => (
               <li className='nav__list__item' key={k}>
-                <NavLink exact
+                <NavLink
+                  exact
                   to={`/label/${l}`}
-                  activeClassName='selected' className='nav__list__item__link'
+                  activeClassName='selected'
+                  className='nav__list__item__link'
                 >
                   <img
                     src='/image/icon/badge.svg'
@@ -53,7 +65,12 @@ const NavBar = React.forwardRef(({ labels }, ref) => {
         <div className='nav__group'>
           <ul className='nav__list'>
             <li className='nav__list__item'>
-              <NavLink exact to='/archive' activeClassName='selected' className='nav__list__item__link'>
+              <NavLink
+                exact
+                to='/archive'
+                activeClassName='selected'
+                className='nav__list__item__link'
+              >
                 <img
                   src='/image/icon/archive.svg'
                   alt='icon'
@@ -63,7 +80,12 @@ const NavBar = React.forwardRef(({ labels }, ref) => {
               </NavLink>
             </li>
             <li className='nav__list__item'>
-              <NavLink exact to='/trash' activeClassName='selected' className='nav__list__item__link'>
+              <NavLink
+                exact
+                to='/trash'
+                activeClassName='selected'
+                className='nav__list__item__link'
+              >
                 <img
                   src='/image/icon/trash.svg'
                   alt='icon'
@@ -73,7 +95,12 @@ const NavBar = React.forwardRef(({ labels }, ref) => {
               </NavLink>
             </li>
             <li className='nav__list__item'>
-              <NavLink exact to='/settings' activeClassName='selected' className='nav__list__item__link'>
+              <NavLink
+                exact
+                to='/settings'
+                activeClassName='selected'
+                className='nav__list__item__link'
+              >
                 <img
                   src='/image/icon/settings.svg'
                   alt='icon'

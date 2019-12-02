@@ -1,13 +1,19 @@
 .omnibar {
-  display: flex;
+  top: 0;
   height: 56px;
-  padding: 0 0 0 20px;
+  display: flex;
+  position: sticky;
+  background: white;
   align-items: center;
   justify-content: space-between;
   box-shadow: inset 0 -1px 0 0 #dadce0;
 }
+.omnibar__scrolling {
+  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
 .omnibar__left {
-    width: 50%;
+  width: 50%;
   display: flex;
   align-items: center;
 }
@@ -15,6 +21,7 @@
   opacity: 0.5;
 }
 .omnibar__left__icon {
+  margin-left: 20px;
   /* color: #5f6368;
     fill: #fff; */
 }
@@ -32,19 +39,17 @@
 }
 .omnibar__right {
   display: flex;
-  /* min-width: 50%; */
 }
 .omnibar__right__search,
 .omnibar__right__refresh,
 .omnibar__right__settings {
-  margin: 0 15px;
-  /* display: block; */
+  margin-right: 25px;
 }
 .omnibar__right__profile {
   width: 32px;
   height: 32px;
-  margin: 0 15px;
   overflow: hidden;
+  margin-right: 10px;
   border-radius: 50%;
   background-size: 32px 32px;
   background-color: #5f6368ba;
