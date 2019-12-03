@@ -1,5 +1,6 @@
 .omnibar {
   top: 0;
+  z-index: 5;
   height: 56px;
   display: flex;
   position: sticky;

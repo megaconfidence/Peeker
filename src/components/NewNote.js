@@ -1,16 +1,27 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import './Notes.css';
 import './NewNote.css';
 
 const NewNote = () => {
+  const noteRef = useRef(null);
+
   const autoGrow = e => {
     const textarea = e.target;
     textarea.style.height = `${textarea.scrollHeight}px`;
     if (!textarea.value) {
-      textarea.style.height = '20px';
+      textarea.style.height = '45px';
     }
   };
+
+  const openNote = () => {
+    noteRef.current.classList.remove('nwnote--closed');
+  };
+  const closeNote = () => {
+    noteRef.current.classList.add('nwnote--closed');
+  };
+
   return (
-    <div className='note nwnote'>
+    <div className='note nwnote nwnote--closed' ref={noteRef}>
       <div className='note__head'>
         <textarea
           className='note__head__titletext textarea--mod'
@@ -31,23 +42,75 @@ const NewNote = () => {
             placeholder='Take a note...'
             spellCheck='false'
             onInput={autoGrow}
+            onFocus={openNote}
           ></textarea>
+          <div className='note__body__content__hiddencontrols'>
+            <img
+              src='/image/icon/checkbox.svg'
+              alt='checkbox'
+              className='note__body__content__hiddencontrols__image'
+            />
+            <img
+              src='/image/icon/draw.svg'
+              alt='draw'
+              className='note__body__content__hiddencontrols__image'
+            />
+            <img
+              src='/image/icon/picture.svg'
+              alt='add_picture'
+              className='note__body__content__hiddencontrols__image'
+            />
+          </div>
         </div>
         <div className='note__body__controls'>
-            <div className='note__body__controls__item'>
-                <img  src='/image/icon/alarm.svg' alt='alarm'className='note__body__controls__item__image' />
-                <img  src='/image/icon/add_contact.svg' alt='add_contact' className='note__body__controls__item__image' />
-                <img  src='/image/icon/palate.svg' alt='pick_color' className='note__body__controls__item__image' />
-                <img  src='/image/icon/picture.svg' alt='add_picture' className='note__body__controls__item__image' />
-                <img  src='/image/icon/archive.svg' alt='archive' className='note__body__controls__item__image' />
-                <img  src='/image/icon/options.svg' alt='options' className='note__body__controls__item__image' />
-                <img  src='/image/icon/undo.svg' alt='undo' className='note__body__controls__item__image control--disabled' />
-                <img  src='/image/icon/redo.svg' alt='redo' className='note__body__controls__item__image control--disabled' />
-            </div>
+          <div className='note__body__controls__item'>
+            <img
+              src='/image/icon/alarm.svg'
+              alt='alarm'
+              className='note__body__controls__item__image'
+            />
+            <img
+              src='/image/icon/add_contact.svg'
+              alt='add_contact'
+              className='note__body__controls__item__image'
+            />
+            <img
+              src='/image/icon/palate.svg'
+              alt='pick_color'
+              className='note__body__controls__item__image'
+            />
+            <img
+              src='/image/icon/picture.svg'
+              alt='add_picture'
+              className='note__body__controls__item__image'
+            />
+            <img
+              src='/image/icon/archive.svg'
+              alt='archive'
+              className='note__body__controls__item__image'
+            />
+            <img
+              src='/image/icon/options.svg'
+              alt='options'
+              className='note__body__controls__item__image'
+            />
+            <img
+              src='/image/icon/undo.svg'
+              alt='undo'
+              className='note__body__controls__item__image control--disabled'
+            />
+            <img
+              src='/image/icon/redo.svg'
+              alt='redo'
+              className='note__body__controls__item__image control--disabled'
+            />
+          </div>
         </div>
       </div>
       <div className='note__footer'>
-          <button className='note__footer__closebtn'>Close</button>
+        <button className='note__footer__closebtn' onClick={closeNote}>
+          Close
+        </button>
       </div>
     </div>
   );

@@ -8,5 +8,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 .app__content {
-  padding: 0 8px;
+  padding: 0 10px;
+  margin-top: 15px;
 }

@@ -11,6 +11,7 @@ import Label from './routes/Label';
 import NavBar from './components/NavBar';
 import OmniBar from './components/OmniBar';
 import NewNote from './components/NewNote';
+import Note from './components/Note';
 
 const NoMatchPage = () => {
   return <h3>404 - Not found</h3>;
@@ -59,7 +60,7 @@ const App = () => {
         <NavBar labels={label} ref={nav} onClick={handleNavClick} />
         <div className='app__content'>
           <Switch>
-            <Route exact path='/' render={props => <Notes {...props} />} />
+            <Route exact path='/' render={props => <Notes {...props} data={DataJSON.data} />} />
             <Route
               exact
               path='/reminders'
@@ -83,7 +84,6 @@ const App = () => {
             />
             <Route component={NoMatchPage} />
           </Switch>
-          <NewNote />
         </div>
       </div>
     </Router>

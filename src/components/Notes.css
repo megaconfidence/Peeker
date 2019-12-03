@@ -1,0 +1,136 @@
+.nwnote.nwnote--closed {
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302),
+    0 2px 6px 2px rgba(60, 64, 67, 0.149);
+}
+.nwnote {
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.402),
+    0 2px 6px 2px rgba(60, 64, 67, 0.449);
+}
+.note {
+  margin-bottom: 8px;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border-color: #e0e0e0;
+  background-color: #fff;
+  transition-duration: 0.218s;
+  border: 1px solid #e0e0e0;
+  transition-timing-function: ease-in;
+  transition-property: background, border, opacity, box-shadow, transform;
+}
+.note__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.textarea--mod {
+  all: unset;
+  resize: none;
+  outline: none;
+  overflow: hidden;
+  word-break: break-all;
+  box-sizing: border-box;
+}
+.note__head__titletext {
+  height: 45px;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 11px 15px;
+  line-height: 1.5rem;
+  width: calc(100% - 25px);
+  letter-spacing: 0.00625em;
+}
+.note__head__pin {
+  top: 11px;
+  width: 26px;
+  right: 18px;
+  height: 26px;
+  opacity: 0.71;
+  position: absolute;
+}
+.note__body__content {
+  /* margin-bottom: 6px; */
+  /* margin-top: 24px; */
+}
+.note__body__content__textarea {
+  /* border: 1px solid; */
+  width: 100%;
+  height: 45px;
+  font-weight: 500;
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  letter-spacing: 0.01428571em;
+  font-family: Roboto, Arial, sans-serif;
+}
+.note__body__content__textarea::placeholder {
+  letter-spacing: 0;
+  font-family: 'Work Sans', sans-serif;
+}
+img[alt='options'] {
+  height: 34px;
+  width: 18px !important;
+}
+.note__body__controls__item {
+  display: flex;
+  padding-left: 3px;
+  width: calc(100% - 65px);
+  justify-content: space-between;
+}
+.note__body__controls__item__image {
+  width: 19px;
+  height: 34px;
+  opacity: 0.71;
+  margin: 0px 10.5px;
+}
+.control--disabled {
+  opacity: 0.25;
+  pointer-events: none;
+}
+.note__footer {
+  display: flex;
+  justify-content: flex-end;
+}
+.note__footer__closebtn {
+  all: unset;
+  height: 32px;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 8px 24px;
+  margin-right: 15px;
+  font-size: 0.945rem;
+  line-height: 1.25rem;
+  color: rgba(0, 0, 0, 0.87);
+  letter-spacing: 0.01785714em;
+  font-family: 'Work Sans', sans-serif;
+}
+.note__body__content__hiddencontrols {
+  display: none;
+}
+.nwnote--closed .note__head {
+  display: none;
+}
+.nwnote--closed .note__body__controls {
+  display: none;
+}
+.nwnote--closed .note__footer {
+  display: none;
+}
+.nwnote--closed .note__body__content {
+  display: flex;
+}
+.nwnote--closed .note__body__content__textarea {
+  width: 50%;
+  font-size: 1.1rem;
+}
+.nwnote--closed .note__body__content__hiddencontrols {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.nwnote--closed .note__body__content__hiddencontrols__image {
+  opacity: 0.54;
+}

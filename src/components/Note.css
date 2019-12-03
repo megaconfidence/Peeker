@@ -1,0 +1,100 @@
+.note__overlay {
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  position: fixed;
+  align-items: center;
+  flex-direction: column;
+  background-color: #ffffffcc;
+  justify-content: space-around;
+}
+.note__overlay--close {
+  width: 100%;
+  z-index: initial;
+  position: initial;
+  height: fit-content;
+  background-color: transparent;
+}
+.note__overlay__offset {
+  height: 0px;
+  visibility: hidden;
+}
+.note__head__pin {
+  display: none;
+}
+.note__body__content__edited {
+  display: none;
+  font-size: 0.8rem;
+  line-height: 1rem;
+  text-align: right;
+  letter-spacing: 0.025em;
+  padding: 20px 16px 12px;
+  font-family: Roboto, Arial, sans-serif;
+}
+.note--opened.note {
+  min-width: 632px;
+}
+.note.note--opened {
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302),
+    0 2px 6px 2px rgba(60, 64, 67, 0.149);
+}
+@media (max-width: 632px) {
+  .note--opened.note {
+    min-width: 100vw;
+  }
+}
+.note--opened .note__head__titletext {
+  color: #000000;
+  font-weight: 400;
+  font-size: 1.35rem;
+}
+.note--opened .note__body__content__textarea {
+  color: #000;
+  font-size: 1rem;
+}
+.note--opened .note__body__content__edited {
+  display: block;
+}
+.note--opened .note__footer__closebtn {
+  font-size: 0.93rem;
+}
+.note.note--closed.note--focused {
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302),
+    0 2px 6px 2px rgba(60, 64, 67, 0.149);
+}
+.note--closed .note__footer {
+  display: none;
+}
+.note--closed .note__body__controls {
+  opacity: 0;
+}
+.note--closed .note__head__titletext {
+  padding-bottom: 0;
+  font-size: 1.08rem;
+}
+.note--closed .note__body__content__textarea {
+  padding-top: 0;
+  font-size: 0.95rem;
+}
+.note--focused .note__head__pin {
+  display: block;
+}
+.note--closed.note--focused .note__body__controls {
+  opacity: 1;
+}
+.note--closed.note--focused .note__body__controls__item__image[alt='redo'],
+.note--closed.note--focused .note__body__controls__item__image[alt='undo'] {
+  display: none;
+}
+.note--closed .note__body__controls__item {
+  width: calc(100% - 155px);
+}
+.note--closed .note__footer {
+  margin-bottom: 5px;
+}
+.note--closed .note__footer__closebtn {
+  display: none;
+}
