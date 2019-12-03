@@ -10,6 +10,7 @@ import DataJSON from './data.json';
 import Label from './routes/Label';
 import NavBar from './components/NavBar';
 import OmniBar from './components/OmniBar';
+import NewNote from './components/NewNote';
 
 const NoMatchPage = () => {
   return <h3>404 - Not found</h3>;
@@ -53,81 +54,37 @@ const App = () => {
 
   return (
     <Router>
-      <div className='App'>
+      <div className='app'>
         <OmniBar ref={omniBarRef} onClick={handleNavClick} />
         <NavBar labels={label} ref={nav} onClick={handleNavClick} />
-
-        <Switch>
-          <Route exact path='/' render={props => <Notes {...props} />} />
-          <Route
-            exact
-            path='/reminders'
-            render={props => <Reminders {...props} />}
-          />
-          <Route
-            exact
-            path='/label/:labelId'
-            render={props => <Label {...props} />}
-          />
-          <Route
-            exact
-            path='/archive'
-            render={props => <Archive {...props} />}
-          />
-          <Route exact path='/trash' render={props => <Trash {...props} />} />
-          <Route
-            exact
-            path='/settings'
-            render={props => <Settings {...props} />}
-          />
-          <Route component={NoMatchPage} />
-        </Switch>
-        <p>Default text</p>
-        <p>
-          Curabitur urna augue, varius in eros vel, gravida congue eros. Etiam
-          elit nisl, consectetur vel feugiat eget, vulputate eu nisi. Aliquam
-          eget dictum erat. In a vulputate lorem. Fusce aliquet ex turpis. Duis
-          luctus at ante ut lacinia. In elementum, ante a imperdiet dignissim,
-          urna orci commodo ex, at varius sem lectus auctor sem. Pellentesque
-          quis nulla vitae libero scelerisque posuere eget sed mi. Fusce sed
-          consectetur arcu, id pharetra diam. Vivamus elit libero, maximus vitae
-          elit lacinia, dignissim mattis odio. Integer cursus, dolor ac auctor
-          interdum, leo tortor efficitur neque, eu facilisis nisi mauris nec
-          elit. Praesent semper vestibulum quam, ut egestas enim porta non. Nunc
-          egestas tortor in tortor porttitor convallis. Curabitur lacus ex,
-          maximus vel ultricies vitae, convallis et enim. Vestibulum nec dolor
-          viverra, euismod odio at, pharetra nulla.
-        </p>
-        <p>
-          Curabitur urna augue, varius in eros vel, gravida congue eros. Etiam
-          elit nisl, consectetur vel feugiat eget, vulputate eu nisi. Aliquam
-          eget dictum erat. In a vulputate lorem. Fusce aliquet ex turpis. Duis
-          luctus at ante ut lacinia. In elementum, ante a imperdiet dignissim,
-          urna orci commodo ex, at varius sem lectus auctor sem. Pellentesque
-          quis nulla vitae libero scelerisque posuere eget sed mi. Fusce sed
-          consectetur arcu, id pharetra diam. Vivamus elit libero, maximus vitae
-          elit lacinia, dignissim mattis odio. Integer cursus, dolor ac auctor
-          interdum, leo tortor efficitur neque, eu facilisis nisi mauris nec
-          elit. Praesent semper vestibulum quam, ut egestas enim porta non. Nunc
-          egestas tortor in tortor porttitor convallis. Curabitur lacus ex,
-          maximus vel ultricies vitae, convallis et enim. Vestibulum nec dolor
-          viverra, euismod odio at, pharetra nulla.
-        </p>
-        <p>
-          Curabitur urna augue, varius in eros vel, gravida congue eros. Etiam
-          elit nisl, consectetur vel feugiat eget, vulputate eu nisi. Aliquam
-          eget dictum erat. In a vulputate lorem. Fusce aliquet ex turpis. Duis
-          luctus at ante ut lacinia. In elementum, ante a imperdiet dignissim,
-          urna orci commodo ex, at varius sem lectus auctor sem. Pellentesque
-          quis nulla vitae libero scelerisque posuere eget sed mi. Fusce sed
-          consectetur arcu, id pharetra diam. Vivamus elit libero, maximus vitae
-          elit lacinia, dignissim mattis odio. Integer cursus, dolor ac auctor
-          interdum, leo tortor efficitur neque, eu facilisis nisi mauris nec
-          elit. Praesent semper vestibulum quam, ut egestas enim porta non. Nunc
-          egestas tortor in tortor porttitor convallis. Curabitur lacus ex,
-          maximus vel ultricies vitae, convallis et enim. Vestibulum nec dolor
-          viverra, euismod odio at, pharetra nulla.
-        </p>
+        <div className='app__content'>
+          <Switch>
+            <Route exact path='/' render={props => <Notes {...props} />} />
+            <Route
+              exact
+              path='/reminders'
+              render={props => <Reminders {...props} />}
+            />
+            <Route
+              exact
+              path='/label/:labelId'
+              render={props => <Label {...props} />}
+            />
+            <Route
+              exact
+              path='/archive'
+              render={props => <Archive {...props} />}
+            />
+            <Route exact path='/trash' render={props => <Trash {...props} />} />
+            <Route
+              exact
+              path='/settings'
+              render={props => <Settings {...props} />}
+            />
+            <Route component={NoMatchPage} />
+          </Switch>
+          <NewNote />
+        </div>
       </div>
     </Router>
   );

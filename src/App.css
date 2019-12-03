@@ -7,3 +7,6 @@
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
 }
+.app__content {
+  padding: 0 8px;
+}
