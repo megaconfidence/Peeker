@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import './Notes.css';
 import './Note.css';
 
-const NewNote = ({ title, content, editedDay, toDayObj }) => {
+const NewNote = ({ title, content, editedDay, toDayObj, pinned }) => {
   const [titleTextState, setTitleTextState] = useState(title);
   const [contentTextState, setContentTextState] = useState(content);
   const noteRef = useRef(null);
@@ -40,15 +40,18 @@ const NewNote = ({ title, content, editedDay, toDayObj }) => {
   };
 
   const openNote = () => {
-      if(noteRef.current.classList.contains('note--closed')) {
-        console.log(noteRef.current.classList)
-        noteRef.current.classList = ''
-        //   noteRef.current.classList.remove('note--closed');
-        //   noteRef.current.classList.add('note--opened');
-      }
-    noteOverlayRef.current.classList.remove('note__overlay--close');
+    /*
+     * The setTimeout makes sure that the openNote function runs last
+     */
+    setTimeout(() => {
+      noteRef.current.classList.remove('note--closed');
+      noteRef.current.classList.add('note--opened');
+      noteOverlayRef.current.classList.remove('note__overlay--close');
+    }, 0);
   };
   const closeNote = e => {
+    e.stopPropagation();
+    e.stopPropagation();
     const elem = e.target;
     if (
       elem.classList.contains('note__overlay') ||
@@ -59,6 +62,7 @@ const NewNote = ({ title, content, editedDay, toDayObj }) => {
       noteOverlayRef.current.classList.add('note__overlay--close');
     }
   };
+
   const giveFocus = () => {
     noteRef.current.classList.add('note--focused');
   };
@@ -109,7 +113,7 @@ const NewNote = ({ title, content, editedDay, toDayObj }) => {
             ref={titleTextRef}
           ></textarea>
           <img
-            src='/image/icon/pin.svg'
+            src={`/image/icon/pin${pinned?'_fill':''}.svg`}
             alt='pin_note'
             className='note__head__pin'
           />

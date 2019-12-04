@@ -12,7 +12,8 @@
         "dayText": "Tue",
         "dayOfWeek": 1,
         "time": "11:07 AM"
-      }
+      },
+      "pinned": true
     },
     {
       "title": "Tips on next.js",
@@ -26,7 +27,8 @@
         "dayText": "Tue",
         "dayOfWeek": 1,
         "time": "11:07 PM"
-      }
+      },
+      "pinned": false
     },
     {
       "title": "Meeting prep",
@@ -40,7 +42,8 @@
         "dayText": "Wed",
         "dayOfWeek": 1,
         "time": "1:07 AM"
-      }
+      },
+      "pinned": true
     },
     {
       "title": "Talk",
@@ -54,7 +57,8 @@
         "dayText": "Wed",
         "dayOfWeek": 1,
         "time": "10:07 PM"
-      }
+      },
+      "pinned": false
     },
     {
       "title": "MEG 404",
@@ -68,7 +72,8 @@
         "dayText": "Fri",
         "dayOfWeek": 1,
         "time": "12:07 AM"
-      }
+      },
+      "pinned": true
     },
     {
       "title": "GEG Assignment",
@@ -82,7 +87,8 @@
         "dayText": "Tue",
         "dayOfWeek": 1,
         "time": "11:07 AM"
-      }
+      },
+      "pinned": false
     },
     {
       "title": "Assignment",
@@ -96,7 +102,8 @@
         "dayText": "Wed",
         "dayOfWeek": 1,
         "time": "05:07 PM"
-      }
+      },
+      "pinned": true
     },
     {
       "title": "Unilag wifi",
@@ -110,7 +117,8 @@
         "dayText": "Wed",
         "dayOfWeek": 1,
         "time": "05:07 PM"
-      }
+      },
+      "pinned": false
     },
     {
       "title": "School Charges",
@@ -124,7 +132,8 @@
         "dayText": "Wed",
         "dayOfWeek": 1,
         "time": "05:07 PM"
-      }
+      },
+      "pinned": false
     },
     {
       "title": "HMFIP",
@@ -138,7 +147,8 @@
         "dayText": "Wed",
         "dayOfWeek": 1,
         "time": "05:07 PM"
-      }
+      },
+      "pinned": false
     },
     {
       "title": "Peek",
@@ -152,7 +162,8 @@
         "dayText": "Mon",
         "dayOfWeek": 1,
         "time": "07:07 AM"
-      }
+      },
+      "pinned": false
     },
     {
       "title": "Daddy's Website",
@@ -166,7 +177,8 @@
         "dayText": "Tue",
         "dayOfWeek": 1,
         "time": "08:07 AM"
-      }
+      },
+      "pinned": true
     },
     {
       "title": "Address",
@@ -180,7 +192,8 @@
         "dayText": "Mon",
         "dayOfWeek": 1,
         "time": "07:07 AM"
-      }
+      },
+      "pinned": false
     },
     {
       "title": "Lorem ipsum",
@@ -208,7 +221,8 @@
         "dayText": "Mon",
         "dayOfWeek": 1,
         "time": "07:07 AM"
-      }
+      },
+      "pinned": false
     }
   ]
 }

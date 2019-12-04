@@ -46,6 +46,9 @@
     min-width: 100vw;
   }
 }
+.note--opened .note__head__pin {
+    display: block;
+  }
 .note--opened .note__head__titletext {
   color: #000000;
   font-weight: 400;
