@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import './Notes.css';
 import './Note.css';
 
-const NewNote = ({ title, content }) => {
+const NewNote = ({ title, content, editedDay, toDayObj }) => {
   const [titleTextState, setTitleTextState] = useState(title);
   const [contentTextState, setContentTextState] = useState(content);
   const noteRef = useRef(null);
@@ -40,8 +40,12 @@ const NewNote = ({ title, content }) => {
   };
 
   const openNote = () => {
-    noteRef.current.classList.remove('note--closed');
-    noteRef.current.classList.add('note--opened');
+      if(noteRef.current.classList.contains('note--closed')) {
+        console.log(noteRef.current.classList)
+        noteRef.current.classList = ''
+        //   noteRef.current.classList.remove('note--closed');
+        //   noteRef.current.classList.add('note--opened');
+      }
     noteOverlayRef.current.classList.remove('note__overlay--close');
   };
   const closeNote = e => {
@@ -58,6 +62,9 @@ const NewNote = ({ title, content }) => {
   const giveFocus = () => {
     noteRef.current.classList.add('note--focused');
   };
+  const loseFocus = () => {
+    noteRef.current.classList.remove('note--focused');
+  };
   const handleTextareaChange = e => {
     const txtArea = e.target;
     if (txtArea.classList.contains('note__head__titletext')) {
@@ -66,6 +73,20 @@ const NewNote = ({ title, content }) => {
     if (txtArea.classList.contains('note__body__content__textarea')) {
       setContentTextState(txtArea.value);
     }
+  };
+  const findEditedDate = () => {
+    if (editedDay) {
+      if (editedDay.year < toDayObj.year) {
+        return `${editedDay.monthText} ${editedDay.day}, ${editedDay.year}`;
+      } else if (editedDay.month < toDayObj.month) {
+        return `${editedDay.monthText} ${editedDay.day}`;
+      } else if (editedDay.day < toDayObj.date) {
+        return `${editedDay.monthText} ${editedDay.day}`;
+      } else {
+        return `${editedDay.time}`;
+      }
+    }
+    return '';
   };
   //   note--focused note--closed
 
@@ -105,9 +126,16 @@ const NewNote = ({ title, content }) => {
               value={contentTextState}
               ref={contentTextRef}
             ></textarea>
-            <div className='note__body__content__edited'>Edited 10:29 AM</div>
+            <div className='note__body__content__edited'>
+              Edited {findEditedDate()}
+            </div>
           </div>
-          <div className='note__body__controls' onClick={giveFocus}>
+          <div
+            className='note__body__controls'
+            tabIndex='0'
+            onBlur={loseFocus}
+            onFocus={giveFocus}
+          >
             <div className='note__body__controls__item'>
               <img
                 src='/image/icon/alarm.svg'

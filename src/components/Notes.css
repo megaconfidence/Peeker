@@ -73,6 +73,9 @@ img[alt='options'] {
   height: 34px;
   width: 18px !important;
 }
+.note__body__controls {
+  outline: none;
+}
 .note__body__controls__item {
   display: flex;
   padding-left: 3px;

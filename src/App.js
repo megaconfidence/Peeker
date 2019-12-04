@@ -10,8 +10,6 @@ import DataJSON from './data.json';
 import Label from './routes/Label';
 import NavBar from './components/NavBar';
 import OmniBar from './components/OmniBar';
-import NewNote from './components/NewNote';
-import Note from './components/Note';
 
 const NoMatchPage = () => {
   return <h3>404 - Not found</h3>;
@@ -52,6 +50,13 @@ const App = () => {
       nav.current.classList.remove('slidein--active');
     }
   };
+  const toDay = new Date();
+  const toDayObj = {
+    year: Number(toDay.getFullYear()),
+    month: Number(toDay.getMonth()),
+    date: Number(toDay.getDate()),
+    dayOfWeek: Number(toDay.getDay())
+  };
 
   return (
     <Router>
@@ -60,7 +65,7 @@ const App = () => {
         <NavBar labels={label} ref={nav} onClick={handleNavClick} />
         <div className='app__content'>
           <Switch>
-            <Route exact path='/' render={props => <Notes {...props} data={DataJSON.data} />} />
+            <Route exact path='/' render={props => <Notes {...props} data={DataJSON.data} toDayObj={toDayObj} />} />
             <Route
               exact
               path='/reminders'
@@ -69,7 +74,7 @@ const App = () => {
             <Route
               exact
               path='/label/:labelId'
-              render={props => <Label {...props} />}
+              render={props => <Label {...props} data={DataJSON.data} toDayObj={toDayObj} />}
             />
             <Route
               exact
