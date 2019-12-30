@@ -6,6 +6,7 @@ import Reminders from './routes/Reminders';
 import Archive from './routes/Archive';
 import Trash from './routes/Trash';
 import Settings from './routes/Settings';
+import Signin from './routes/Signin';
 import DataJSON from './data.json';
 import Label from './routes/Label';
 import NavBar from './components/NavBar';
@@ -65,7 +66,13 @@ const App = () => {
         <NavBar labels={label} ref={nav} onClick={handleNavClick} />
         <div className='app__content'>
           <Switch>
-            <Route exact path='/' render={props => <Notes {...props} data={DataJSON.data} toDayObj={toDayObj} />} />
+            <Route
+              exact
+              path='/'
+              render={props => (
+                <Notes {...props} data={DataJSON.data} toDayObj={toDayObj} />
+              )}
+            />
             <Route
               exact
               path='/reminders'
@@ -74,7 +81,9 @@ const App = () => {
             <Route
               exact
               path='/label/:labelId'
-              render={props => <Label {...props} data={DataJSON.data} toDayObj={toDayObj} />}
+              render={props => (
+                <Label {...props} data={DataJSON.data} toDayObj={toDayObj} />
+              )}
             />
             <Route
               exact
@@ -86,6 +95,11 @@ const App = () => {
               exact
               path='/settings'
               render={props => <Settings {...props} />}
+            />
+            <Route
+              exact
+              path='/signin'
+              render={props => <Signin {...props} />}
             />
             <Route component={NoMatchPage} />
           </Switch>
