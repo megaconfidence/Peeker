@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
+import moment from 'moment';
 import './Notes.css';
 import './Note.css';
 
-const NewNote = ({ title, content, editedDay, toDayObj, pinned }) => {
+const NewNote = ({ title, content, updatedAt, pinned }) => {
   const [titleTextState, setTitleTextState] = useState(title);
   const [contentTextState, setContentTextState] = useState(content);
   const noteRef = useRef(null);
@@ -79,18 +80,12 @@ const NewNote = ({ title, content, editedDay, toDayObj, pinned }) => {
     }
   };
   const findEditedDate = () => {
-    if (editedDay) {
-      if (editedDay.year < toDayObj.year) {
-        return `${editedDay.monthText} ${editedDay.day}, ${editedDay.year}`;
-      } else if (editedDay.month < toDayObj.month) {
-        return `${editedDay.monthText} ${editedDay.day}`;
-      } else if (editedDay.day < toDayObj.date) {
-        return `${editedDay.monthText} ${editedDay.day}`;
-      } else {
-        return `${editedDay.time}`;
-      }
-    }
-    return '';
+    let str = updatedAt.split('T');
+    const date = str[0];
+    str = str[1].split('.');
+    const time = str[0];
+    const utc = str[1];
+    return moment(`${date} ${time} ${utc}`, 'YYYY-MM-DD HH:mm:ss Z').fromNow();
   };
   //   note--focused note--closed
 
@@ -113,7 +108,7 @@ const NewNote = ({ title, content, editedDay, toDayObj, pinned }) => {
             ref={titleTextRef}
           ></textarea>
           <img
-            src={`/image/icon/pin${pinned?'_fill':''}.svg`}
+            src={`/image/icon/pin${pinned ? '_fill' : ''}.svg`}
             alt='pin_note'
             className='note__head__pin'
           />

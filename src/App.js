@@ -1,16 +1,22 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect
+} from 'react-router-dom';
 import Notes from './routes/Notes';
 import Reminders from './routes/Reminders';
 import Archive from './routes/Archive';
 import Trash from './routes/Trash';
 import Settings from './routes/Settings';
 import Signin from './routes/Signin';
-import DataJSON from './data.json';
 import Label from './routes/Label';
 import NavBar from './components/NavBar';
 import OmniBar from './components/OmniBar';
+import axios from 'axios';
+import { isEqual } from 'lodash';
 
 const NoMatchPage = () => {
   return <h3>404 - Not found</h3>;
@@ -19,15 +25,35 @@ const NoMatchPage = () => {
 const App = () => {
   const nav = useRef(null);
   const omniBarRef = useRef(null);
+  const [appData, setAppData] = useState([{}]);
+  const [redirectTo, setRedirectTo] = useState(null);
+
+  async function fetchData() {
+    if (!localStorage.getItem('PEEK_TOKEN')) {
+      return setRedirectTo('/signin');
+    }
+    const response = await axios.get('http://localhost:3000/api/note', {
+      headers: {
+        authorization: localStorage.getItem('PEEK_TOKEN')
+      }
+    });
+    if (!isEqual(appData, response.data.data)) {
+      console.log('## app data is updated');
+      setAppData(response.data.data);
+    }
+  }
+
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
+
+    fetchData();
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   });
 
   const label = [];
-  const labelTemps = DataJSON.data.map(i => i.label).filter(i => i !== '');
+  const labelTemps = appData.map(i => i.label).filter(i => i !== '');
   labelTemps.forEach(i => (!label.includes(i) ? label.push(i) : undefined));
 
   const handleScroll = e => {
@@ -51,17 +77,11 @@ const App = () => {
       nav.current.classList.remove('slidein--active');
     }
   };
-  const toDay = new Date();
-  const toDayObj = {
-    year: Number(toDay.getFullYear()),
-    month: Number(toDay.getMonth()),
-    date: Number(toDay.getDate()),
-    dayOfWeek: Number(toDay.getDay())
-  };
 
   return (
     <Router>
       <div className='app'>
+        {redirectTo ? <Redirect to={redirectTo} /> : null}
         <OmniBar ref={omniBarRef} onClick={handleNavClick} />
         <NavBar labels={label} ref={nav} onClick={handleNavClick} />
         <div className='app__content'>
@@ -69,9 +89,7 @@ const App = () => {
             <Route
               exact
               path='/'
-              render={props => (
-                <Notes {...props} data={DataJSON.data} toDayObj={toDayObj} />
-              )}
+              render={props => <Notes {...props} data={appData} />}
             />
             <Route
               exact
@@ -81,9 +99,7 @@ const App = () => {
             <Route
               exact
               path='/label/:labelId'
-              render={props => (
-                <Label {...props} data={DataJSON.data} toDayObj={toDayObj} />
-              )}
+              render={props => <Label {...props} data={appData} />}
             />
             <Route
               exact
@@ -99,7 +115,7 @@ const App = () => {
             <Route
               exact
               path='/signin'
-              render={props => <Signin {...props} />}
+              render={props => <Signin {...props} fetchData={fetchData} />}
             />
             <Route component={NoMatchPage} />
           </Switch>

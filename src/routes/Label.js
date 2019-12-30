@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import NewNote from '../components/NewNote';
 import Note from '../components/Note';
 
-const Label = ({ match, location, data, toDayObj }) => {
+const Label = ({ match, location, data }) => {
   //   console.log(match, location);
   const {
     params: { labelId }
@@ -11,8 +11,6 @@ const Label = ({ match, location, data, toDayObj }) => {
 
   const pinned = fData.filter(d => (d.pinned ? d : undefined));
   const others = fData.filter(d => (!d.pinned ? d : undefined));
-
-  console.log(labelId, pinned, others);
 
   const sectionStyle = {
     fontWeight: 500,
@@ -30,16 +28,19 @@ const Label = ({ match, location, data, toDayObj }) => {
           {isPinned ? 'PINNED' : 'OTHERS'}
         </div>
         <div className={`${fill}__content`}>
-          {noteArr.map((d, k) => (
-            <Note
-              pinned={isPinned}
-              title={d.title}
-              content={d.content}
-              key={`${k}-${d.title}`}
-              editedDay={d.editedDay}
-              toDayObj={toDayObj}
-            />
-          ))}
+          {noteArr.map((d, k) => {
+            // Quit if note is empty
+            if (!d._id) return '';
+            return (
+              <Note
+                pinned={isPinned}
+                title={d.title}
+                content={d.content}
+                key={`${k}-${d.title}`}
+                updatedAt={d.updatedAt}
+              />
+            );
+          })}
         </div>
       </div>
     );

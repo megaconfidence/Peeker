@@ -1,5 +1,5 @@
 .signin {
-    text-align: center;
+  text-align: center;
 }
 .signin__header {
   font-weight: bold;
@@ -13,6 +13,7 @@
   justify-content: space-between;
 }
 .signin__action__btn {
+  all: unset;
   height: 36px;
   color: white;
   padding: 0 16px;

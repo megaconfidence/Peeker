@@ -2,7 +2,7 @@ import React from 'react';
 import NewNote from '../components/NewNote';
 import Note from '../components/Note';
 
-const Notes = ({ data, toDayObj }) => {
+const Notes = ({ data }) => {
   const pinned = data.filter(d => (d.pinned ? d : undefined));
   const others = data.filter(d => (!d.pinned ? d : undefined));
 
@@ -22,16 +22,19 @@ const Notes = ({ data, toDayObj }) => {
           {isPinned ? 'PINNED' : 'OTHERS'}
         </div>
         <div className={`${fill}__content`}>
-          {noteArr.map((d, k) => (
-            <Note
-              pinned={isPinned}
-              title={d.title}
-              content={d.content}
-              key={`${k}-${d.title}`}
-              editedDay={d.editedDay}
-              toDayObj={toDayObj}
-            />
-          ))}
+          {noteArr.map((d, k) => {
+            // Quit if note is empty
+            if (!d._id) return '';
+            return(
+              <Note
+                pinned={isPinned}
+                title={d.title}
+                content={d.content}
+                key={`${k}-${d.title}`}
+                updatedAt={d.updatedAt}
+              />
+            )
+          })}
         </div>
       </div>
     );

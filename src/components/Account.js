@@ -1,41 +1,78 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Account.css';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
+import { google_client_id, facebook_client_id } from '../config/keys';
 
-const Account = () => {
-  const handleFBookBtn = async () => {
-    // try {
-    //   const response = await axios.get('http://localhost:3000/signin/facebook');
-    //   console.log(response);
-    // } catch (error) {
-    //   console.error(error);
-    // }
+import GoogleLogin from 'react-google-login';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
+
+const Account = ({ fetchData }) => {
+  const [redirectTo, setRedirectTo] = useState(null);
+  useEffect(() => {
+    if (localStorage.getItem('PEEK_TOKEN')) {
+      setRedirectTo('/');
+    }
+    return () => {};
+  }, []);
+  const responseGoogle = async res => {
+    const access_token = res.accessToken;
+    const response = await axios.post('http://localhost:3000/signin/google', {
+      access_token: access_token
+    });
+    localStorage.setItem('PEEK_TOKEN', response.data.token);
+    setRedirectTo('/');
+    fetchData();
   };
-  const handleGoogleBtn = async () => {
-    // try {
-    //   const response = await axios.get('http://localhost:3000/signin/google');
-    //   console.log(response);
-    // } catch (error) {
-    //   console.error(error);
-    // }
+  const responseFacebook = async res => {
+    const access_token = res.accessToken;
+    const response = await axios.post('http://localhost:3000/signin/facebook', {
+      access_token: access_token
+    });
+    localStorage.setItem('PEEK_TOKEN', response.data.token);
+    setRedirectTo('/');
+    fetchData();
   };
+
   return (
     <>
       <div className='signin'>
         <div className='signin__header'>Signin With</div>
         <div className='signin__action'>
-          <div
+          <GoogleLogin
+            render={renderProps => (
+              <div
+                className='signin__action__btn signin__action__btn--google'
+                onClick={renderProps.onClick}
+                disabled={renderProps.disabled}
+              >
+                Google
+              </div>
+            )}
+            clientId={google_client_id}
+            buttonText='Google'
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+            cookiePolicy={'single_host_origin'}
             className='signin__action__btn signin__action__btn--google'
-            onClick={handleGoogleBtn}
-          >
-            Google
-          </div>
-          <div
-            className='signin__action__btn signin__action__btn--facebook'
-            onClick={handleFBookBtn}
-          >
-            Facebook
-          </div>
+          />
+
+          <FacebookLogin
+            appId={facebook_client_id}
+            autoLoad={false}
+            callback={responseFacebook}
+            disableMobileRedirect={true}
+            fields='name,email,picture'
+            render={renderProps => (
+              <button
+                className='signin__action__btn signin__action__btn--facebook'
+                onClick={renderProps.onClick}
+              >
+                Facebook
+              </button>
+            )}
+          />
+          {redirectTo ? <Redirect to={redirectTo} /> : null}
         </div>
       </div>
     </>
