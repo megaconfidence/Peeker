@@ -3,6 +3,8 @@ import moment from 'moment';
 import './Notes.css';
 import './Note.css';
 import axios from 'axios';
+import config from 'environment';
+
 
 const NewNote = ({ title, content, updatedAt, pinned, id }) => {
   const [titleTextState, setTitleTextState] = useState(title);
@@ -68,7 +70,7 @@ const NewNote = ({ title, content, updatedAt, pinned, id }) => {
       (async () => {
         await axios({
           method: 'put',
-          url: `http://localhost:3000/api/note/${noteId}`,
+          url: `${config.api}/api/note/${noteId}`,
           headers: {
             authorization: localStorage.getItem('PEEK_TOKEN')
           },

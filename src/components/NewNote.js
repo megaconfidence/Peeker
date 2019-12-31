@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 import './Notes.css';
 import './NewNote.css';
 import axios from 'axios';
+import config from 'environment';
+
 
 const NewNote = ({ fetchData, labelForNewNote }) => {
   const noteRef = useRef(null);
@@ -32,7 +34,7 @@ const NewNote = ({ fetchData, labelForNewNote }) => {
 
       await axios({
         method: 'post',
-        url: `http://localhost:3000/api/note`,
+        url: `${config.api}/api/note`,
         headers: {
           authorization: localStorage.getItem('PEEK_TOKEN')
         },

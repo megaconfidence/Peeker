@@ -6,6 +6,8 @@ import { google_client_id, facebook_client_id } from '../config/keys';
 
 import GoogleLogin from 'react-google-login';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
+import config from 'environment';
+
 
 const Account = ({ fetchData }) => {
   const [redirectTo, setRedirectTo] = useState(null);
@@ -17,7 +19,7 @@ const Account = ({ fetchData }) => {
   }, []);
   const responseGoogle = async res => {
     const access_token = res.accessToken;
-    const response = await axios.post('http://localhost:3000/signin/google', {
+    const response = await axios.post(`${config.api}/signin/google`, {
       access_token: access_token
     });
     localStorage.setItem('PEEK_TOKEN', response.data.token);
@@ -26,7 +28,7 @@ const Account = ({ fetchData }) => {
   };
   const responseFacebook = async res => {
     const access_token = res.accessToken;
-    const response = await axios.post('http://localhost:3000/signin/facebook', {
+    const response = await axios.post(`${config.api}/signin/facebook`, {
       access_token: access_token
     });
     localStorage.setItem('PEEK_TOKEN', response.data.token);

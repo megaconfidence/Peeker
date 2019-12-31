@@ -17,6 +17,7 @@ import NavBar from './components/NavBar';
 import OmniBar from './components/OmniBar';
 import axios from 'axios';
 import { isEqual } from 'lodash';
+import config from 'environment';
 
 const NoMatchPage = () => {
   return <h3>404 - Not found</h3>;
@@ -34,7 +35,7 @@ const App = () => {
     if (!localStorage.getItem('PEEK_TOKEN')) {
       return setRedirectTo('/signin');
     }
-    const response = await axios.get('http://localhost:3000/api/note', {
+    const response = await axios.get(`${config.api}/api/note`, {
       headers: {
         authorization: localStorage.getItem('PEEK_TOKEN')
       }

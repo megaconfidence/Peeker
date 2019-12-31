@@ -14,9 +14,8 @@
     "react-scripts": "3.2.0"
   },
   "scripts": {
-    "start": "cross-env CLIENT_ENV=dev craco start",
-    "prod": "cross-env CLIENT_ENV=prod craco start",
-    "build": "cross-env CLIENT_ENV=prod craco build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -36,7 +35,6 @@
     ]
   },
   "devDependencies": {
-    "@craco/craco": "^5.6.2",
-    "cross-env": "^6.0.3"
+    "@craco/craco": "^5.6.2"
   }
 }
