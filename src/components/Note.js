@@ -2,8 +2,9 @@ import React, { useRef, useState, useEffect } from 'react';
 import moment from 'moment';
 import './Notes.css';
 import './Note.css';
+import axios from 'axios';
 
-const NewNote = ({ title, content, updatedAt, pinned }) => {
+const NewNote = ({ title, content, updatedAt, pinned, id }) => {
   const [titleTextState, setTitleTextState] = useState(title);
   const [contentTextState, setContentTextState] = useState(content);
   const noteRef = useRef(null);
@@ -61,6 +62,22 @@ const NewNote = ({ title, content, updatedAt, pinned }) => {
       noteRef.current.classList.remove('note--opened');
       noteRef.current.classList.add('note--closed');
       noteOverlayRef.current.classList.add('note__overlay--close');
+      const noteId = noteRef.current.getAttribute('data-note-id');
+      const noteTitle = titleTextRef.current.textContent;
+      const noteContent = contentTextRef.current.textContent;
+      (async () => {
+        await axios({
+          method: 'put',
+          url: `http://localhost:3000/api/note/${noteId}`,
+          headers: {
+            authorization: localStorage.getItem('PEEK_TOKEN')
+          },
+          data: {
+            title: noteTitle,
+            content: noteContent
+          }
+        });
+      })();
     }
   };
 
@@ -95,11 +112,10 @@ const NewNote = ({ title, content, updatedAt, pinned }) => {
       ref={noteOverlayRef}
       onClick={closeNote}
     >
-      <div className='note note--closed' ref={noteRef}>
+      <div className='note note--closed' ref={noteRef} data-note-id={id}>
         <div className='note__head'>
           <textarea
             className='note__head__titletext textarea--mod'
-            placeholder='Title'
             spellCheck='false'
             onInput={autoGrow}
             onFocus={openNote}
@@ -117,7 +133,6 @@ const NewNote = ({ title, content, updatedAt, pinned }) => {
           <div className='note__body__content'>
             <textarea
               className='note__body__content__textarea textarea--mod'
-              placeholder='Take a note...'
               spellCheck='false'
               onInput={autoGrow}
               onFocus={openNote}

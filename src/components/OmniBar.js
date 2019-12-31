@@ -14,8 +14,11 @@ const withRouterAndRef = Wrapped => {
   return WithRouterAndRef;
 };
 
-const OmniBar = forwardRef(({ onClick, location }, ref) => {
+const OmniBar = forwardRef(({ onClick, location, fetchData }, ref) => {
   let currPath = location.pathname.split('/').pop();
+  const handleRefresh = () => {
+    fetchData();
+  };
   return (
     <div className='omnibar' ref={ref}>
       <div className='omnibar__left'>
@@ -40,6 +43,7 @@ const OmniBar = forwardRef(({ onClick, location }, ref) => {
           src='/image/icon/refresh.svg'
           alt='refresh'
           className='omnibar__right__refresh omnibar__icon'
+          onClick={handleRefresh}
         />
         <img
           src='/image/icon/settings.svg'

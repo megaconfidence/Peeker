@@ -1,8 +1,7 @@
 import React from 'react';
 import NewNote from '../components/NewNote';
 import Note from '../components/Note';
-
-const Notes = ({ data }) => {
+const Notes = ({ data, fetchData }) => {
   const pinned = data.filter(d => (d.pinned ? d : undefined));
   const others = data.filter(d => (!d.pinned ? d : undefined));
 
@@ -25,15 +24,16 @@ const Notes = ({ data }) => {
           {noteArr.map((d, k) => {
             // Quit if note is empty
             if (!d._id) return '';
-            return(
+            return (
               <Note
+                id={d._id}
                 pinned={isPinned}
                 title={d.title}
                 content={d.content}
                 key={`${k}-${d.title}`}
                 updatedAt={d.updatedAt}
               />
-            )
+            );
           })}
         </div>
       </div>
@@ -42,7 +42,7 @@ const Notes = ({ data }) => {
 
   return (
     <div>
-      <NewNote />
+      <NewNote fetchData={fetchData} />
       {pinned.length ? buildNotes(pinned, true) : undefined}
       {others.length ? buildNotes(others, false) : undefined}
     </div>

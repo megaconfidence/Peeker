@@ -25,7 +25,9 @@ const NoMatchPage = () => {
 const App = () => {
   const nav = useRef(null);
   const omniBarRef = useRef(null);
-  const [appData, setAppData] = useState([{}]);
+  const [app, setApp] = useState({
+    data: []
+  });
   const [redirectTo, setRedirectTo] = useState(null);
 
   async function fetchData() {
@@ -37,15 +39,15 @@ const App = () => {
         authorization: localStorage.getItem('PEEK_TOKEN')
       }
     });
-    if (!isEqual(appData, response.data.data)) {
+    if (!isEqual(app.data, response.data.data)) {
       console.log('## app data is updated');
-      setAppData(response.data.data);
+      setApp({
+        data: response.data.data
+      });
     }
   }
-
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
-
     fetchData();
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -53,7 +55,7 @@ const App = () => {
   });
 
   const label = [];
-  const labelTemps = appData.map(i => i.label).filter(i => i !== '');
+  const labelTemps = app.data.map(i => i.label).filter(i => i !== '');
   labelTemps.forEach(i => (!label.includes(i) ? label.push(i) : undefined));
 
   const handleScroll = e => {
@@ -82,14 +84,20 @@ const App = () => {
     <Router>
       <div className='app'>
         {redirectTo ? <Redirect to={redirectTo} /> : null}
-        <OmniBar ref={omniBarRef} onClick={handleNavClick} />
+        <OmniBar
+          ref={omniBarRef}
+          onClick={handleNavClick}
+          fetchData={fetchData}
+        />
         <NavBar labels={label} ref={nav} onClick={handleNavClick} />
         <div className='app__content'>
           <Switch>
             <Route
               exact
               path='/'
-              render={props => <Notes {...props} data={appData} />}
+              render={props => (
+                <Notes {...props} data={app.data} fetchData={fetchData} />
+              )}
             />
             <Route
               exact
@@ -99,7 +107,7 @@ const App = () => {
             <Route
               exact
               path='/label/:labelId'
-              render={props => <Label {...props} data={appData} />}
+              render={props => <Label {...props} data={app.data} />}
             />
             <Route
               exact

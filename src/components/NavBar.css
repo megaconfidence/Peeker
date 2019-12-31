@@ -68,8 +68,9 @@
   overflow: hidden;
   padding-left: 32px;
   white-space: nowrap;
-  color: rgb(32, 33, 36);
   text-overflow: ellipsis;
+  color: rgb(32, 33, 36);
+  text-transform: capitalize;
   font-family: 'Noto Sans', sans-serif;
 }
 .selected {

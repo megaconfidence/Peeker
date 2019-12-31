@@ -1,9 +1,12 @@
 import React, { useRef } from 'react';
 import './Notes.css';
 import './NewNote.css';
+import axios from 'axios';
 
-const NewNote = () => {
+const NewNote = ({ fetchData }) => {
   const noteRef = useRef(null);
+  const titleTextRef = useRef(null);
+  const contentTextRef = useRef(null);
 
   const autoGrow = e => {
     const textarea = e.target;
@@ -16,8 +19,29 @@ const NewNote = () => {
   const openNote = () => {
     noteRef.current.classList.remove('nwnote--closed');
   };
-  const closeNote = () => {
+  const closeNote = async () => {
     noteRef.current.classList.add('nwnote--closed');
+    const noteTitle = titleTextRef.current.value;
+    const noteContent = contentTextRef.current.value;
+    if (noteTitle || noteContent) {
+      const data = {
+        title: noteTitle ? noteTitle : '',
+        content: noteContent ? noteContent : ''
+      };
+
+      await axios({
+        method: 'post',
+        url: `http://localhost:3000/api/note`,
+        headers: {
+          authorization: localStorage.getItem('PEEK_TOKEN')
+        },
+        data
+      });
+
+      titleTextRef.current.value = '';
+      contentTextRef.current.value = '';
+      fetchData();
+    }
   };
 
   return (
@@ -28,6 +52,7 @@ const NewNote = () => {
           placeholder='Title'
           spellCheck='false'
           onInput={autoGrow}
+          ref={titleTextRef}
         ></textarea>
         <img
           src='/image/icon/pin.svg'
@@ -43,6 +68,7 @@ const NewNote = () => {
             spellCheck='false'
             onInput={autoGrow}
             onFocus={openNote}
+            ref={contentTextRef}
           ></textarea>
           <div className='note__body__content__hiddencontrols'>
             <img
@@ -109,7 +135,7 @@ const NewNote = () => {
       </div>
       <div className='note__footer'>
         <button className='note__footer__closebtn' onClick={closeNote}>
-          Close
+          Save
         </button>
       </div>
     </div>
