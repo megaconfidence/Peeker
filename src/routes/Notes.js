@@ -1,7 +1,7 @@
 import React from 'react';
 import NewNote from '../components/NewNote';
 import Note from '../components/Note';
-const Notes = ({ data, fetchData }) => {
+const Notes = ({ data, fetchData, labelForNewNote }) => {
   const pinned = data.filter(d => (d.pinned ? d : undefined));
   const others = data.filter(d => (!d.pinned ? d : undefined));
 
@@ -42,7 +42,7 @@ const Notes = ({ data, fetchData }) => {
 
   return (
     <div>
-      <NewNote fetchData={fetchData} />
+      <NewNote fetchData={fetchData} labelForNewNote={labelForNewNote}/>
       {pinned.length ? buildNotes(pinned, true) : undefined}
       {others.length ? buildNotes(others, false) : undefined}
     </div>

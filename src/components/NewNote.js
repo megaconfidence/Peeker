@@ -3,7 +3,7 @@ import './Notes.css';
 import './NewNote.css';
 import axios from 'axios';
 
-const NewNote = ({ fetchData }) => {
+const NewNote = ({ fetchData, labelForNewNote }) => {
   const noteRef = useRef(null);
   const titleTextRef = useRef(null);
   const contentTextRef = useRef(null);
@@ -26,6 +26,7 @@ const NewNote = ({ fetchData }) => {
     if (noteTitle || noteContent) {
       const data = {
         title: noteTitle ? noteTitle : '',
+        label: labelForNewNote,
         content: noteContent ? noteContent : ''
       };
 

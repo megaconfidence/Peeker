@@ -96,7 +96,12 @@ const App = () => {
               exact
               path='/'
               render={props => (
-                <Notes {...props} data={app.data} fetchData={fetchData} />
+                <Notes
+                  {...props}
+                  data={app.data}
+                  fetchData={fetchData}
+                  labelForNewNote={''}
+                />
               )}
             />
             <Route
@@ -107,7 +112,9 @@ const App = () => {
             <Route
               exact
               path='/label/:labelId'
-              render={props => <Label {...props} data={app.data} />}
+              render={props => (
+                <Label {...props} data={app.data} fetchData={fetchData} />
+              )}
             />
             <Route
               exact
