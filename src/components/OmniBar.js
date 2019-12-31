@@ -16,7 +16,12 @@ const withRouterAndRef = Wrapped => {
 
 const OmniBar = forwardRef(({ onClick, location, fetchData }, ref) => {
   let currPath = location.pathname.split('/').pop();
-  const handleRefresh = () => {
+  const handleRefresh = e => {
+    const btn = e.target;
+    btn.classList.add('spin-animation');
+    setTimeout(() => {
+      btn.classList.remove('spin-animation');
+    }, 500);
     fetchData();
   };
   return (
