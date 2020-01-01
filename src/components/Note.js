@@ -72,7 +72,7 @@ const NewNote = ({ title, content, updatedAt, pinned, id }) => {
           method: 'put',
           url: `${config.api}/api/note/${noteId}`,
           headers: {
-            authorization: localStorage.getItem('PEEK_TOKEN')
+            authorization: localStorage.getItem('PEEKER_TOKEN')
           },
           data: {
             title: noteTitle,

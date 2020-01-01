@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== 'production') {
 const Account = ({ fetchData }) => {
   const [redirectTo, setRedirectTo] = useState(null);
   useEffect(() => {
-    if (localStorage.getItem('PEEK_TOKEN')) {
+    if (localStorage.getItem('PEEKER_TOKEN')) {
       setRedirectTo('/');
     }
     return () => {};
@@ -22,7 +22,7 @@ const Account = ({ fetchData }) => {
     const response = await axios.post(`${config.api}/signin/google`, {
       access_token: access_token
     });
-    localStorage.setItem('PEEK_TOKEN', response.data.token);
+    localStorage.setItem('PEEKER_TOKEN', response.data.token);
     setRedirectTo('/');
     fetchData();
   };
@@ -31,7 +31,7 @@ const Account = ({ fetchData }) => {
     const response = await axios.post(`${config.api}/signin/facebook`, {
       access_token: access_token
     });
-    localStorage.setItem('PEEK_TOKEN', response.data.token);
+    localStorage.setItem('PEEKER_TOKEN', response.data.token);
     setRedirectTo('/');
     fetchData();
   };

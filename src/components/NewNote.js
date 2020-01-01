@@ -36,7 +36,7 @@ const NewNote = ({ fetchData, labelForNewNote }) => {
         method: 'post',
         url: `${config.api}/api/note`,
         headers: {
-          authorization: localStorage.getItem('PEEK_TOKEN')
+          authorization: localStorage.getItem('PEEKER_TOKEN')
         },
         data
       });

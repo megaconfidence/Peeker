@@ -34,7 +34,7 @@ const OmniBar = forwardRef(({ onClick, location, fetchData }, ref) => {
           onClick={onClick}
         />
         <div className='omnibar__left__pagename'>
-          {currPath ? currPath : 'Peek'}
+          {currPath ? currPath : 'Peeker'}
         </div>
       </div>
 

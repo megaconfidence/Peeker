@@ -32,12 +32,12 @@ const App = () => {
   const [redirectTo, setRedirectTo] = useState(null);
 
   async function fetchData() {
-    if (!localStorage.getItem('PEEK_TOKEN')) {
+    if (!localStorage.getItem('PEEKER_TOKEN')) {
       return setRedirectTo('/signin');
     }
     const response = await axios.get(`${config.api}/api/note`, {
       headers: {
-        authorization: localStorage.getItem('PEEK_TOKEN')
+        authorization: localStorage.getItem('PEEKER_TOKEN')
       }
     });
     if (!isEqual(app.data, response.data.data)) {

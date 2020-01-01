@@ -7,7 +7,7 @@ const NavBar = forwardRef(({ labels, onClick }, ref) => {
     <>
       <div className='slidein' ref={ref} onClick={onClick}>
         <nav className=' nav no-select'>
-          <div className='nav__name'>Peek</div>
+          <div className='nav__name'>Peeker</div>
           <div className='nav__group'>
             <ul className='nav__list'>
               <li className='nav__list__item'>
