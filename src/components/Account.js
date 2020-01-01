@@ -7,10 +7,8 @@ import GoogleLogin from 'react-google-login';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import config from 'environment';
 if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').load()
+  require('dotenv').config();
 }
-
-
 const Account = ({ fetchData }) => {
   const [redirectTo, setRedirectTo] = useState(null);
   useEffect(() => {
@@ -53,7 +51,7 @@ const Account = ({ fetchData }) => {
                 Google
               </div>
             )}
-            clientId={process.env.google_client_id}
+            clientId={process.env.REACT_APP_google_client_id}
             buttonText='Google'
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
@@ -62,7 +60,7 @@ const Account = ({ fetchData }) => {
           />
 
           <FacebookLogin
-            appId={process.env.facebook_client_id}
+            appId={process.env.REACT_APP_facebook_client_id}
             autoLoad={false}
             callback={responseFacebook}
             disableMobileRedirect={true}
