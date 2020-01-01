@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import './Account.css';
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
-import { google_client_id, facebook_client_id } from '../config/keys';
 
 import GoogleLogin from 'react-google-login';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import config from 'environment';
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').load()
+}
 
 
 const Account = ({ fetchData }) => {
@@ -51,7 +53,7 @@ const Account = ({ fetchData }) => {
                 Google
               </div>
             )}
-            clientId={google_client_id}
+            clientId={process.env.google_client_id}
             buttonText='Google'
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
@@ -60,7 +62,7 @@ const Account = ({ fetchData }) => {
           />
 
           <FacebookLogin
-            appId={facebook_client_id}
+            appId={process.env.facebook_client_id}
             autoLoad={false}
             callback={responseFacebook}
             disableMobileRedirect={true}
