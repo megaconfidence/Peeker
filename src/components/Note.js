@@ -2,17 +2,25 @@ import React, { useRef, useState, useEffect } from 'react';
 import moment from 'moment';
 import './Notes.css';
 import './Note.css';
-import axios from 'axios';
-import config from 'environment';
+import request from '../helpers';
 
-
-const NewNote = ({ title, content, updatedAt, pinned, id }) => {
+const NewNote = ({
+  title,
+  content,
+  updatedAt,
+  pinned,
+  id,
+  fetchData,
+  updateLocal,
+  deleteLocal
+}) => {
   const [titleTextState, setTitleTextState] = useState(title);
   const [contentTextState, setContentTextState] = useState(content);
   const noteRef = useRef(null);
   const noteOverlayRef = useRef(null);
   const titleTextRef = useRef(null);
   const contentTextRef = useRef(null);
+  const pinimgRef = useRef(null);
 
   useEffect(() => {
     /*
@@ -53,7 +61,7 @@ const NewNote = ({ title, content, updatedAt, pinned, id }) => {
       noteOverlayRef.current.classList.remove('note__overlay--close');
     }, 0);
   };
-  const closeNote = e => {
+  const closeNote = async e => {
     e.stopPropagation();
     e.stopPropagation();
     const elem = e.target;
@@ -64,22 +72,38 @@ const NewNote = ({ title, content, updatedAt, pinned, id }) => {
       noteRef.current.classList.remove('note--opened');
       noteRef.current.classList.add('note--closed');
       noteOverlayRef.current.classList.add('note__overlay--close');
+
+      // Get note data to update
       const noteId = noteRef.current.getAttribute('data-note-id');
       const noteTitle = titleTextRef.current.textContent;
       const noteContent = contentTextRef.current.textContent;
-      (async () => {
-        await axios({
-          method: 'put',
-          url: `${config.api}/api/note/${noteId}`,
-          headers: {
-            authorization: localStorage.getItem('PEEKER_TOKEN')
-          },
-          data: {
-            title: noteTitle,
-            content: noteContent
-          }
-        });
-      })();
+      const pinned = pinimgRef.current.src.includes('pin_fill');
+
+      const payload = {
+        title: noteTitle,
+        content: noteContent,
+        pinned
+      };
+
+      updateLocal(noteId, payload);
+
+      // Make the update
+      await request('put', `api/note/${noteId}`, payload);
+    }
+  };
+
+  const deleteNote = async () => {
+    const noteId = noteRef.current.getAttribute('data-note-id');
+    deleteLocal(noteId);
+    await request('delete', `api/note/${noteId}`);
+    fetchData();
+  };
+
+  const pinNote = ({ target }) => {
+    if (target.src.includes('pin_fill')) {
+      target.src = target.src.split('pin_fill').join('pin');
+    } else {
+      target.src = target.src.split('pin').join('pin_fill');
     }
   };
 
@@ -129,6 +153,8 @@ const NewNote = ({ title, content, updatedAt, pinned, id }) => {
             src={`/image/icon/pin${pinned ? '_fill' : ''}.svg`}
             alt='pin_note'
             className='note__head__pin'
+            ref={pinimgRef}
+            onClick={pinNote}
           />
         </div>
         <div className='note__body'>
@@ -177,6 +203,12 @@ const NewNote = ({ title, content, updatedAt, pinned, id }) => {
                 src='/image/icon/archive.svg'
                 alt='archive'
                 className='note__body__controls__item__image'
+              />
+              <img
+                src='/image/icon/trash.svg'
+                alt='delete'
+                className='note__body__controls__item__image'
+                onClick={deleteNote}
               />
               <img
                 src='/image/icon/options.svg'

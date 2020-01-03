@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
 import './Account.css';
-import axios from 'axios';
+import request from '../helpers';
 import { Redirect } from 'react-router-dom';
-
 import GoogleLogin from 'react-google-login';
+import React, { useState, useEffect } from 'react';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
-import config from 'environment';
+
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
+
 const Account = ({ fetchData }) => {
   const [redirectTo, setRedirectTo] = useState(null);
   useEffect(() => {
@@ -17,23 +17,23 @@ const Account = ({ fetchData }) => {
     }
     return () => {};
   }, []);
-  const responseGoogle = async res => {
-    const access_token = res.accessToken;
-    const response = await axios.post(`${config.api}/signin/google`, {
-      access_token: access_token
-    });
-    localStorage.setItem('PEEKER_TOKEN', response.data.token);
+  const saveToken = async (access_token, provider) => {
+    const payload = {
+      access_token
+    };
+    const {
+      data: { token }
+    } = await request('post', `signin/${provider}`, payload);
+
+    localStorage.setItem('PEEKER_TOKEN', token);
     setRedirectTo('/');
     fetchData();
   };
-  const responseFacebook = async res => {
-    const access_token = res.accessToken;
-    const response = await axios.post(`${config.api}/signin/facebook`, {
-      access_token: access_token
-    });
-    localStorage.setItem('PEEKER_TOKEN', response.data.token);
-    setRedirectTo('/');
-    fetchData();
+  const responseGoogle = ({ accessToken }) => {
+    saveToken(accessToken, 'google');
+  };
+  const responseFacebook = ({ accessToken }) => {
+    saveToken(accessToken, 'facebook');
   };
 
   return (

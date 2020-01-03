@@ -1,7 +1,7 @@
 import React from 'react';
 import NewNote from '../components/NewNote';
 import Note from '../components/Note';
-const Notes = ({ data, fetchData, labelForNewNote }) => {
+const Notes = ({ data, fetchData, labelForNewNote, updateLocal, addLocal, deleteLocal }) => {
   const pinned = data.filter(d => (d.pinned ? d : undefined));
   const others = data.filter(d => (!d.pinned ? d : undefined));
 
@@ -32,6 +32,9 @@ const Notes = ({ data, fetchData, labelForNewNote }) => {
                 content={d.content}
                 key={`${k}-${d.title}`}
                 updatedAt={d.updatedAt}
+                fetchData={fetchData}
+                updateLocal={updateLocal}
+                deleteLocal={deleteLocal}
               />
             );
           })}
@@ -42,7 +45,11 @@ const Notes = ({ data, fetchData, labelForNewNote }) => {
 
   return (
     <div>
-      <NewNote fetchData={fetchData} labelForNewNote={labelForNewNote}/>
+      <NewNote
+        fetchData={fetchData}
+        labelForNewNote={labelForNewNote}
+        addLocal={addLocal}
+      />
       {pinned.length ? buildNotes(pinned, true) : undefined}
       {others.length ? buildNotes(others, false) : undefined}
     </div>

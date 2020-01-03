@@ -15,9 +15,8 @@ import Signin from './routes/Signin';
 import Label from './routes/Label';
 import NavBar from './components/NavBar';
 import OmniBar from './components/OmniBar';
-import axios from 'axios';
-import { isEqual } from 'lodash';
-import config from 'environment';
+import _ from 'lodash';
+import request from './helpers';
 
 const NoMatchPage = () => {
   return <h3>404 - Not found</h3>;
@@ -26,27 +25,53 @@ const NoMatchPage = () => {
 const App = () => {
   const nav = useRef(null);
   const omniBarRef = useRef(null);
+
   const [app, setApp] = useState({
     data: []
   });
   const [redirectTo, setRedirectTo] = useState(null);
 
-  async function fetchData() {
+  const addLocal = payload => {
+    const data = app.data;
+    data.push(payload);
+    setApp({ data });
+  };
+
+  const deleteLocal = id => {
+    const data = app.data;
+    const index = _.findIndex(data, { _id: id });
+    data.splice(index, 1);
+    setApp({ data });
+  };
+
+  const updateLocal = (id, payload) => {
+    const data = app.data;
+    const obj = _.find(data, { _id: id });
+    const update = {
+      ...obj,
+      ...payload
+    };
+    const index = _.findIndex(data, { _id: id });
+    data.splice(index, 1, update);
+    setApp({ data });
+  };
+
+  const fetchData = async () => {
     if (!localStorage.getItem('PEEKER_TOKEN')) {
       return setRedirectTo('/signin');
     }
-    const response = await axios.get(`${config.api}/api/note`, {
-      headers: {
-        authorization: localStorage.getItem('PEEKER_TOKEN')
-      }
-    });
-    if (!isEqual(app.data, response.data.data)) {
+    // Get all notes
+    const {
+      data: { data }
+    } = await request('get', 'api/note');
+
+    // Makes update if there are any changes
+    if (!_.isEqual(app.data, data)) {
       console.log('## app data is updated');
-      setApp({
-        data: response.data.data
-      });
+      setApp({ data });
     }
-  }
+  };
+
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
     fetchData();
@@ -101,6 +126,9 @@ const App = () => {
                   {...props}
                   data={app.data}
                   fetchData={fetchData}
+                  updateLocal={updateLocal}
+                  addLocal={addLocal}
+                  deleteLocal={deleteLocal}
                   labelForNewNote={''}
                 />
               )}
