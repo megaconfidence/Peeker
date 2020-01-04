@@ -25,15 +25,35 @@
 .note__head__pin {
   display: none;
 }
+.note__body__content__label {
+  display: flex;
+  padding: 10px 12px;
+}
+.note__body__content__flex{
+  display: flex;
+  width: 100%;
+}
+.note__body__content__label__tag {
+  margin: 0 4px;
+  width: 60%;
+  font-size: 11px;
+  color: #3c4043;
+  border-radius: 10px;
+  padding: 6px 10px 5px 10px;
+  background-color: #ebebeb;
+}
 .note__body__content__edited {
+  width: 40%;
   display: none;
   font-size: 0.8rem;
   line-height: 1rem;
   text-align: right;
   letter-spacing: 0.025em;
-  padding: 20px 16px 12px;
+  /* padding: 20px 16px 12px; */
+  padding-right: 16px;
   font-family: Roboto, Arial, sans-serif;
 }
+
 .note--opened.note {
   min-width: 632px;
 }
@@ -47,8 +67,8 @@
   }
 }
 .note--opened .note__head__pin {
-    display: block;
-  }
+  display: block;
+}
 .note--opened .note__head__titletext {
   color: #000000;
   font-weight: 400;

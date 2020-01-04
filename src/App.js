@@ -12,6 +12,7 @@ import Archive from './routes/Archive';
 import Trash from './routes/Trash';
 import Settings from './routes/Settings';
 import Signin from './routes/Signin';
+import Signout from './routes/Signout';
 import Label from './routes/Label';
 import NavBar from './components/NavBar';
 import OmniBar from './components/OmniBar';
@@ -80,9 +81,10 @@ const App = () => {
     };
   });
 
-  const label = [];
-  const labelTemps = app.data.map(i => i.label).filter(i => i !== '');
-  labelTemps.forEach(i => (!label.includes(i) ? label.push(i) : undefined));
+  let label = app.data.map(i => i.label);
+  label = _.reduce(label, (acc, curr) => _.concat(acc, curr));
+  label = _.compact(label);
+  label = _.uniq(label);
 
   const handleScroll = e => {
     if (window.pageYOffset > 0) {
@@ -130,6 +132,7 @@ const App = () => {
                   addLocal={addLocal}
                   deleteLocal={deleteLocal}
                   labelForNewNote={''}
+                  allLabels={label}
                 />
               )}
             />
@@ -142,7 +145,15 @@ const App = () => {
               exact
               path='/label/:labelId'
               render={props => (
-                <Label {...props} data={app.data} fetchData={fetchData} />
+                <Label
+                  {...props}
+                  data={app.data}
+                  fetchData={fetchData}
+                  allLabels={label}
+                  updateLocal={updateLocal}
+                  deleteLocal={deleteLocal}
+                  addLocal={addLocal}
+                />
               )}
             />
             <Route
@@ -161,6 +172,7 @@ const App = () => {
               path='/signin'
               render={props => <Signin {...props} fetchData={fetchData} />}
             />
+            <Route exact path='/signout' render={props => <Signout />} />
             <Route component={NoMatchPage} />
           </Switch>
         </div>

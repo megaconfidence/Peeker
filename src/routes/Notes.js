@@ -1,7 +1,15 @@
 import React from 'react';
 import NewNote from '../components/NewNote';
 import Note from '../components/Note';
-const Notes = ({ data, fetchData, labelForNewNote, updateLocal, addLocal, deleteLocal }) => {
+const Notes = ({
+  data,
+  fetchData,
+  labelForNewNote,
+  updateLocal,
+  addLocal,
+  deleteLocal,
+  allLabels
+}) => {
   const pinned = data.filter(d => (d.pinned ? d : undefined));
   const others = data.filter(d => (!d.pinned ? d : undefined));
 
@@ -18,7 +26,7 @@ const Notes = ({ data, fetchData, labelForNewNote, updateLocal, addLocal, delete
     return (
       <div className={`${fill}`}>
         <div className={`${fill}__header`} style={sectionStyle}>
-          {isPinned ? 'PINNED' : 'OTHERS'}
+          {isPinned ? 'PINNED' : pinned.length ? 'OTHERS' : undefined}
         </div>
         <div className={`${fill}__content`}>
           {noteArr.map((d, k) => {
@@ -35,6 +43,8 @@ const Notes = ({ data, fetchData, labelForNewNote, updateLocal, addLocal, delete
                 fetchData={fetchData}
                 updateLocal={updateLocal}
                 deleteLocal={deleteLocal}
+                allLabels={allLabels}
+                noteLabels={d.label}
               />
             );
           })}

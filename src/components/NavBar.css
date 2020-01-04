@@ -44,6 +44,9 @@
 .nav__group {
   padding: 8px 0;
 }
+.nav__group__separator {
+  border-top: 1px solid #ddd;
+}
 .nav__group--middle {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;

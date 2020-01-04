@@ -9,7 +9,7 @@
 .note {
   margin-bottom: 8px;
   width: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
   position: relative;
   border-radius: 8px;
   box-sizing: border-box;
@@ -81,6 +81,93 @@ img[alt='options'] {
   padding-left: 3px;
   width: calc(100% - 65px);
   justify-content: space-between;
+}
+.note__body__controls__item__withmodal {
+  position: relative;
+}
+.label_modal {
+  width: 225px;
+  z-index: 5003;
+  font-size: 13px;
+  color: #202124;
+  max-width: 225px;
+  border-radius: 2px;
+  position: absolute;
+  background-color: #fff;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302),
+    0 2px 6px 2px rgba(60, 64, 67, 0.149);
+
+  left: 13px;
+}
+.label_modal .body {
+  padding: 11px 10px 0;
+}
+.label_modal_head {
+  font-size: 14px;
+}
+.label_modal_search {
+  display: flex;
+  align-items: center;
+  padding: 11px 5px 8px 0;
+  justify-content: space-between;
+}
+.label_modal_search_input {
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: #3c4043;
+  font-family: 'Roboto', arial, sans-serif;
+}
+.label_modal_search_input::placeholder {
+  color: #959899;
+}
+.label_modal_search_icon {
+  width: 14px;
+  height: 14px;
+  opacity: 0.35;
+}
+.label_modal_labels ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.label_modal_labels li {
+  margin: 10px 0;
+}
+.label_modal_labels li .label {
+  display: flex;
+  font-size: 13px;
+  align-items: center;
+}
+.label_modal_labels li .checkbox {
+  all: unset;
+  width: 18px;
+  height: 18px;
+  opacity: 0.54;
+  margin-right: 7px;
+  display: inline-block;
+  background-size: 18px 18px;
+  background-repeat: no-repeat;
+  background-image: url(/image/icon/checkbox_notchecked.svg);
+}
+.label_modal_labels li .checkbox.checked {
+  background-image: url(/image/icon/checkbox.svg);
+}
+.label_modal_createlabel {
+  display: flex;
+  padding: 5px 10px;
+  align-items: center;
+  border-top: 1px solid #dadce0;
+}
+.label_modal_createlabel_icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.54;
+  margin-right: 8px;
+  display: inline-block;
+}
+.label_modal_createlabel_text {
+  font-weight: bold;
 }
 .note__body__controls__item__image {
   width: 19px;
