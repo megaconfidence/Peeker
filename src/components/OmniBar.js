@@ -42,7 +42,7 @@ const OmniBar = forwardRef(({ onClick, location, fetchData }, ref) => {
         <img
           src='/image/icon/search.svg'
           alt='search'
-          className='omnibar__right__search omnibar__icon'
+          className='omnibar__right__search omnibar__icon disabled'
         />
         <img
           src='/image/icon/refresh.svg'
@@ -53,12 +53,12 @@ const OmniBar = forwardRef(({ onClick, location, fetchData }, ref) => {
         <img
           src='/image/icon/settings.svg'
           alt='settings'
-          className='omnibar__right__settings omnibar__icon'
+          className='omnibar__right__settings omnibar__icon disabled'
         />
         <img
           src='/image/icon/profile.svg'
           alt='profile_image'
-          className='omnibar__right__profile'
+          className='omnibar__right__profile disabled'
         />
       </div>
     </div>

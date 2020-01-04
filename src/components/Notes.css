@@ -73,6 +73,33 @@ img[alt='options'] {
   height: 34px;
   width: 18px !important;
 }
+.note__body__content__label {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px 12px 5px;
+}
+.note__body__content__label__tag {
+  margin: 3px;
+  display: flex;
+  font-size: 11px;
+  color: #3c4043;
+  border-radius: 20px;
+  align-items: center;
+  padding: 4px 10px 3px 14px;
+  background-color: #ebebeb;
+}
+.note--closed .note__body__content__label__tag {
+  padding: 4px 10px;
+}
+.note--closed .note__body__content__label__tag .close img {
+  display: none;
+}
+.note__body__content__label__tag .close img {
+  width: 14px;
+  opacity: 0.54;
+  margin-top: 2px;
+  margin-left: 5px;
+}
 .note__body__controls {
   outline: none;
 }

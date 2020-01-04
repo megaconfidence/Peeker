@@ -84,6 +84,9 @@ const NewNote = ({
       elem.classList.contains('note__overlay') ||
       elem.classList.contains('note__footer__closebtn')
     ) {
+      if (!labelModalRef.current.classList.contains('hide')) {
+        labelModalRef.current.classList.add('hide');
+      }
       noteRef.current.classList.remove('note--opened');
       noteRef.current.classList.add('note--closed');
       noteOverlayRef.current.classList.add('note__overlay--close');
@@ -318,11 +321,11 @@ const NewNote = ({
             onBlur={loseFocus}
             onFocus={giveFocus}
           >
-            <div className='note__body__controls__item'>
+            <div className='note__body__controls__item '>
               <img
                 src='/image/icon/alarm.svg'
                 alt='alarm'
-                className='note__body__controls__item__image'
+                className='note__body__controls__item__image disabled'
               />
               <div className='note__body__controls__item__withmodal'>
                 <img
@@ -373,17 +376,17 @@ const NewNote = ({
               <img
                 src='/image/icon/palate.svg'
                 alt='pick_color'
-                className='note__body__controls__item__image'
+                className='note__body__controls__item__image disabled'
               />
               <img
                 src='/image/icon/picture.svg'
                 alt='add_picture'
-                className='note__body__controls__item__image'
+                className='note__body__controls__item__image disabled'
               />
               <img
                 src='/image/icon/archive.svg'
                 alt='archive'
-                className='note__body__controls__item__image'
+                className='note__body__controls__item__image disabled'
               />
               <img
                 src='/image/icon/trash.svg'
@@ -394,7 +397,7 @@ const NewNote = ({
               <img
                 src='/image/icon/options.svg'
                 alt='options'
-                className='note__body__controls__item__image'
+                className='note__body__controls__item__image disabled'
               />
               <img
                 src='/image/icon/undo.svg'

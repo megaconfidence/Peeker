@@ -59,6 +59,7 @@ const Notes = ({
         fetchData={fetchData}
         labelForNewNote={labelForNewNote}
         addLocal={addLocal}
+        allLabels={allLabels}
       />
       {pinned.length ? buildNotes(pinned, true) : undefined}
       {others.length ? buildNotes(others, false) : undefined}

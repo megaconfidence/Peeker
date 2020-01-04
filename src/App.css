@@ -17,3 +17,7 @@
 .hide {
   display: none !important;
 }
+.disabled {
+  opacity: 0.2 !important;
+  pointer-events: none !important;
+}
