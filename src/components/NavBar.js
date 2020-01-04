@@ -126,7 +126,7 @@ const NavBar = forwardRef(({ labels, onClick }, ref) => {
                   className='nav__list__item__link'
                 >
                   <img
-                    src='/image/icon/account.png'
+                    src='/image/icon/account.svg'
                     alt='sign_out'
                     className='nav__list__item__link__icon'
                   />
