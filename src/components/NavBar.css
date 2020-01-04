@@ -23,6 +23,7 @@
 
 .nav {
   width: 264px;
+  min-height: 100vh;
   color: #000;
   display: flex;
   padding-right: 5px;
