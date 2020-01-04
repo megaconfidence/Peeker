@@ -131,7 +131,7 @@ const App = () => {
                   updateLocal={updateLocal}
                   addLocal={addLocal}
                   deleteLocal={deleteLocal}
-                  labelForNewNote={''}
+                  labelForNewNote={[]}
                   allLabels={label}
                 />
               )}
