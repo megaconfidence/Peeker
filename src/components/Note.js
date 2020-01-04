@@ -35,6 +35,7 @@ const NewNote = ({
   const contentTextRef = useRef(null);
   const pinimgRef = useRef(null);
   const createNewLabel = useRef(null);
+  const labelModalRef = useRef(null);
 
   useEffect(() => {
     /*
@@ -210,6 +211,21 @@ const NewNote = ({
 
     setLabelArr(data);
     setAllNoteLabels(labelArr);
+
+    setLabelSearchbox('');
+  };
+  const handleDeleteLabelClick = ({ target }) => {
+    const data = noteLabelArr.data;
+    const value = target.getAttribute('data-value');
+
+    const index = data.findIndex(d => d === value);
+    data.splice(index, 1);
+    setNoteLabelArr({
+      data
+    });
+  };
+  const handleLabelModalOpenCLose = () => {
+    labelModalRef.current.classList.toggle('hide');
   };
   //   note--focused note--closed
 
@@ -273,21 +289,27 @@ const NewNote = ({
               value={contentTextState}
               ref={contentTextRef}
             ></textarea>
-            <div className='note__body__content__flex'>
-              <div className='note__body__content__label'>
-                {noteLabelArr.data.map((d, i) =>
-                  d ? (
-                    <div key={i} className='note__body__content__label__tag'>
-                      {d}
-                    </div>
-                  ) : (
-                    undefined
-                  )
-                )}
-              </div>
-              <div className='note__body__content__edited'>
-                Edited {findEditedDate()}
-              </div>
+            <div className='note__body__content__label'>
+              {noteLabelArr.data.map((d, i) =>
+                d ? (
+                  <div key={i} className='note__body__content__label__tag'>
+                    <span className='text'>{d}</span>
+                    <span className='close'>
+                      <img
+                        src='/image/icon/close.svg'
+                        alt='delete_label'
+                        onClick={handleDeleteLabelClick}
+                        data-value={d}
+                      />
+                    </span>
+                  </div>
+                ) : (
+                  undefined
+                )
+              )}
+            </div>
+            <div className='note__body__content__edited'>
+              Edited {findEditedDate()}
             </div>
           </div>
           <div
@@ -307,41 +329,42 @@ const NewNote = ({
                   src='/image/icon/badge.svg'
                   alt='badge'
                   className='note__body__controls__item__image'
+                  onClick={handleLabelModalOpenCLose}
                 />
-                <div className='label_modal'>
+                <div className='label__modal hide' ref={labelModalRef}>
                   <div className='body'>
-                    <div className='label_modal_head'>Label note</div>
-                    <div className='label_modal_search'>
+                    <div className='label__modal__head'>Label note</div>
+                    <div className='label__modal__search'>
                       <input
                         type='text'
-                        className='label_modal_search_input'
+                        className='label__modal__search__input'
                         value={labelSearchbox}
                         onChange={handleLabelSearchbox}
                         placeholder='Enter label name'
                       />
                       <img
                         src='/image/icon/search.svg'
-                        className='label_modal_search_icon'
+                        className='label__modal__search__icon'
                         alt='search'
                       />
                     </div>
-                    <div className='label_modal_labels'>
+                    <div className='label__modal__labels'>
                       <ul>{labelModalListItems}</ul>
                     </div>
                   </div>
 
                   <div
-                    className='label_modal_createlabel hide'
+                    className='label__modal__createlabel hide'
                     ref={createNewLabel}
                     onClick={handleCreateNewLabel}
                   >
                     <img
                       src='/image/icon/plus.svg'
                       alt='plus'
-                      className='label_modal_createlabel_icon'
+                      className='label__modal__createlabel__icon'
                     />
                     Create &nbsp;
-                    <span className='label_modal_createlabel_text'>
+                    <span className='label__modal__createlabel__text'>
                       "{labelSearchbox}"
                     </span>
                   </div>
