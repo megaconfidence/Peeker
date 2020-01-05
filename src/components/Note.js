@@ -20,7 +20,6 @@ const NewNote = ({
   const [titleTextState, setTitleTextState] = useState(title);
   const [contentTextState, setContentTextState] = useState(content);
   const [labelSearchbox, setLabelSearchbox] = useState('');
-
   // holds all labels from db
   const [labelArr, setLabelArr] = useState(allLabels);
   // Holds only labels for this individual note
@@ -35,57 +34,52 @@ const NewNote = ({
   const contentTextRef = useRef(null);
   const pinimgRef = useRef(null);
   const createNewLabel = useRef(null);
-  const labelModalRef = useRef(null);
+  const createLabelOverlay = useRef(null);
 
   useEffect(() => {
-    /*
-     * Autogrow notes after filling in content
-     */
-    autoGrow(contentTextRef.current);
-    autoGrow(titleTextRef.current);
+    // Autogrow notes after filling in content
+    autoGrowAfterPopulate(contentTextRef.current);
+    autoGrowAfterPopulate(titleTextRef.current);
+    addAutoResize();
     return () => {};
   });
+  function addAutoResize() {
+    document.querySelectorAll('[data-autoresize]').forEach(function(element) {
+      element.style.boxSizing = 'border-box';
+      var offset = element.offsetHeight - element.clientHeight;
+      document.addEventListener('input', function(event) {
+        event.target.style.height = 'auto';
+        event.target.style.height = event.target.scrollHeight + offset + 'px';
+      });
+      element.removeAttribute('data-autoresize');
+    });
+  }
 
-  const autoGrow = elem => {
-    const textarea = elem.target;
-
-    if (textarea) {
-      textarea.style.height = `${textarea.scrollHeight}px`;
-      if (!textarea.value) {
-        textarea.style.height = '45px';
-      }
-    }
-    /*
-     * Sym autogrow after filling in notes
-     */
-    if (!elem.target) {
-      elem.style.height = `${elem.scrollHeight}px`;
-      if (!elem.value) {
-        elem.style.height = '45px';
+  const autoGrowAfterPopulate = e => {
+    // Sym autogrow after filling in notes
+    if (!e.target) {
+      e.style.height = `${e.scrollHeight}px`;
+      if (!e.value) {
+        e.style.height = '45px';
       }
     }
   };
 
-  const openNote = () => {
-    /*
-     * The setTimeout makes sure that the openNote function runs last
-     */
-    setTimeout(() => {
-      noteRef.current.classList.remove('note--closed');
-      noteRef.current.classList.add('note--opened');
+  const openNote = async () => {
+    const note = noteRef.current.classList;
+    if (note.contains('note--closed')) {
+      note.remove('note--closed');
+      note.add('note--opened');
       noteOverlayRef.current.classList.remove('note__overlay--close');
-    }, 0);
+    }
   };
-  const closeNote = async e => {
-    e.stopPropagation();
-    e.stopPropagation();
-    const elem = e.target;
+  const closeNote = async ({ target }) => {
     if (
-      elem.classList.contains('note__overlay') ||
-      elem.classList.contains('note__footer__closebtn')
+      target.classList.contains('note__overlay') ||
+      target.classList.contains('note__footer__closebtn')
     ) {
-      if (!labelModalRef.current.classList.contains('hide')) {
-        labelModalRef.current.classList.add('hide');
+      if (!createLabelOverlay.current.classList.contains('hide')) {
+        createLabelOverlay.current.classList.add('hide');
       }
       noteRef.current.classList.remove('note--opened');
       noteRef.current.classList.add('note--closed');
@@ -95,7 +89,9 @@ const NewNote = ({
       const noteId = noteRef.current.getAttribute('data-note-id');
       const noteTitle = titleTextRef.current.textContent;
       const noteContent = contentTextRef.current.textContent;
-      const pinned = pinimgRef.current.src.includes('pin_fill');
+      const pinned = pinimgRef.current
+        .getAttribute('data-imgname')
+        .includes('pin_fill');
 
       const payload = {
         title: noteTitle,
@@ -119,19 +115,14 @@ const NewNote = ({
   };
 
   const pinNote = ({ target }) => {
-    if (target.src.includes('pin_fill')) {
-      target.src = target.src.split('pin_fill').join('pin');
+    const src = target.getAttribute('data-imgname');
+    if (src.includes('pin_fill')) {
+      target.setAttribute('data-imgname', src.split('pin_fill').join('pin'));
     } else {
-      target.src = target.src.split('pin').join('pin_fill');
+      target.setAttribute('data-imgname', src.split('pin').join('pin_fill'));
     }
   };
 
-  const giveFocus = () => {
-    noteRef.current.classList.add('note--focused');
-  };
-  const loseFocus = () => {
-    noteRef.current.classList.remove('note--focused');
-  };
   const handleTextareaChange = e => {
     const txtArea = e.target;
     if (txtArea.classList.contains('note__head__titletext')) {
@@ -227,8 +218,12 @@ const NewNote = ({
       data
     });
   };
-  const handleLabelModalOpenCLose = () => {
-    labelModalRef.current.classList.toggle('hide');
+  const handleLabelModalOpenCLose = async () => {
+    await createLabelOverlay.current.classList.toggle('hide');
+    createLabelOverlay.current.scrollTop = 155;
+  };
+  const handleCreateLabelOverlayClick = e => {
+    createLabelOverlay.current.classList.toggle('hide');
   };
   //   note--focused note--closed
 
@@ -262,20 +257,26 @@ const NewNote = ({
       ref={noteOverlayRef}
       onClick={closeNote}
     >
-      <div className='note note--closed' ref={noteRef} data-note-id={id}>
+      <div
+        className='note note--closed'
+        ref={noteRef}
+        data-note-id={id}
+        onClick={openNote}
+      >
         <div className='note__head'>
           <textarea
             className='note__head__titletext textarea--mod'
             spellCheck='false'
-            onInput={autoGrow}
+            data-autoresize
             onFocus={openNote}
             onChange={handleTextareaChange}
             value={titleTextState}
             ref={titleTextRef}
+            placeholder='Title'
           ></textarea>
-          <img
-            src={`/image/icon/pin${pinned ? '_fill' : ''}.svg`}
-            alt='pin_note'
+          <div
+            data-img
+            data-imgname={`pin${pinned ? '_fill' : ''}`}
             className='note__head__pin'
             ref={pinimgRef}
             onClick={pinNote}
@@ -286,25 +287,24 @@ const NewNote = ({
             <textarea
               className='note__body__content__textarea textarea--mod'
               spellCheck='false'
-              onInput={autoGrow}
+              data-autoresize
               onFocus={openNote}
               onChange={handleTextareaChange}
               value={contentTextState}
               ref={contentTextRef}
+              placeholder='Note'
             ></textarea>
             <div className='note__body__content__label'>
               {noteLabelArr.data.map((d, i) =>
                 d ? (
                   <div key={i} className='note__body__content__label__tag'>
                     <span className='text'>{d}</span>
-                    <span className='close'>
-                      <img
-                        src='/image/icon/close.svg'
-                        alt='delete_label'
-                        onClick={handleDeleteLabelClick}
-                        data-value={d}
-                      />
-                    </span>
+                    <div
+                      data-img
+                      data-imgname='close'
+                      onClick={handleDeleteLabelClick}
+                      data-value={d}
+                    />
                   </div>
                 ) : (
                   undefined
@@ -315,99 +315,105 @@ const NewNote = ({
               Edited {findEditedDate()}
             </div>
           </div>
-          <div
-            className='note__body__controls'
-            tabIndex='0'
-            onBlur={loseFocus}
-            onFocus={giveFocus}
-          >
+          <div className='note__body__controls' tabIndex='0'>
             <div className='note__body__controls__item '>
-              <img
-                src='/image/icon/alarm.svg'
-                alt='alarm'
+              <div
+                data-img
+                data-imgname='alarm'
                 className='note__body__controls__item__image disabled'
               />
               <div className='note__body__controls__item__withmodal'>
-                <img
-                  src='/image/icon/badge.svg'
-                  alt='badge'
+                <div
+                  data-img
+                  data-imgname='badge'
                   className='note__body__controls__item__image'
                   onClick={handleLabelModalOpenCLose}
                 />
-                <div className='label__modal hide' ref={labelModalRef}>
-                  <div className='body'>
-                    <div className='label__modal__head'>Label note</div>
-                    <div className='label__modal__search'>
-                      <input
-                        type='text'
-                        className='label__modal__search__input'
-                        value={labelSearchbox}
-                        onChange={handleLabelSearchbox}
-                        placeholder='Enter label name'
-                      />
-                      <img
-                        src='/image/icon/search.svg'
-                        className='label__modal__search__icon'
-                        alt='search'
-                      />
-                    </div>
-                    <div className='label__modal__labels'>
-                      <ul>{labelModalListItems}</ul>
-                    </div>
-                  </div>
-
+                <div
+                  className='label__modal__wrapper hide'
+                  ref={createLabelOverlay}
+                  onClick={handleCreateLabelOverlayClick}
+                >
                   <div
-                    className='label__modal__createlabel hide'
-                    ref={createNewLabel}
-                    onClick={handleCreateNewLabel}
+                    className='label__modal '
+                    onClick={e => {
+                      e.stopPropagation();
+                    }}
                   >
-                    <img
-                      src='/image/icon/plus.svg'
-                      alt='plus'
-                      className='label__modal__createlabel__icon'
-                    />
-                    Create &nbsp;
-                    <span className='label__modal__createlabel__text'>
-                      "{labelSearchbox}"
-                    </span>
+                    <div className='body'>
+                      <div className='label__modal__head'>Note label</div>
+                      <div className='label__modal__search'>
+                        <input
+                          type='text'
+                          className='label__modal__search__input'
+                          value={labelSearchbox}
+                          onChange={handleLabelSearchbox}
+                          placeholder='Enter label name'
+                        />
+                        <div
+                          data-img
+                          data-imgname='search'
+                          className='label__modal__search__icon'
+                        />
+                      </div>
+                      <div className='label__modal__labels'>
+                        <ul>{labelModalListItems}</ul>
+                      </div>
+                    </div>
+
+                    <div
+                      className='label__modal__createlabel hide'
+                      ref={createNewLabel}
+                      onClick={handleCreateNewLabel}
+                    >
+                      <div
+                        data-img
+                        data-imgname='plus'
+                        className='label__modal__createlabel__icon'
+                      />
+                      Create &nbsp;
+                      <span className='label__modal__createlabel__text'>
+                        "{labelSearchbox}"
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-              <img
-                src='/image/icon/palate.svg'
-                alt='pick_color'
+              <div
+                data-img
+                data-imgname='palate'
                 className='note__body__controls__item__image disabled'
               />
-              <img
-                src='/image/icon/picture.svg'
-                alt='add_picture'
+              <div
+                data-img
+                data-imgname='picture'
                 className='note__body__controls__item__image disabled'
               />
-              <img
-                src='/image/icon/archive.svg'
-                alt='archive'
+              <div
+                data-img
+                data-imgname='archive'
                 className='note__body__controls__item__image disabled'
               />
-              <img
-                src='/image/icon/trash.svg'
-                alt='delete'
+              <div
+                data-img
+                data-imgname='trash'
                 className='note__body__controls__item__image'
                 onClick={deleteNote}
               />
-              <img
-                src='/image/icon/options.svg'
-                alt='options'
+              <div
+                data-img
+                data-imgname='options'
                 className='note__body__controls__item__image disabled'
               />
-              <img
-                src='/image/icon/undo.svg'
-                alt='undo'
-                className='note__body__controls__item__image control--disabled'
+              <div
+                data-img
+                data-imgname='undo'
+                className='note__body__controls__item__image disabled'
               />
-              <img
-                src='/image/icon/redo.svg'
-                alt='redo'
-                className='note__body__controls__item__image control--disabled'
+              <div
+                data-img
+                data-imgname='redo'
+                className='note__body__controls__item__image disabled'
               />
             </div>
           </div>
@@ -418,7 +424,6 @@ const NewNote = ({
           </button>
         </div>
       </div>
-      <div className='note__overlay__offset'>flex offset</div>
     </div>
   );
 };

@@ -40,9 +40,9 @@ const NavBar = forwardRef(({ labels, onClick }, ref) => {
                   activeClassName='selected'
                   className='nav__list__item__link'
                 >
-                  <img
-                    src='/image/icon/bulb.svg'
-                    alt='icon'
+                  <div
+                    data-img
+                    data-imgname='bulb'
                     className='nav__list__item__link__icon'
                   />
                   <span className='nav__list__item__link__text'>Note</span>
@@ -55,9 +55,9 @@ const NavBar = forwardRef(({ labels, onClick }, ref) => {
                   activeClassName='selected'
                   className='nav__list__item__link'
                 >
-                  <img
-                    src='/image/icon/bell.svg'
-                    alt='icon'
+                  <div
+                    data-img
+                    data-imgname='bell'
                     className='nav__list__item__link__icon'
                   />
                   <span className='nav__list__item__link__text'>Reminders</span>
@@ -80,11 +80,12 @@ const NavBar = forwardRef(({ labels, onClick }, ref) => {
                   activeClassName='selected'
                   className='nav__list__item__link'
                 >
-                  <img
-                    src='/image/icon/archive.svg'
-                    alt='icon'
+                  <div
+                    data-img
+                    data-imgname='archive'
                     className='nav__list__item__link__icon'
                   />
+
                   <span className='nav__list__item__link__text'>Archive</span>
                 </NavLink>
               </li>
@@ -95,9 +96,9 @@ const NavBar = forwardRef(({ labels, onClick }, ref) => {
                   activeClassName='selected'
                   className='nav__list__item__link'
                 >
-                  <img
-                    src='/image/icon/trash.svg'
-                    alt='icon'
+                  <div
+                    data-img
+                    data-imgname='trash'
                     className='nav__list__item__link__icon'
                   />
                   <span className='nav__list__item__link__text'>Trash</span>
@@ -110,9 +111,9 @@ const NavBar = forwardRef(({ labels, onClick }, ref) => {
                   activeClassName='selected'
                   className='nav__list__item__link'
                 >
-                  <img
-                    src='/image/icon/settings.svg'
-                    alt='icon'
+                  <div
+                    data-img
+                    data-imgname='settings'
                     className='nav__list__item__link__icon'
                   />
                   <span className='nav__list__item__link__text'>Settings</span>
@@ -125,9 +126,9 @@ const NavBar = forwardRef(({ labels, onClick }, ref) => {
                   activeClassName='selected'
                   className='nav__list__item__link'
                 >
-                  <img
-                    src='/image/icon/account.svg'
-                    alt='sign_out'
+                  <div
+                    data-img
+                    data-imgname='account'
                     className='nav__list__item__link__icon'
                   />
                   <span className='nav__list__item__link__text'>Signout</span>

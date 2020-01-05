@@ -108,6 +108,10 @@ const App = () => {
     }
   };
 
+  if (!app.data.length) {
+    // Retrun empty tag if no app data
+    return <></>;
+  }
   return (
     <Router>
       <div className='app'>

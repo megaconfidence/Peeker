@@ -27,33 +27,29 @@ const OmniBar = forwardRef(({ onClick, location, fetchData }, ref) => {
   return (
     <div className='omnibar' ref={ref}>
       <div className='omnibar__left'>
-        <img
-          src='/image/icon/hamburger.svg'
-          alt='menue'
-          className='omnibar__left__icon omnibar__left__icon--menutriger  omnibar__icon'
-          onClick={onClick}
-        />
+        <div data-img data-imgname='hamburger' className='omnibar__left__icon omnibar__left__icon--menutriger '
+          onClick={onClick} />
         <div className='omnibar__left__pagename'>
           {currPath ? currPath : 'Peeker'}
         </div>
       </div>
 
       <div className='omnibar__right'>
-        <img
-          src='/image/icon/search.svg'
-          alt='search'
-          className='omnibar__right__search omnibar__icon disabled'
+        <div
+          data-img
+          data-imgname='search'
+          className='omnibar__icon disabled'
         />
-        <img
-          src='/image/icon/refresh.svg'
-          alt='refresh'
-          className='omnibar__right__refresh omnibar__icon'
+        <div
+          data-img
+          data-imgname='refresh'
+          className='omnibar__icon '
           onClick={handleRefresh}
         />
-        <img
-          src='/image/icon/settings.svg'
-          alt='settings'
-          className='omnibar__right__settings omnibar__icon disabled'
+        <div
+          data-img
+          data-imgname='settings'
+          className='omnibar__icon disabled'
         />
         <img
           src='/image/icon/profile.svg'

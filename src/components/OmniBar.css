@@ -18,13 +18,10 @@
   display: flex;
   align-items: center;
 }
-.omnibar__icon {
-  opacity: 0.5;
-}
+
 .omnibar__left__icon {
+  opacity: 0.5;
   margin-left: 20px;
-  /* color: #5f6368;
-    fill: #fff; */
 }
 .omnibar__left__pagename {
   top: -1px;
@@ -37,14 +34,20 @@
   text-overflow: ellipsis;
   text-transform: capitalize;
   font-family: 'Work Sans', sans-serif;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 .omnibar__right {
   display: flex;
 }
-.omnibar__right__search,
-.omnibar__right__refresh,
-.omnibar__right__settings {
+.omnibar__icon {
+  width: 24px;
+  opacity: 0.5;
+  height: 32px;
   margin-right: 25px;
+  background-size: 24px 32px;
 }
 .omnibar__right__profile {
   width: 32px;
@@ -58,7 +61,7 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
- }
+  }
 }
 
 .spin-animation {

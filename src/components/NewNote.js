@@ -1,7 +1,7 @@
 import './Notes.css';
 import './NewNote.css';
 import response from '../helpers';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import ObjectID from 'bson-objectid';
 import _ from 'lodash';
 
@@ -21,16 +21,24 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
   });
   const [allNoteLabels, setAllNoteLabels] = useState(labelArr);
 
-  const labelModalRef = useRef(null);
+  const createLabelOverlay = useRef(null);
   const createNewLabel = useRef(null);
+  useEffect(() => {
+    addAutoResize();
+    return () => {};
+  });
 
-  const autoGrow = e => {
-    const textarea = e.target;
-    textarea.style.height = `${textarea.scrollHeight}px`;
-    if (!textarea.value) {
-      textarea.style.height = '45px';
-    }
-  };
+  function addAutoResize() {
+    document.querySelectorAll('[data-autoresize]').forEach(function(element) {
+      element.style.boxSizing = 'border-box';
+      var offset = element.offsetHeight - element.clientHeight;
+      document.addEventListener('input', function(event) {
+        event.target.style.height = 'auto';
+        event.target.style.height = event.target.scrollHeight + offset + 'px';
+      });
+      element.removeAttribute('data-autoresize');
+    });
+  }
 
   const openNote = () => {
     noteRef.current.classList.remove('nwnote--closed');
@@ -39,11 +47,13 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
     noteRef.current.classList.add('nwnote--closed');
     const noteTitle = titleTextRef.current.value;
     const noteContent = contentTextRef.current.value;
-    const pinned = pinimgRef.current.src.includes('pin_fill');
+    const pinned = pinimgRef.current
+      .getAttribute('data-imgname')
+      .includes('pin_fill');
     const labels = noteLabelArr.data;
 
-    if (!labelModalRef.current.classList.contains('hide')) {
-      labelModalRef.current.classList.add('hide');
+    if (!createLabelOverlay.current.classList.contains('hide')) {
+      createLabelOverlay.current.classList.add('hide');
     }
 
     // Reset the fields
@@ -52,13 +62,13 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
     setNoteLabelArr({
       data: []
     });
+    titleTextRef.current.style.height = '45px';
+    contentTextRef.current.style.height = '45px';
     if (pinned) {
-      pinimgRef.current.src = pinimgRef.current.src
-        .split('pin_fill')
-        .join('pin');
+      pinimgRef.current.setAttribute('data-imgname', 'pin');
     }
 
-    if (noteTitle || noteContent || labels) {
+    if (noteTitle || noteContent || labels.length) {
       const payload = {
         title: noteTitle || '',
         content: noteContent || '',
@@ -85,10 +95,11 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
   };
 
   const pinNote = ({ target }) => {
-    if (target.src.includes('pin_fill')) {
-      target.src = target.src.split('pin_fill').join('pin');
+    const src = target.getAttribute('data-imgname');
+    if (src.includes('pin_fill')) {
+      target.setAttribute('data-imgname', src.split('pin_fill').join('pin'));
     } else {
-      target.src = target.src.split('pin').join('pin_fill');
+      target.setAttribute('data-imgname', src.split('pin').join('pin_fill'));
     }
   };
   const handleLabelSearchbox = ({ target: { value } }) => {
@@ -170,7 +181,10 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
     });
   };
   const handleLabelModalOpenCLose = () => {
-    labelModalRef.current.classList.toggle('hide');
+    createLabelOverlay.current.classList.toggle('hide');
+  };
+  const handleCreateLabelOverlayClick = e => {
+    createLabelOverlay.current.classList.toggle('hide');
   };
   //   note--focused note--closed
 
@@ -205,12 +219,12 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
           className='note__head__titletext textarea--mod'
           placeholder='Title'
           spellCheck='false'
-          onInput={autoGrow}
+          data-autoresize
           ref={titleTextRef}
         ></textarea>
-        <img
-          src='/image/icon/pin.svg'
-          alt='pin_note'
+        <div
+          data-img
+          data-imgname='pin'
           className='note__head__pin'
           ref={pinimgRef}
           onClick={pinNote}
@@ -222,7 +236,7 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
             className='note__body__content__textarea textarea--mod'
             placeholder='Take a note...'
             spellCheck='false'
-            onInput={autoGrow}
+            data-autoresize
             onFocus={openNote}
             ref={contentTextRef}
           ></textarea>
@@ -231,126 +245,117 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
               d ? (
                 <div key={i} className='note__body__content__label__tag'>
                   <span className='text'>{d}</span>
-                  <span className='close'>
-                    <img
-                      src='/image/icon/close.svg'
-                      alt='delete_label'
-                      onClick={handleDeleteLabelClick}
-                      data-value={d}
-                    />
-                  </span>
+                  <div
+                    data-img
+                    data-imgname='close'
+                    onClick={handleDeleteLabelClick}
+                    data-value={d}
+                  />
                 </div>
               ) : (
                 undefined
               )
             )}
           </div>
-          <div className='note__body__content__hiddencontrols'>
-            <img
-              src='/image/icon/checkbox.svg'
-              alt='checkbox'
-              className='note__body__content__hiddencontrols__image'
-            />
-            <img
-              src='/image/icon/draw.svg'
-              alt='draw'
-              className='note__body__content__hiddencontrols__image'
-            />
-            <img
-              src='/image/icon/picture.svg'
-              alt='add_picture'
-              className='note__body__content__hiddencontrols__image'
-            />
-          </div>
         </div>
         <div className='note__body__controls'>
           <div className='note__body__controls__item'>
-            <img
-              src='/image/icon/alarm.svg'
-              alt='alarm'
-              className='note__body__controls__item__image'
+            <div
+              data-img
+              data-imgname='alarm'
+              className='note__body__controls__item__image disabled'
             />
             <div className='note__body__controls__item__withmodal'>
-              <img
-                src='/image/icon/badge.svg'
-                alt='badge'
+              <div
+                data-img
+                data-imgname='badge'
                 className='note__body__controls__item__image'
                 onClick={handleLabelModalOpenCLose}
               />
-              <div className='label__modal hide' ref={labelModalRef}>
-                <div className='body'>
-                  <div className='label__modal__head'>Label note</div>
-                  <div className='label__modal__search'>
-                    <input
-                      type='text'
-                      className='label__modal__search__input'
-                      value={labelSearchbox}
-                      onChange={handleLabelSearchbox}
-                      placeholder='Enter label name'
-                    />
-                    <img
-                      src='/image/icon/search.svg'
-                      className='label__modal__search__icon'
-                      alt='search'
-                    />
-                  </div>
-                  <div className='label__modal__labels'>
-                    <ul>{labelModalListItems}</ul>
-                  </div>
-                </div>
-
+              <div
+                className='label__modal__wrapper hide'
+                ref={createLabelOverlay}
+                onClick={handleCreateLabelOverlayClick}
+              >
                 <div
-                  className='label__modal__createlabel hide'
-                  ref={createNewLabel}
-                  onClick={handleCreateNewLabel}
+                  className='label__modal '
+                  onClick={e => {
+                    e.stopPropagation();
+                  }}
                 >
-                  <img
-                    src='/image/icon/plus.svg'
-                    alt='plus'
-                    className='label__modal__createlabel__icon'
-                  />
-                  Create &nbsp;
-                  <span className='label__modal__createlabel__text'>
-                    "{labelSearchbox}"
-                  </span>
+                  <div className='body'>
+                    <div className='label__modal__head'>Note label</div>
+                    <div className='label__modal__search'>
+                      <input
+                        type='text'
+                        className='label__modal__search__input'
+                        value={labelSearchbox}
+                        onChange={handleLabelSearchbox}
+                        placeholder='Enter label name'
+                      />
+                      <div
+                        data-img
+                        data-imgname='search'
+                        className='label__modal__search__icon'
+                      />
+                    </div>
+                    <div className='label__modal__labels'>
+                      <ul>{labelModalListItems}</ul>
+                    </div>
+                  </div>
+
+                  <div
+                    className='label__modal__createlabel hide'
+                    ref={createNewLabel}
+                    onClick={handleCreateNewLabel}
+                  >
+                    <div
+                      data-img
+                      data-imgname='plus'
+                      className='label__modal__createlabel__icon'
+                    />
+                    Create &nbsp;
+                    <span className='label__modal__createlabel__text'>
+                      "{labelSearchbox}"
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <img
-              src='/image/icon/add_contact.svg'
-              alt='add_contact'
-              className='note__body__controls__item__image'
+            <div
+              data-img
+              data-imgname='add_contact'
+              className='note__body__controls__item__image disabled'
             />
-            <img
-              src='/image/icon/palate.svg'
-              alt='pick_color'
-              className='note__body__controls__item__image'
+            <div
+              data-img
+              data-imgname='palate'
+              className='note__body__controls__item__image disabled'
             />
-            <img
-              src='/image/icon/picture.svg'
-              alt='add_picture'
-              className='note__body__controls__item__image'
+            <div
+              data-img
+              data-imgname='picture'
+              className='note__body__controls__item__image disabled'
             />
-            <img
-              src='/image/icon/archive.svg'
-              alt='archive'
-              className='note__body__controls__item__image'
+            <div
+              data-img
+              data-imgname='archive'
+              className='note__body__controls__item__image disabled'
             />
-            <img
-              src='/image/icon/options.svg'
-              alt='options'
-              className='note__body__controls__item__image'
+            <div
+              data-img
+              data-imgname='options'
+              className='note__body__controls__item__image disabled'
             />
-            <img
-              src='/image/icon/undo.svg'
-              alt='undo'
-              className='note__body__controls__item__image control--disabled'
+            <div
+              data-img
+              data-imgname='undo'
+              className='note__body__controls__item__image disabled'
             />
-            <img
-              src='/image/icon/redo.svg'
-              alt='redo'
-              className='note__body__controls__item__image control--disabled'
+            <div
+              data-img
+              data-imgname='redo'
+              className='note__body__controls__item__image disabled'
             />
           </div>
         </div>

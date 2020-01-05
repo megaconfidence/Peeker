@@ -21,3 +21,80 @@
   opacity: 0.2 !important;
   pointer-events: none !important;
 }
+[data-img] {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  background-size: 24px 24px;
+  background-repeat: no-repeat;
+
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+[data-imgname='badge'] {
+  background-image: url(/image/icon/badge.svg);
+}
+[data-imgname='alarm'] {
+  background-image: url(/image/icon/alarm.svg);
+}
+[data-imgname='plus'] {
+  background-image: url(/image/icon/plus.svg);
+}
+[data-imgname='palate'] {
+  background-image: url(/image/icon/palate.svg);
+}
+[data-imgname='picture'] {
+  background-image: url(/image/icon/picture.svg);
+}
+[data-imgname='archive'] {
+  background-image: url(/image/icon/archive.svg);
+}
+[data-imgname='trash'] {
+  background-image: url(/image/icon/trash.svg);
+}
+[data-imgname='options'] {
+  background-image: url(/image/icon/options.svg);
+}
+[data-imgname='undo'] {
+  background-image: url(/image/icon/undo.svg);
+}
+[data-imgname='redo'] {
+  background-image: url(/image/icon/redo.svg);
+}
+[data-imgname='pin'] {
+  background-image: url(/image/icon/pin.svg);
+}
+[data-imgname='pin_fill'] {
+  background-image: url(/image/icon/pin_fill.svg);
+}
+[data-imgname='close'] {
+  background-image: url(/image/icon/close.svg);
+}
+[data-imgname='search'] {
+  background-image: url(/image/icon/search.svg);
+}
+[data-imgname='add_contact'] {
+  background-image: url(/image/icon/add_contact.svg);
+}
+[data-imgname='refresh'] {
+  background-image: url(/image/icon/refresh.svg);
+}
+[data-imgname='settings'] {
+  background-image: url(/image/icon/settings.svg);
+}
+[data-imgname='hamburger'] {
+  background-image: url(/image/icon/hamburger.svg);
+}
+[data-imgname='bulb'] {
+  background-image: url(/image/icon/bulb.svg);
+}
+[data-imgname='bell'] {
+  background-image: url(/image/icon/bell.svg);
+}[data-imgname='account'] {
+  background-image: url(/image/icon/account.svg);
+}
