@@ -106,10 +106,10 @@ img[alt='options'] {
   outline: none;
 }
 .note__body__controls__item {
+  width: 100%;
   display: flex;
-  padding-left: 3px;
-  width: calc(100% - 50px);
-  justify-content: space-between;
+  align-items: center;
+  justify-content: space-evenly;
 }
 .note--closed .note__body__controls__item {
   pointer-events: none;
