@@ -108,10 +108,11 @@ const App = () => {
     }
   };
 
-  if (!app.data.length) {
-    // Retrun empty tag if no app data
-    return <></>;
-  }
+  // if (!app.data[0]) {
+  //   // Quit if note is empty
+  //   return <></>;
+  // }
+
   return (
     <Router>
       <div className='app'>

@@ -52,6 +52,7 @@ const Notes = ({
       </div>
     );
   };
+  
 
   return (
     <div>

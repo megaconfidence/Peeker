@@ -50,7 +50,7 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
     const pinned = pinimgRef.current
       .getAttribute('data-imgname')
       .includes('pin_fill');
-    const labels = noteLabelArr.data;
+    const labels = _.concat(noteLabelArr.data, labelForNewNote);
 
     if (!createLabelOverlay.current.classList.contains('hide')) {
       createLabelOverlay.current.classList.add('hide');

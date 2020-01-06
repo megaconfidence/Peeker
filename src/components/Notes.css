@@ -86,7 +86,7 @@ img[alt='options'] {
   border-radius: 20px;
   align-items: center;
   text-transform: capitalize;
-  padding: 4px 10px 3px 14px;
+  padding: 4px 10px;
   background-color: #ebebeb;
 }
 .note--closed .note__body__content__label__tag {
@@ -100,6 +100,7 @@ img[alt='options'] {
   height: 14px;
   opacity: 0.54;
   margin-left: 5px;
+  margin-bottom: 1px;
   background-size: 14px 14px;
 }
 .note__body__controls {
@@ -119,7 +120,7 @@ img[alt='options'] {
 }
 .label__modal__wrapper {
   top: 10%;
-  left: -1px;
+  left: 0;
   z-index: 5;
   width: 100vw;
   height: 130vh;

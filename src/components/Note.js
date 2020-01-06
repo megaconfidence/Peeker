@@ -93,6 +93,13 @@ const NewNote = ({
         .getAttribute('data-imgname')
         .includes('pin_fill');
 
+      const originalData = {
+        title,
+        content,
+        pinned,
+        label: noteLabels
+      };
+
       const payload = {
         title: noteTitle,
         content: noteContent,
@@ -100,10 +107,14 @@ const NewNote = ({
         label: noteLabelArr.data
       };
 
-      updateLocal(noteId, payload);
-
-      // Make the update
-      await request('put', `api/note/${noteId}`, payload);
+      if (
+        !_.isEqual(originalData, payload) ||
+        _.isEqual(noteLabels, noteLabelArr.data)
+      ) {
+        // Make the update
+        updateLocal(noteId, payload);
+        await request('put', `api/note/${noteId}`, payload);
+      }
     }
   };
 
