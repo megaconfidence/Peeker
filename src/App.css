@@ -95,6 +95,10 @@
 }
 [data-imgname='bell'] {
   background-image: url(/image/icon/bell.svg);
-}[data-imgname='account'] {
+}
+[data-imgname='account'] {
   background-image: url(/image/icon/account.svg);
+}
+[data-imgname='profile'] {
+  background-image: url(/image/icon/profile.svg);
 }

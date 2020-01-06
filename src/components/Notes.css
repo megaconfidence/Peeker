@@ -25,6 +25,12 @@
   align-items: center;
   justify-content: space-between;
 }
+.trash .note__head {
+  pointer-events: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
 .textarea--mod {
   all: unset;
   resize: none;
@@ -42,6 +48,7 @@
   width: calc(100% - 25px);
   letter-spacing: 0.00625em;
 }
+
 .note__head__pin {
   top: 11px;
   width: 26px;
@@ -54,6 +61,12 @@
   /* margin-bottom: 6px; */
   /* margin-top: 24px; */
 }
+.trash .note__body__content {
+  pointer-events: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
 .note__body__content__textarea {
   width: 100%;
   height: 45px;
@@ -63,6 +76,12 @@
   line-height: 1.25rem;
   letter-spacing: 0.01428571em;
   font-family: Roboto, Arial, sans-serif;
+}
+.trash .note__body__content__textarea {
+  pointer-events: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .note__body__content__textarea::placeholder {
@@ -89,13 +108,16 @@ img[alt='options'] {
   padding: 4px 10px;
   background-color: #ebebeb;
 }
-.note__body__content__label__tag .text{
+.note__body__content__label__tag .text {
   max-width: calc(100% - 20px);
 }
 .note--closed .note__body__content__label__tag {
   padding: 4px 10px;
 }
 .note--closed .note__body__content__label__tag [data-img] {
+  display: none;
+}
+.trash .note__body__content__label__tag [data-img] {
   display: none;
 }
 .note__body__content__label__tag [data-img] {
@@ -108,6 +130,9 @@ img[alt='options'] {
 }
 .note__body__controls {
   outline: none;
+}
+.trash .note__body__controls {
+  display: none;
 }
 .note__body__controls__item {
   width: 100%;

@@ -1,40 +1,61 @@
-.signin {
+.account__wrapper {
+  position: fixed;
+  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.452);
+}
+.account {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  border-radius: 8px;
+  background-color: white;
+  padding: 15px;
+  top: 50%;
   text-align: center;
+  width: calc(100% - 70px);
 }
-.signin__header {
-  font-weight: bold;
+
+.account__image {
+  background-color: #5f6368ba;
+  overflow: hidden;
+  border-radius: 50%;
+
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 20px;
 }
-.signin__action {
-  display: flex;
-  height: 100px;
-  margin-top: 20px;
-  align-items: center;
-  flex-direction: column;
-  justify-content: space-between;
+.account__image [data-img],
+.account__image img {
+  width: 90px;
+  height: 90px;
+  background-size: 90px 90px;
 }
-.signin__action__btn {
+.account__body__name {
+  font-weight: 500;
+  font-size: 18px;
+  color: #202124;
+  letter-spacing: 0.29px;
+}
+.account__body__email {
+  color: #5f6368;
+  margin-top: 3px;
+  font: 400 14px/19px Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+}
+.account__signout {
+}
+.account__signout__button {
   all: unset;
-  height: 36px;
-  color: white;
-  padding: 0 16px;
-  user-select: none;
-  line-height: 36px;
-  border-radius: 2px;
-  text-align: center;
+  display: inline-block;
+  color: #3c4043;
+  font-weight: 500;
+  font-size: 16px;
   width: fit-content;
-  letter-spacing: 0.5px;
-  transition: 0.3s ease-out;
-  text-transform: uppercase;
-  background-color: #26a69a;
-  -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
-    0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
-}
-.signin__action__btn--google {
-  background-color: rgb(244, 81, 30);
-  border-color: rgb(244, 81, 30);
-}
-.signin__action__btn--facebook {
-  background-color: rgb(24, 119, 242);
-  border-color: rgb(24, 119, 242);
+  border-radius: 4px;
+  width: fit-content;
+  border: 1px solid #dadce0;
+  letter-spacing: 0.15px;
+  margin: 16px;
+  padding: 10px 24px;
 }

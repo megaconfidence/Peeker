@@ -15,7 +15,8 @@ const NewNote = ({
   updateLocal,
   deleteLocal,
   allLabels,
-  noteLabels
+  noteLabels,
+  status
 }) => {
   const [titleTextState, setTitleTextState] = useState(title);
   const [contentTextState, setContentTextState] = useState(content);
@@ -86,44 +87,57 @@ const NewNote = ({
       noteRef.current.classList.add('note--closed');
       noteOverlayRef.current.classList.add('note__overlay--close');
 
-      // Get note data to update
-      const noteId = noteRef.current.getAttribute('data-note-id');
-      const noteTitle = titleTextRef.current.textContent;
-      const noteContent = contentTextRef.current.textContent;
-      const pinned = pinimgRef.current
-        .getAttribute('data-imgname')
-        .includes('pin_fill');
+      if (status === 'note' || status === 'archive') {
+        // Get note data to update
+        const noteId = noteRef.current.getAttribute('data-note-id');
+        const noteTitle = titleTextRef.current.textContent;
+        const noteContent = contentTextRef.current.textContent;
+        const pinned = pinimgRef.current
+          .getAttribute('data-imgname')
+          .includes('pin_fill');
 
-      const originalData = {
-        title,
-        content,
-        pinned,
-        label: noteLabels
-      };
+        const originalData = {
+          title,
+          content,
+          pinned,
+          label: noteLabels
+        };
 
-      const payload = {
-        title: noteTitle,
-        content: noteContent,
-        pinned,
-        label: noteLabelArr.data
-      };
+        const payload = {
+          title: noteTitle,
+          content: noteContent,
+          pinned,
+          label: noteLabelArr.data
+        };
 
-      if (
-        !_.isEqual(originalData, payload) ||
-        _.isEqual(noteLabels, noteLabelArr.data)
-      ) {
-        // Make the update
-        updateLocal(noteId, payload);
-        await request('put', `api/note/${noteId}`, payload);
+        if (
+          !_.isEqual(originalData, payload) ||
+          _.isEqual(noteLabels, noteLabelArr.data)
+        ) {
+          // Make the update
+          updateLocal(noteId, payload);
+          await request('put', `api/note/${noteId}`, payload);
+        }
       }
     }
   };
 
-  const deleteNote = async () => {
+  const permanentDelete = async () => {
     const noteId = noteRef.current.getAttribute('data-note-id');
     deleteLocal(noteId);
     await request('delete', `api/note/${noteId}`);
     fetchData();
+  };
+  const deleteNote = async () => {
+    // Get note data to update
+    const noteId = noteRef.current.getAttribute('data-note-id');
+    const payload = {
+      status: 'trash'
+    };
+
+    // Make the update
+    updateLocal(noteId, payload);
+    request('put', `api/note/${noteId}`, payload);
   };
 
   const pinNote = ({ target }) => {
@@ -237,6 +251,28 @@ const NewNote = ({
   const handleCreateLabelOverlayClick = e => {
     createLabelOverlay.current.classList.toggle('hide');
   };
+
+  const restoreNote = e => {
+    // Get note data to update
+    const noteId = noteRef.current.getAttribute('data-note-id');
+    const payload = {
+      status: 'note'
+    };
+
+    // Make the update
+    updateLocal(noteId, payload);
+    request('put', `api/note/${noteId}`, payload);
+  };
+  const archiveNote = e => {
+    // Get note data to update
+    const noteId = noteRef.current.getAttribute('data-note-id');
+    const payload = {
+      status: 'archive'
+    };
+    // Make the update
+    updateLocal(noteId, payload);
+    request('put', `api/note/${noteId}`, payload);
+  };
   //   note--focused note--closed
 
   const labelModalListItems = allNoteLabels.map((d, i) => {
@@ -268,7 +304,13 @@ const NewNote = ({
   });
   return (
     <div
-      className='note__overlay note__overlay--close'
+      className={`note__overlay note__overlay--close ${
+        status === 'trash'
+          ? 'trash'
+          : status === 'archive'
+          ? 'archive'
+          : undefined
+      }`}
       ref={noteOverlayRef}
       onClick={closeNote}
     >
@@ -404,11 +446,16 @@ const NewNote = ({
                 data-imgname='picture'
                 className='note__body__controls__item__image disabled'
               />
-              <div
-                data-img
-                data-imgname='archive'
-                className='note__body__controls__item__image disabled'
-              />
+              {status !== 'archive' ? (
+                <div
+                  data-img
+                  data-imgname='archive'
+                  className='note__body__controls__item__image'
+                  onClick={archiveNote}
+                />
+              ) : (
+                undefined
+              )}
               <div
                 data-img
                 data-imgname='trash'
@@ -434,6 +481,23 @@ const NewNote = ({
           </div>
         </div>
         <div className='note__footer'>
+          {status === 'trash' ? (
+            <button
+              className='note__footer__closebtn'
+              onClick={permanentDelete}
+            >
+              Delete
+            </button>
+          ) : (
+            undefined
+          )}
+          {status === 'trash' || status === 'archive' ? (
+            <button className='note__footer__closebtn' onClick={restoreNote}>
+              Restore
+            </button>
+          ) : (
+            undefined
+          )}
           <button className='note__footer__closebtn' onClick={closeNote}>
             Close
           </button>

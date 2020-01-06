@@ -119,21 +119,6 @@ const NavBar = forwardRef(({ labels, onClick }, ref) => {
                   <span className='nav__list__item__link__text'>Settings</span>
                 </NavLink>
               </li>
-              <li className='nav__list__item'>
-                <NavLink
-                  exact
-                  to='/signout'
-                  activeClassName='selected'
-                  className='nav__list__item__link'
-                >
-                  <div
-                    data-img
-                    data-imgname='account'
-                    className='nav__list__item__link__icon'
-                  />
-                  <span className='nav__list__item__link__text'>Signout</span>
-                </NavLink>
-              </li>
             </ul>
           </div>
         </nav>

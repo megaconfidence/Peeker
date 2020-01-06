@@ -12,12 +12,12 @@ import Archive from './routes/Archive';
 import Trash from './routes/Trash';
 import Settings from './routes/Settings';
 import Signin from './routes/Signin';
-import Signout from './routes/Signout';
 import Label from './routes/Label';
 import NavBar from './components/NavBar';
 import OmniBar from './components/OmniBar';
 import _ from 'lodash';
 import request from './helpers';
+import Account from './components/Account';
 
 const NoMatchPage = () => {
   return <h3>404 - Not found</h3>;
@@ -30,7 +30,22 @@ const App = () => {
   const [app, setApp] = useState({
     data: []
   });
+  const [user, setUser] = useState({});
   const [redirectTo, setRedirectTo] = useState(null);
+  const [accountDisplay, setAccountDisplay] = useState(false);
+
+  const handleAccountDisalay = () => {
+    if (accountDisplay) {
+      setAccountDisplay(false);
+    } else {
+      setAccountDisplay(true);
+    }
+  };
+
+  const resetGlobalAppState = () => {
+    setApp({ data: [] });
+    setUser({});
+  };
 
   const addLocal = payload => {
     const data = app.data;
@@ -57,6 +72,18 @@ const App = () => {
     setApp({ data });
   };
 
+  const fetchUser = async () => {
+    if (localStorage.getItem('PEEKER_TOKEN')) {
+      const {
+        data: { data }
+      } = await request('get', 'api/user');
+      if (!_.isEqual(user, data)) {
+        console.log('## updating user data');
+        setUser(data);
+      }
+    }
+  };
+
   const fetchData = async () => {
     if (!localStorage.getItem('PEEKER_TOKEN')) {
       return setRedirectTo('/signin');
@@ -75,13 +102,14 @@ const App = () => {
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
+    fetchUser();
     fetchData();
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   });
 
-  let label = app.data.map(i => i.label);
+  let label = app.data.map(i => (i.status === 'note' ? i.label : undefined));
   label = _.reduce(label, (acc, curr) => _.concat(acc, curr));
   label = _.compact(label);
   label = _.uniq(label);
@@ -117,10 +145,21 @@ const App = () => {
     <Router>
       <div className='app'>
         {redirectTo ? <Redirect to={redirectTo} /> : null}
+        {accountDisplay ? (
+          <Account
+            user={user}
+            handleAccountDisalay={handleAccountDisalay}
+            resetGlobalAppState={resetGlobalAppState}
+          />
+        ) : (
+          undefined
+        )}
         <OmniBar
           ref={omniBarRef}
           onClick={handleNavClick}
+          handleAccountDisalay={handleAccountDisalay}
           fetchData={fetchData}
+          profileImageURL={user.profileImageURL}
         />
         <NavBar labels={label} ref={nav} onClick={handleNavClick} />
         <div className='app__content'>
@@ -164,9 +203,33 @@ const App = () => {
             <Route
               exact
               path='/archive'
-              render={props => <Archive {...props} />}
+              render={props => (
+                <Archive
+                  {...props}
+                  data={app.data}
+                  fetchData={fetchData}
+                  allLabels={label}
+                  updateLocal={updateLocal}
+                  deleteLocal={deleteLocal}
+                  addLocal={addLocal}
+                />
+              )}
             />
-            <Route exact path='/trash' render={props => <Trash {...props} />} />
+            <Route
+              exact
+              path='/trash'
+              render={props => (
+                <Trash
+                  {...props}
+                  data={app.data}
+                  fetchData={fetchData}
+                  allLabels={label}
+                  updateLocal={updateLocal}
+                  deleteLocal={deleteLocal}
+                  addLocal={addLocal}
+                />
+              )}
+            />
             <Route
               exact
               path='/settings'
@@ -175,9 +238,14 @@ const App = () => {
             <Route
               exact
               path='/signin'
-              render={props => <Signin {...props} fetchData={fetchData} />}
+              render={props => (
+                <Signin
+                  {...props}
+                  fetchData={fetchData}
+                  fetchUser={fetchUser}
+                />
+              )}
             />
-            <Route exact path='/signout' render={props => <Signout />} />
             <Route component={NoMatchPage} />
           </Switch>
         </div>

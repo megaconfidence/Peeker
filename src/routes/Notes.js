@@ -10,6 +10,7 @@ const Notes = ({
   deleteLocal,
   allLabels
 }) => {
+  data = data.filter(d => (d.status === 'note' ? d : undefined));
   const pinned = data.filter(d => (d.pinned ? d : undefined));
   const others = data.filter(d => (!d.pinned ? d : undefined));
 
@@ -45,6 +46,7 @@ const Notes = ({
                 deleteLocal={deleteLocal}
                 allLabels={allLabels}
                 noteLabels={d.label}
+                status={d.status}
               />
             );
           })}
@@ -52,7 +54,6 @@ const Notes = ({
       </div>
     );
   };
-  
 
   return (
     <div>
