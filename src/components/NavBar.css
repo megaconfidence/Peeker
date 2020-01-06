@@ -75,6 +75,7 @@
   color: rgb(32, 33, 36);
   text-transform: capitalize;
   font-family: 'Noto Sans', sans-serif;
+  width: calc(100% - 75px);
 }
 .selected {
   background-color: #feefc3;

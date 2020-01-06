@@ -25,6 +25,7 @@
 }
 .omnibar__left__pagename {
   top: -1px;
+  width: 170px;
   font-size: 22px;
   color: #3c4043;
   overflow: hidden;

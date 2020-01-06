@@ -24,7 +24,9 @@ const imgSrc = [
   '/image/icon/settings.svg',
   '/image/icon/hamburger.svg',
   '/image/icon/bulb.svg',
-  '/image/icon/bell.svg'
+  '/image/icon/bell.svg',
+  '/image/icon/checkbox.svg',
+  '/image/icon/checkbox_notchecked.svg'
 ];
 
 ReactDOM.render(

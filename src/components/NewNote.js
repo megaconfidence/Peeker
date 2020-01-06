@@ -196,8 +196,7 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
         <li key={i}>
           <div className='label' onClick={handleLabelModalListItemClick}>
             <div className='checkbox checked' value={d}></div>
-
-            {d}
+            <span className='text'>{d}</span>
           </div>
         </li>
       );
@@ -206,7 +205,7 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
         <li key={i}>
           <div className='label' onClick={handleLabelModalListItemClick}>
             <div className='checkbox' value={d}></div>
-            {d}
+            <span className='text'>{d}</span>
           </div>
         </li>
       );
@@ -314,7 +313,7 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
                       data-imgname='plus'
                       className='label__modal__createlabel__icon'
                     />
-                    Create &nbsp;
+                    <span>Create &nbsp;</span>
                     <span className='label__modal__createlabel__text'>
                       "{labelSearchbox}"
                     </span>

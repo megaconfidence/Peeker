@@ -35,6 +35,7 @@ const NewNote = ({
   const pinimgRef = useRef(null);
   const createNewLabel = useRef(null);
   const createLabelOverlay = useRef(null);
+  const createLabelCheckbox = useRef(null);
 
   useEffect(() => {
     // Autogrow notes after filling in content
@@ -180,7 +181,7 @@ const NewNote = ({
   };
 
   const handleLabelModalListItemClick = ({ target }) => {
-    const checkbox = target.children[0];
+    const checkbox = createLabelCheckbox.current;
     checkbox.classList.toggle('checked');
     const value = checkbox.getAttribute('value');
 
@@ -245,9 +246,12 @@ const NewNote = ({
       return (
         <li key={i}>
           <div className='label' onClick={handleLabelModalListItemClick}>
-            <div className='checkbox checked' value={d}></div>
-
-            {d}
+            <div
+              className='checkbox checked'
+              value={d}
+              ref={createLabelCheckbox}
+            ></div>
+            <span className='text'>{d}</span>
           </div>
         </li>
       );
@@ -255,8 +259,8 @@ const NewNote = ({
       return (
         <li key={i}>
           <div className='label' onClick={handleLabelModalListItemClick}>
-            <div className='checkbox' value={d}></div>
-            {d}
+            <div className='checkbox' value={d} ref={createLabelCheckbox}></div>
+            <span className='text'>{d}</span>
           </div>
         </li>
       );
@@ -382,7 +386,7 @@ const NewNote = ({
                         data-imgname='plus'
                         className='label__modal__createlabel__icon'
                       />
-                      Create &nbsp;
+                      <span>Create &nbsp;</span>
                       <span className='label__modal__createlabel__text'>
                         "{labelSearchbox}"
                       </span>

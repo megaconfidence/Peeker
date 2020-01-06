@@ -89,6 +89,9 @@ img[alt='options'] {
   padding: 4px 10px;
   background-color: #ebebeb;
 }
+.note__body__content__label__tag .text{
+  max-width: calc(100% - 20px);
+}
 .note--closed .note__body__content__label__tag {
   padding: 4px 10px;
 }
@@ -188,6 +191,7 @@ img[alt='options'] {
   font-size: 13px;
   align-items: center;
 }
+
 .label__modal__labels li .checkbox {
   all: unset;
   width: 18px;
@@ -208,6 +212,12 @@ img[alt='options'] {
   align-items: center;
   border-top: 1px solid #dadce0;
 }
+.label__modal__labels li .text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: calc(100% - 20px);
+}
 [data-img].label__modal__createlabel__icon {
   width: 18px;
   height: 18px;
@@ -223,7 +233,11 @@ img[alt='options'] {
   display: inline-block;
 }
 .label__modal__createlabel__text {
+  width: 133px;
+  overflow: hidden;
   font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 [data-img].note__body__controls__item__image {
