@@ -53,7 +53,7 @@ const NavBar = forwardRef(({ labels, onClick }, ref) => {
                   exact
                   to='/reminders'
                   activeClassName='selected'
-                  className='nav__list__item__link'
+                  className='nav__list__item__link disabled'
                 >
                   <div
                     data-img
@@ -109,7 +109,7 @@ const NavBar = forwardRef(({ labels, onClick }, ref) => {
                   exact
                   to='/settings'
                   activeClassName='selected'
-                  className='nav__list__item__link'
+                  className='nav__list__item__link disabled'
                 >
                   <div
                     data-img

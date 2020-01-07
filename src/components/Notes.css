@@ -150,13 +150,13 @@ img[alt='options'] {
 }
 .label__modal__wrapper {
   top: 10%;
-  left: 0;
+  left: -1px;
   z-index: 5;
   width: 100vw;
   height: 130vh;
   position: fixed;
   transform: translateY(-13%);
-  background-color: #20212493;
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .label__modal {

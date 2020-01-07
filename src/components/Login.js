@@ -1,5 +1,6 @@
 import './Login.css';
 import request from '../helpers';
+import { useSnackbar } from 'notistack';
 import { Redirect } from 'react-router-dom';
 import GoogleLogin from 'react-google-login';
 import React, { useState, useEffect, useRef } from 'react';
@@ -14,6 +15,7 @@ const Login = ({ fetchData, fetchUser }) => {
   const loginButtons = useRef(null);
   const signinHeader = useRef(null);
 
+  const { enqueueSnackbar } = useSnackbar();
   const [redirectTo, setRedirectTo] = useState(null);
   useEffect(() => {
     if (localStorage.getItem('PEEKER_TOKEN')) {
@@ -37,6 +39,7 @@ const Login = ({ fetchData, fetchUser }) => {
       setRedirectTo('/');
       fetchUser();
       fetchData();
+      enqueueSnackbar('Welcome 😜');
     } catch (err) {
       signinHeader.current.textContent = 'Signin With';
       loginButtons.current.classList.remove('hide');
