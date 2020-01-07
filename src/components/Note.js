@@ -3,6 +3,8 @@ import './Notes.css';
 import _ from 'lodash';
 import moment from 'moment';
 import request from '../helpers';
+import { useSnackbar } from 'notistack';
+// import { Button } from '@material-ui/core';
 import React, { useRef, useState, useEffect } from 'react';
 
 const NewNote = ({
@@ -27,6 +29,7 @@ const NewNote = ({
   const [noteLabel, setNoteLabel] = useState({
     data: noteLabels
   });
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [allNoteLabels, setAllNoteLabels] = useState(labels);
 
   const noteRef = useRef(null);
@@ -115,8 +118,7 @@ const NewNote = ({
     }
   };
 
-  const updateNoteStatus = async status => {
-    const noteId = noteRef.current.getAttribute('data-note-id');
+  const updateNoteStatus = async (noteId, status) => {
     const payload = {
       status
     };
@@ -124,14 +126,33 @@ const NewNote = ({
     await request('put', `api/note/${noteId}`, payload);
     fetchData();
   };
-  const restoreNote = () => {
-    updateNoteStatus('note');
+  const restoreNote = (noteId, initSatus) => {
+    updateNoteStatus(noteId, 'note');
+    undo(noteId, initSatus, 'Note restored');
   };
-  const archiveNote = () => {
-    updateNoteStatus('archive');
+  const archiveNote = noteId => {
+    updateNoteStatus(noteId, 'archive');
+    undo(noteId, 'note', 'Note archived');
   };
-  const trashNote = () => {
-    updateNoteStatus('trash');
+  const trashNote = (noteId, initSatus) => {
+    updateNoteStatus(noteId, 'trash');
+    undo(noteId, initSatus, 'Note trashed');
+  };
+
+  const undo = (noteId, status, msg) => {
+    enqueueSnackbar(msg, {
+      action: key => (
+        <div
+          style={{ color: '#ffeb3b', marginRight: '8px' }}
+          onClick={() => {
+            updateNoteStatus(noteId, status);
+            closeSnackbar(key);
+          }}
+        >
+          UNDO
+        </div>
+      )
+    });
   };
 
   const handleTextareaChange = ({ target }) => {
@@ -406,19 +427,37 @@ const NewNote = ({
               {status !== 'archive' ? (
                 <div
                   data-img
+                  data-note-id={id}
                   data-imgname='archive'
-                  onClick={archiveNote}
+                  onClick={({ target }) => {
+                    archiveNote(target.getAttribute('data-note-id'));
+                  }}
                   className='note__body__controls__item__image'
                 />
               ) : (
                 undefined
               )}
-              <div
-                data-img
-                data-imgname='trash'
-                onClick={trashNote}
-                className='note__body__controls__item__image'
-              />
+              {status === 'archive' ? (
+                <div
+                  data-img
+                  data-note-id={id}
+                  data-imgname='trash'
+                  onClick={({ target }) => {
+                    trashNote(target.getAttribute('data-note-id'), 'archive');
+                  }}
+                  className='note__body__controls__item__image'
+                />
+              ) : (
+                <div
+                  data-img
+                  data-note-id={id}
+                  data-imgname='trash'
+                  onClick={({ target }) => {
+                    trashNote(target.getAttribute('data-note-id'), 'note');
+                  }}
+                  className='note__body__controls__item__image'
+                />
+              )}
               <div
                 data-img
                 data-imgname='options'
@@ -439,14 +478,34 @@ const NewNote = ({
         </div>
         <div className='note__footer'>
           {status === 'trash' ? (
-            <button className='note__footer__closebtn' onClick={deleteNote}>
+            <button
+              className='note__footer__closebtn'
+              data-note-id={id}
+              onClick={deleteNote}
+            >
               Delete
             </button>
           ) : (
             undefined
           )}
-          {status === 'trash' || status === 'archive' ? (
-            <button className='note__footer__closebtn' onClick={restoreNote}>
+          {status === 'trash' ? (
+            <button
+              data-note-id={id}
+              className='note__footer__closebtn'
+              onClick={({ target }) => {
+                restoreNote(target.getAttribute('data-note-id'), 'trash');
+              }}
+            >
+              Restore
+            </button>
+          ) : status === 'archive' ? (
+            <button
+              data-note-id={id}
+              className='note__footer__closebtn'
+              onClick={({ target }) => {
+                restoreNote(target.getAttribute('data-note-id'), 'archive');
+              }}
+            >
               Restore
             </button>
           ) : (

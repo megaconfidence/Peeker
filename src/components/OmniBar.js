@@ -1,4 +1,5 @@
 import './OmniBar.css';
+import { useSnackbar } from 'notistack';
 import React, { forwardRef } from 'react';
 import { withRouter } from 'react-router-dom';
 
@@ -27,14 +28,16 @@ const OmniBar = forwardRef(
     ref
   ) => {
     let currPath = location.pathname.split('/').pop();
+    const { enqueueSnackbar } = useSnackbar();
 
-    const handleRefresh = ({ target }) => {
+    const handleRefresh = async ({ target }) => {
       target.classList.add('spin-animation');
       setTimeout(() => {
         target.classList.remove('spin-animation');
       }, 500);
-      fetchUser();
-      fetchData();
+      await fetchUser();
+      await fetchData();
+      enqueueSnackbar('Updated');
     };
 
     return (
@@ -72,7 +75,7 @@ const OmniBar = forwardRef(
             />
           ) : (
             <img
-              alt='profile_image'
+              alt=''
               src={profileImageURL}
               className='omnibar__right__profile'
               onClick={handleAccountModalDisalay}
