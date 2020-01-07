@@ -1,120 +1,83 @@
-import React, { useRef, useEffect, useState } from 'react';
 import './App.css';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
+  Link
 } from 'react-router-dom';
-import Notes from './routes/Notes';
-import Reminders from './routes/Reminders';
-import Archive from './routes/Archive';
-import Trash from './routes/Trash';
-import Settings from './routes/Settings';
-import Signin from './routes/Signin';
-import Label from './routes/Label';
-import NavBar from './components/NavBar';
-import OmniBar from './components/OmniBar';
 import _ from 'lodash';
 import request from './helpers';
+import Notes from './routes/Notes';
+import Label from './routes/Label';
+import Signin from './routes/Signin';
+import Settings from './routes/Settings';
+import NavBar from './components/NavBar';
+import Reminders from './routes/Reminders';
+import OmniBar from './components/OmniBar';
 import Account from './components/Account';
+import React, { useRef, useEffect, useState } from 'react';
 
 const NoMatchPage = () => {
-  return <h3>404 - Not found</h3>;
+  return (
+    <>
+      <h3 className='notfound'>404 -Page not found</h3>
+      <div className='notfound__button'>
+        <Link to='/' className='account__signout__button'>
+          Back to App
+        </Link>
+      </div>
+    </>
+  );
 };
 
 const App = () => {
   const nav = useRef(null);
   const omniBarRef = useRef(null);
-
   const [app, setApp] = useState({
     data: []
   });
-  const [user, setUser] = useState({});
+  const [userData, setUserData] = useState({});
   const [redirectTo, setRedirectTo] = useState(null);
-  const [accountDisplay, setAccountDisplay] = useState(false);
+  const [accountModalDisplay, setAccountModalDisplay] = useState(false);
 
-  const handleAccountDisalay = () => {
-    if (accountDisplay) {
-      setAccountDisplay(false);
-    } else {
-      setAccountDisplay(true);
-    }
-  };
+  let labels;
+  labels = app.data.map(i => (i.status === 'note' ? i.label : undefined));
+  labels = _.reduce(labels, (acc, curr) => _.concat(acc, curr));
+  labels = _.compact(labels);
+  labels = _.uniq(labels);
 
   const resetGlobalAppState = () => {
+    setUserData({});
     setApp({ data: [] });
-    setUser({});
   };
 
   const addLocal = payload => {
-    const data = app.data;
+    const { data } = app;
     data.push(payload);
     setApp({ data });
   };
 
   const deleteLocal = id => {
-    const data = app.data;
-    const index = _.findIndex(data, { _id: id });
-    data.splice(index, 1);
+    const { data } = app;
+    const i = _.findIndex(data, { _id: id });
+    data.splice(i, 1);
     setApp({ data });
   };
 
   const updateLocal = (id, payload) => {
-    const data = app.data;
-    const obj = _.find(data, { _id: id });
-    const update = {
-      ...obj,
+    const { data } = app;
+    const oldData = _.find(data, { _id: id });
+    const newData = {
+      ...oldData,
       ...payload
     };
-    const index = _.findIndex(data, { _id: id });
-    data.splice(index, 1, update);
+    const i = _.findIndex(data, { _id: id });
+    data.splice(i, 1, newData);
     setApp({ data });
   };
 
-  const fetchUser = async () => {
-    if (localStorage.getItem('PEEKER_TOKEN')) {
-      const {
-        data: { data }
-      } = await request('get', 'api/user');
-      if (!_.isEqual(user, data)) {
-        console.log('## updating user data');
-        setUser(data);
-      }
-    }
-  };
-
-  const fetchData = async () => {
-    if (!localStorage.getItem('PEEKER_TOKEN')) {
-      return setRedirectTo('/signin');
-    }
-    // Get all notes
-    const {
-      data: { data }
-    } = await request('get', 'api/note');
-
-    // Makes update if there are any changes
-    if (!_.isEqual(app.data, data)) {
-      console.log('## app data is updated');
-      setApp({ data });
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    fetchUser();
-    fetchData();
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  });
-
-  let label = app.data.map(i => (i.status === 'note' ? i.label : undefined));
-  label = _.reduce(label, (acc, curr) => _.concat(acc, curr));
-  label = _.compact(label);
-  label = _.uniq(label);
-
-  const handleScroll = e => {
+  const handleScroll = () => {
     if (window.pageYOffset > 0) {
       omniBarRef.current.classList.add('omnibar__scrolling');
     } else {
@@ -136,32 +99,87 @@ const App = () => {
     }
   };
 
-  // if (!app.data[0]) {
-  //   // Quit if note is empty
-  //   return <></>;
-  // }
+  const handleAccountModalDisalay = () => {
+    if (accountModalDisplay) {
+      setAccountModalDisplay(false);
+    } else {
+      setAccountModalDisplay(true);
+    }
+  };
 
+  const fetchUser = async () => {
+    if (localStorage.getItem('PEEKER_TOKEN')) {
+      const {
+        data: { data }
+      } = await request('get', 'api/user');
+
+      if (!_.isEqual(userData, data)) {
+        console.log('## updating user data');
+        setUserData(data);
+      }
+    }
+  };
+
+  const fetchData = async () => {
+    if (!localStorage.getItem('PEEKER_TOKEN')) {
+      return setRedirectTo('/signin');
+    }
+    const {
+      data: { data }
+    } = await request('get', 'api/note');
+
+    // Makes update if there are any changes
+    if (!_.isEqual(app.data, data)) {
+      console.log('## app data is updated');
+      setApp({ data });
+    }
+  };
+
+  function addAutoResize() {
+    document.querySelectorAll('[data-autoresize]').forEach(function(element) {
+      element.style.boxSizing = 'border-box';
+      var offset = element.offsetHeight - element.clientHeight;
+      document.addEventListener('input', function(event) {
+        event.target.style.height = 'auto';
+        event.target.style.height = event.target.scrollHeight + offset + 'px';
+      });
+      element.removeAttribute('data-autoresize');
+    });
+  }
+
+  useEffect(() => {
+    fetchUser();
+    fetchData();
+    addAutoResize();
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  });
+
+  // if (true) return <></>;
   return (
     <Router>
       <div className='app'>
         {redirectTo ? <Redirect to={redirectTo} /> : null}
-        {accountDisplay ? (
+        {accountModalDisplay ? (
           <Account
-            user={user}
-            handleAccountDisalay={handleAccountDisalay}
+            userData={userData}
             resetGlobalAppState={resetGlobalAppState}
+            handleAccountModalDisalay={handleAccountModalDisalay}
           />
         ) : (
           undefined
         )}
         <OmniBar
           ref={omniBarRef}
-          onClick={handleNavClick}
-          handleAccountDisalay={handleAccountDisalay}
           fetchData={fetchData}
-          profileImageURL={user.profileImageURL}
+          fetchUser={fetchUser}
+          onClick={handleNavClick}
+          profileImageURL={userData.profileImageURL}
+          handleAccountModalDisalay={handleAccountModalDisalay}
         />
-        <NavBar labels={label} ref={nav} onClick={handleNavClick} />
+        <NavBar labels={labels} ref={nav} onClick={handleNavClick} />
         <div className='app__content'>
           <Switch>
             <Route
@@ -170,13 +188,15 @@ const App = () => {
               render={props => (
                 <Notes
                   {...props}
+                  noteType='note'
                   data={app.data}
+                  allLabels={labels}
+                  withNewNote={true}
+                  addLocal={addLocal}
+                  labelForNewNote={[]}
                   fetchData={fetchData}
                   updateLocal={updateLocal}
-                  addLocal={addLocal}
                   deleteLocal={deleteLocal}
-                  labelForNewNote={[]}
-                  allLabels={label}
                 />
               )}
             />
@@ -192,11 +212,11 @@ const App = () => {
                 <Label
                   {...props}
                   data={app.data}
+                  allLabels={labels}
+                  addLocal={addLocal}
                   fetchData={fetchData}
-                  allLabels={label}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
-                  addLocal={addLocal}
                 />
               )}
             />
@@ -204,14 +224,16 @@ const App = () => {
               exact
               path='/archive'
               render={props => (
-                <Archive
+                <Notes
                   {...props}
                   data={app.data}
+                  allLabels={labels}
+                  noteType='archive'
+                  addLocal={addLocal}
+                  withNewNote={false}
                   fetchData={fetchData}
-                  allLabels={label}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
-                  addLocal={addLocal}
                 />
               )}
             />
@@ -219,14 +241,16 @@ const App = () => {
               exact
               path='/trash'
               render={props => (
-                <Trash
+                <Notes
                   {...props}
                   data={app.data}
+                  allLabels={labels}
+                  noteType='trash'
+                  addLocal={addLocal}
+                  withNewNote={false}
                   fetchData={fetchData}
-                  allLabels={label}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
-                  addLocal={addLocal}
                 />
               )}
             />

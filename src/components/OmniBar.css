@@ -15,14 +15,15 @@
     0 2px 4px -1px rgba(0, 0, 0, 0.2);
 }
 .omnibar__left {
-  width: 50%;
   display: flex;
   align-items: center;
+  width: calc(100% - 130px);
 }
 
 .omnibar__left__icon {
   opacity: 0.5;
   margin-left: 20px;
+  margin-right: 15px;
 }
 .omnibar__left__pagename {
   top: -1px;
@@ -30,7 +31,6 @@
   font-size: 22px;
   color: #3c4043;
   overflow: hidden;
-  margin-left: 15px;
   position: relative;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -43,26 +43,24 @@
 }
 .omnibar__right {
   display: flex;
+  width: 130px;
+  justify-content: space-between;
 }
 .omnibar__icon {
   width: 24px;
   opacity: 0.5;
   height: 32px;
-  margin-right: 25px;
   background-size: 24px 32px;
 }
 .omnibar__right__profile {
   width: 32px;
   height: 32px;
   overflow: hidden;
-  margin-right: 10px;
   border-radius: 50%;
   background-size: 32px 32px;
   background-color: #5f6368ba;
 }
-.omnibar__right__profile:last-of-type {
-  margin-right: 0;
-}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

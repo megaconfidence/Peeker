@@ -2,13 +2,12 @@ import React from 'react';
 import Notes from './Notes';
 
 const Label = ({
-  match,
-  location,
   data,
+  match,
+  addLocal,
   fetchData,
   allLabels,
   updateLocal,
-  addLocal,
   deleteLocal
 }) => {
   const {
@@ -18,12 +17,14 @@ const Label = ({
   return (
     <Notes
       data={fData}
+      noteType='note'
+      withNewNote={true}
+      addLocal={addLocal}
       fetchData={fetchData}
-      labelForNewNote={[labelId]}
       allLabels={allLabels}
       updateLocal={updateLocal}
       deleteLocal={deleteLocal}
-      addLocal={addLocal}
+      labelForNewNote={[labelId]}
     />
   );
 };

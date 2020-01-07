@@ -1,21 +1,25 @@
-import React, { useRef } from 'react';
 import './Account.css';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 
-const Account = ({ user, handleAccountDisalay, resetGlobalAppState }) => {
-  const { _id, name, email, profileImageURL } = user;
+const Account = ({
+  userData,
+  resetGlobalAppState,
+  handleAccountModalDisalay
+}) => {
+  const { _id, name, email, profileImageURL } = userData;
   const accountModal = useRef(null);
 
   const handleSignout = () => {
     resetGlobalAppState();
-    handleAccountDisalay();
+    handleAccountModalDisalay();
     localStorage.removeItem('PEEKER_TOKEN');
   };
   return (
     <div
       className='account__wrapper'
       ref={accountModal}
-      onClick={handleAccountDisalay}
+      onClick={handleAccountModalDisalay}
     >
       <div className='account' onClick={e => e.stopPropagation()}>
         <div className='account__image'>

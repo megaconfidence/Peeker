@@ -1,6 +1,6 @@
+import './OmniBar.css';
 import React, { forwardRef } from 'react';
 import { withRouter } from 'react-router-dom';
-import './OmniBar.css';
 
 const withRouterAndRef = Wrapped => {
   const WithRouter = withRouter(({ forwardRef, ...otherProps }) => (
@@ -16,26 +16,35 @@ const withRouterAndRef = Wrapped => {
 
 const OmniBar = forwardRef(
   (
-    { onClick, location, fetchData, handleAccountDisalay, profileImageURL },
+    {
+      onClick,
+      location,
+      fetchData,
+      fetchUser,
+      profileImageURL,
+      handleAccountModalDisalay
+    },
     ref
   ) => {
     let currPath = location.pathname.split('/').pop();
-    const handleRefresh = e => {
-      const btn = e.target;
-      btn.classList.add('spin-animation');
+
+    const handleRefresh = ({ target }) => {
+      target.classList.add('spin-animation');
       setTimeout(() => {
-        btn.classList.remove('spin-animation');
+        target.classList.remove('spin-animation');
       }, 500);
+      fetchUser();
       fetchData();
     };
+
     return (
       <div className='omnibar' ref={ref}>
         <div className='omnibar__left'>
           <div
             data-img
             data-imgname='hamburger'
-            className='omnibar__left__icon omnibar__left__icon--menutriger '
             onClick={currPath !== 'signin' ? onClick : undefined}
+            className='omnibar__left__icon omnibar__left__icon--menutriger'
           />
           <div className='omnibar__left__pagename'>
             {currPath ? currPath : 'Peeker'}
@@ -51,27 +60,22 @@ const OmniBar = forwardRef(
           <div
             data-img
             data-imgname='refresh'
-            className='omnibar__icon '
             onClick={handleRefresh}
-          />
-          <div
-            data-img
-            data-imgname='settings'
-            className='omnibar__icon disabled'
+            className='omnibar__icon'
           />
           {profileImageURL === undefined || profileImageURL === 'no_image' ? (
             <div
               data-img
               data-imgname='profile'
               className='omnibar__right__profile'
-              onClick={handleAccountDisalay}
+              onClick={handleAccountModalDisalay}
             />
           ) : (
             <img
-              src={profileImageURL}
               alt='profile_image'
+              src={profileImageURL}
               className='omnibar__right__profile'
-              onClick={handleAccountDisalay}
+              onClick={handleAccountModalDisalay}
             />
           )}
         </div>

@@ -1,67 +1,47 @@
 import './Notes.css';
 import './NewNote.css';
-import response from '../helpers';
-import React, { useRef, useState, useEffect } from 'react';
-import ObjectID from 'bson-objectid';
 import _ from 'lodash';
+import response from '../helpers';
+import ObjectID from 'bson-objectid';
+import React, { useRef, useState } from 'react';
 
-const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
+const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
   const noteRef = useRef(null);
+  const pinimgRef = useRef(null);
   const titleTextRef = useRef(null);
   const contentTextRef = useRef(null);
-  const pinimgRef = useRef(null);
-
-  const [labelSearchbox, setLabelSearchbox] = useState('');
+  const createNewLabel = useRef(null);
+  const createLabelOverlay = useRef(null);
 
   // holds all labels from db
-  const [labelArr, setLabelArr] = useState(allLabels);
+  const [labels, setLabels] = useState(allLabels);
+  const [labelSearchbox, setLabelSearchbox] = useState('');
   // Holds only labels for this individual note
-  const [noteLabelArr, setNoteLabelArr] = useState({
+  const [noteLabel, setNoteLabel] = useState({
     data: []
   });
-  const [allNoteLabels, setAllNoteLabels] = useState(labelArr);
-
-  const createLabelOverlay = useRef(null);
-  const createNewLabel = useRef(null);
-  useEffect(() => {
-    addAutoResize();
-    return () => {};
-  });
-
-  function addAutoResize() {
-    document.querySelectorAll('[data-autoresize]').forEach(function(element) {
-      element.style.boxSizing = 'border-box';
-      var offset = element.offsetHeight - element.clientHeight;
-      document.addEventListener('input', function(event) {
-        event.target.style.height = 'auto';
-        event.target.style.height = event.target.scrollHeight + offset + 'px';
-      });
-      element.removeAttribute('data-autoresize');
-    });
-  }
+  const [allNoteLabels, setAllNoteLabels] = useState(labels);
 
   const openNote = () => {
     noteRef.current.classList.remove('nwnote--closed');
   };
+
   const closeNote = async () => {
-    noteRef.current.classList.add('nwnote--closed');
     const noteTitle = titleTextRef.current.value;
+    noteRef.current.classList.add('nwnote--closed');
     const noteContent = contentTextRef.current.value;
+
     const pinned = pinimgRef.current
       .getAttribute('data-imgname')
       .includes('pin_fill');
-    const labels = _.concat(noteLabelArr.data, labelForNewNote);
-
-    if (!createLabelOverlay.current.classList.contains('hide')) {
-      createLabelOverlay.current.classList.add('hide');
-    }
+    const labels = _.concat(noteLabel.data, labelForNewNote);
 
     // Reset the fields
-    titleTextRef.current.value = '';
-    contentTextRef.current.value = '';
-    setNoteLabelArr({
+    setNoteLabel({
       data: []
     });
+    titleTextRef.current.value = '';
+    contentTextRef.current.value = '';
     titleTextRef.current.style.height = '45px';
     contentTextRef.current.style.height = '45px';
     if (pinned) {
@@ -70,10 +50,11 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
 
     if (noteTitle || noteContent || labels.length) {
       const payload = {
-        title: noteTitle || '',
-        content: noteContent || '',
         pinned,
-        label: labels
+        label: labels,
+        status: 'note',
+        title: noteTitle || '',
+        content: noteContent || ''
       };
 
       let date = new Date();
@@ -82,13 +63,12 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
       // Creates a local copy of payload to update app state
       const fakePayload = {
         ...payload,
-        _id: ObjectID.generate(),
-        updatedAt: date
+        updatedAt: date,
+        _id: ObjectID.generate()
       };
 
       // Updates state with local payload
       addLocal(fakePayload);
-
       await response('post', 'api/note', payload);
       fetchData();
     }
@@ -102,13 +82,13 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
       target.setAttribute('data-imgname', src.split('pin').join('pin_fill'));
     }
   };
-  const handleLabelSearchbox = ({ target: { value } }) => {
+
+  const handleLabelSearchboxChange = ({ target: { value } }) => {
     let isAnyMatch = false;
     setLabelSearchbox(value);
 
     if (value) {
       createNewLabel.current.classList.remove('hide');
-
       allNoteLabels.forEach(d => {
         if (d.includes(value)) {
           isAnyMatch = true;
@@ -118,7 +98,7 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
 
       if (!isAnyMatch) {
         setAllNoteLabels([]);
-        labelArr.forEach(d => {
+        labels.forEach(d => {
           if (d.includes(value)) {
             setAllNoteLabels([d]);
           }
@@ -126,7 +106,7 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
       }
     } else {
       createNewLabel.current.classList.add('hide');
-      setAllNoteLabels(labelArr);
+      setAllNoteLabels(labels);
     }
   };
 
@@ -136,17 +116,17 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
     const value = checkbox.getAttribute('value');
 
     if (checkbox.classList.contains('checked')) {
-      const data = noteLabelArr.data;
+      const { data } = noteLabel;
       data.push(value);
-      setNoteLabelArr({
+      setNoteLabel({
         data
       });
     } else {
-      const data = noteLabelArr.data;
+      const { data } = noteLabel;
       data.forEach((d, i) => {
         if (d === value) {
           data.splice(i, 1);
-          setNoteLabelArr({
+          setNoteLabel({
             data
           });
         }
@@ -156,41 +136,37 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
 
   const handleCreateNewLabel = () => {
     createNewLabel.current.classList.add('hide');
-    let data = noteLabelArr.data;
+    let { data } = noteLabel;
     data.push(labelSearchbox);
-    setNoteLabelArr({
+    setNoteLabel({
       data
     });
 
-    data = labelArr;
+    data = labels;
     data.push(labelSearchbox);
 
-    setLabelArr(data);
-    setAllNoteLabels(labelArr);
-
+    setLabels(data);
     setLabelSearchbox('');
+    setAllNoteLabels(labels);
   };
-  const handleDeleteLabelClick = ({ target }) => {
-    const data = noteLabelArr.data;
-    const value = target.getAttribute('data-value');
 
-    const index = data.findIndex(d => d === value);
-    data.splice(index, 1);
-    setNoteLabelArr({
+  const handleDeleteLabelClick = ({ target }) => {
+    const { data } = noteLabel;
+    const value = target.getAttribute('data-value');
+    const i = data.findIndex(d => d === value);
+    data.splice(i, 1);
+    setNoteLabel({
       data
     });
   };
+
   const handleLabelModalOpenCLose = () => {
     createLabelOverlay.current.classList.toggle('hide');
   };
-  const handleCreateLabelOverlayClick = e => {
-    createLabelOverlay.current.classList.toggle('hide');
-  };
-  //   note--focused note--closed
 
   const labelModalListItems = allNoteLabels.map((d, i) => {
     // This function add checked class to the checkbox if the note has that label
-    const m = _.find(noteLabelArr.data, i => (i === d ? d : undefined));
+    const m = _.find(noteLabel.data, i => (i === d ? d : undefined));
     if (m) {
       return (
         <li key={i}>
@@ -215,40 +191,40 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
     <div className='note nwnote nwnote--closed' ref={noteRef}>
       <div className='note__head'>
         <textarea
-          className='note__head__titletext textarea--mod'
-          placeholder='Title'
-          spellCheck='false'
           data-autoresize
+          spellCheck='false'
           ref={titleTextRef}
+          placeholder='Title'
+          className='note__head__titletext textarea--mod'
         ></textarea>
         <div
           data-img
-          data-imgname='pin'
-          className='note__head__pin'
           ref={pinimgRef}
           onClick={pinNote}
+          data-imgname='pin'
+          className='note__head__pin'
         />
       </div>
       <div className='note__body'>
         <div className='note__body__content'>
           <textarea
-            className='note__body__content__textarea textarea--mod'
-            placeholder='Take a note...'
-            spellCheck='false'
             data-autoresize
+            spellCheck='false'
             onFocus={openNote}
             ref={contentTextRef}
+            placeholder='Take a note...'
+            className='note__body__content__textarea textarea--mod'
           ></textarea>
           <div className='note__body__content__label'>
-            {noteLabelArr.data.map((d, i) =>
+            {noteLabel.data.map((d, i) =>
               d ? (
                 <div key={i} className='note__body__content__label__tag'>
                   <span className='text'>{d}</span>
                   <div
                     data-img
+                    data-value={d}
                     data-imgname='close'
                     onClick={handleDeleteLabelClick}
-                    data-value={d}
                   />
                 </div>
               ) : (
@@ -268,13 +244,13 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
               <div
                 data-img
                 data-imgname='badge'
-                className='note__body__controls__item__image'
                 onClick={handleLabelModalOpenCLose}
+                className='note__body__controls__item__image'
               />
               <div
-                className='label__modal__wrapper hide'
                 ref={createLabelOverlay}
-                onClick={handleCreateLabelOverlayClick}
+                onClick={handleLabelModalOpenCLose}
+                className='label__modal__wrapper hide'
               >
                 <div
                   className='label__modal '
@@ -287,10 +263,10 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
                     <div className='label__modal__search'>
                       <input
                         type='text'
-                        className='label__modal__search__input'
                         value={labelSearchbox}
-                        onChange={handleLabelSearchbox}
                         placeholder='Enter label name'
+                        onChange={handleLabelSearchboxChange}
+                        className='label__modal__search__input'
                       />
                       <div
                         data-img
@@ -304,9 +280,9 @@ const NewNote = ({ fetchData, labelForNewNote, addLocal, allLabels }) => {
                   </div>
 
                   <div
-                    className='label__modal__createlabel hide'
                     ref={createNewLabel}
                     onClick={handleCreateNewLabel}
+                    className='label__modal__createlabel hide'
                   >
                     <div
                       data-img

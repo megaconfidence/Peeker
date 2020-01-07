@@ -94,8 +94,8 @@ const Login = ({ fetchData, fetchUser }) => {
           {redirectTo ? <Redirect to={redirectTo} /> : null}
         </div>
         <div className='signin__loader hide' ref={loaderIcon}>
-          <div class='loadingio-spinner-dual-ring-9kvr8hw5b1'>
-            <div class='ldio-hyhtxra63xn'>
+          <div className='loadingio-spinner-dual-ring-9kvr8hw5b1'>
+            <div className='ldio-hyhtxra63xn'>
               <div></div>
               <div>
                 <div></div>

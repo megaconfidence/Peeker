@@ -21,6 +21,14 @@
   opacity: 0.2 !important;
   pointer-events: none !important;
 }
+.notfound {
+  font-size: 30px;
+  margin-top: 90px;
+  text-align: center;
+}
+.notfound__button {
+  text-align: center;
+}
 [data-img] {
   width: 24px;
   height: 24px;

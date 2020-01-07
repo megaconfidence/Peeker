@@ -1,16 +1,19 @@
 import React from 'react';
-import NewNote from '../components/NewNote';
 import Note from '../components/Note';
+import NewNote from '../components/NewNote';
+
 const Notes = ({
   data,
-  fetchData,
-  labelForNewNote,
-  updateLocal,
   addLocal,
+  noteType,
+  fetchData,
+  allLabels,
+  withNewNote,
   deleteLocal,
-  allLabels
+  updateLocal,
+  labelForNewNote
 }) => {
-  data = data.filter(d => (d.status === 'note' ? d : undefined));
+  data = data.filter(d => (d.status === noteType ? d : undefined));
   const pinned = data.filter(d => (d.pinned ? d : undefined));
   const others = data.filter(d => (!d.pinned ? d : undefined));
 
@@ -26,9 +29,14 @@ const Notes = ({
     const fill = isPinned ? 'pinned' : 'others';
     return (
       <div className={`${fill}`}>
-        <div className={`${fill}__header`} style={sectionStyle}>
-          {isPinned ? 'PINNED' : pinned.length ? 'OTHERS' : undefined}
-        </div>
+        {noteType !== 'trash' ? (
+          <div className={`${fill}__header`} style={sectionStyle}>
+            {isPinned ? 'PINNED' : pinned.length ? 'OTHERS' : undefined}
+          </div>
+        ) : (
+          undefined
+        )}
+
         <div className={`${fill}__content`}>
           {noteArr.map((d, k) => {
             // Quit if note is empty
@@ -36,17 +44,17 @@ const Notes = ({
             return (
               <Note
                 id={d._id}
-                pinned={isPinned}
                 title={d.title}
-                content={d.content}
-                key={`${k}-${d.title}`}
-                updatedAt={d.updatedAt}
-                fetchData={fetchData}
-                updateLocal={updateLocal}
-                deleteLocal={deleteLocal}
-                allLabels={allLabels}
-                noteLabels={d.label}
+                pinned={isPinned}
                 status={d.status}
+                content={d.content}
+                noteLabels={d.label}
+                fetchData={fetchData}
+                allLabels={allLabels}
+                updatedAt={d.updatedAt}
+                key={`${k}-${d.title}`}
+                deleteLocal={deleteLocal}
+                updateLocal={updateLocal}
               />
             );
           })}
@@ -57,12 +65,16 @@ const Notes = ({
 
   return (
     <div>
-      <NewNote
-        fetchData={fetchData}
-        labelForNewNote={labelForNewNote}
-        addLocal={addLocal}
-        allLabels={allLabels}
-      />
+      {withNewNote ? (
+        <NewNote
+          addLocal={addLocal}
+          allLabels={allLabels}
+          fetchData={fetchData}
+          labelForNewNote={labelForNewNote}
+        />
+      ) : (
+        undefined
+      )}
       {pinned.length ? buildNotes(pinned, true) : undefined}
       {others.length ? buildNotes(others, false) : undefined}
     </div>
