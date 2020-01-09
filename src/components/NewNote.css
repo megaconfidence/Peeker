@@ -26,7 +26,7 @@
   display: flex;
 }
 .nwnote--closed .note__body__content__textarea {
-  width: 50%;
+  width: 100%;
   font-size: 1.1rem;
 }
 .nwnote--closed .note__body__content__hiddencontrols {

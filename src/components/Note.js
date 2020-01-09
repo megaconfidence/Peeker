@@ -18,7 +18,9 @@ const NewNote = ({
   allLabels,
   noteLabels,
   updateLocal,
-  deleteLocal
+  deleteLocal,
+  searchText,
+  isSearch
 }) => {
   const [labelSearchbox, setLabelSearchbox] = useState('');
   const [titleTextState, setTitleTextState] = useState(title);
@@ -41,11 +43,20 @@ const NewNote = ({
   const createLabelOverlay = useRef(null);
   const createLabelCheckbox = useRef(null);
 
+  const headTextContainer = useRef(null);
+  const headTextBackdrop = useRef(null);
+  const headTextHighlights = useRef(null);
+
+  const bodyTextContainer = useRef(null);
+  const bodyTextBackdrop = useRef(null);
+  const bodyTextHighlights = useRef(null);
+
   const autoGrowAfterPopulate = target => {
-    target.style.height = `${target.scrollHeight}px`;
-    if (!target.value) {
-      target.style.height = '45px';
-    }
+    target.style.boxSizing = 'border-box';
+    const offset = target.offsetHeight - target.clientHeight;
+
+    target.style.height = 'auto';
+    target.style.height = target.scrollHeight + offset + 'px';
   };
 
   const openNote = () => {
@@ -54,6 +65,16 @@ const NewNote = ({
       note.add('note--opened');
       note.remove('note--closed');
       noteOverlayRef.current.classList.remove('note__overlay--close');
+
+      if (isSearch) {
+        autoGrowAfterPopulate(headTextHighlights.current);
+        autoGrowAfterPopulate(titleTextRef.current);
+        autoGrowAfterPopulate(headTextContainer.current);
+
+        autoGrowAfterPopulate(bodyTextHighlights.current);
+        autoGrowAfterPopulate(bodyTextBackdrop.current);
+        autoGrowAfterPopulate(bodyTextContainer.current);
+      }
     }
   };
   const closeNote = async ({ target }) => {
@@ -155,12 +176,41 @@ const NewNote = ({
     });
   };
 
+  const applyHighlights = text => {
+    const regex = new RegExp(text, 'gi');
+
+    headTextHighlights.current.innerHTML = titleTextState
+      .replace(/\n$/g, '\n\n')
+      .replace(regex, '<mark>$&</mark>');
+
+    bodyTextHighlights.current.innerHTML = contentTextState
+      .replace(/\n$/g, '\n\n')
+      .replace(regex, '<mark>$&</mark>');
+  };
   const handleTextareaChange = ({ target }) => {
     if (target.classList.contains('note__head__titletext')) {
       setTitleTextState(target.value);
     }
     if (target.classList.contains('note__body__content__textarea')) {
       setContentTextState(target.value);
+    }
+  };
+
+  const handleTextareaScroll = ({ target }) => {
+    if (target.classList.contains('note__head__titletext')) {
+      const scrollTop = target.scrollTop;
+      headTextBackdrop.current.scrollTop = scrollTop;
+
+      const scrollLeft = target.scrollLeft;
+      headTextBackdrop.current.scrollLeft = scrollLeft;
+    }
+
+    if (target.classList.contains('note__body__content__textarea')) {
+      const scrollTop = target.scrollTop;
+      bodyTextHighlights.current.scrollTop = scrollTop;
+
+      const scrollLeft = target.scrollLeft;
+      bodyTextBackdrop.current.scrollLeft = scrollLeft;
     }
   };
 
@@ -247,9 +297,24 @@ const NewNote = ({
   };
 
   useEffect(() => {
-    // Autogrow notes after filling in content
-    autoGrowAfterPopulate(titleTextRef.current);
-    autoGrowAfterPopulate(contentTextRef.current);
+    (async () => {
+      // Autogrow notes after filling in content
+      await autoGrowAfterPopulate(titleTextRef.current);
+      await autoGrowAfterPopulate(contentTextRef.current);
+
+      if (isSearch) {
+        autoGrowAfterPopulate(headTextHighlights.current);
+        autoGrowAfterPopulate(headTextBackdrop.current);
+        autoGrowAfterPopulate(headTextContainer.current);
+
+        autoGrowAfterPopulate(bodyTextHighlights.current);
+        autoGrowAfterPopulate(bodyTextBackdrop.current);
+        autoGrowAfterPopulate(bodyTextContainer.current);
+      }
+    })();
+    if (isSearch) {
+      applyHighlights(searchText);
+    }
     return () => {};
   });
 
@@ -280,6 +345,7 @@ const NewNote = ({
       );
     }
   });
+
   return (
     <div
       className={`note__overlay note__overlay--close ${
@@ -299,16 +365,41 @@ const NewNote = ({
         className='note note--closed'
       >
         <div className='note__head'>
-          <textarea
-            data-autoresize
-            spellCheck='false'
-            onFocus={openNote}
-            ref={titleTextRef}
-            placeholder='Title'
-            value={titleTextState}
-            onChange={handleTextareaChange}
-            className='note__head__titletext textarea--mod'
-          ></textarea>
+          {isSearch ? (
+            <div className='note__head__container' ref={headTextContainer}>
+              <div className='note__head__backdrop' ref={headTextBackdrop}>
+                <div
+                  className='note__head__highlights'
+                  ref={headTextHighlights}
+                ></div>
+              </div>
+              <textarea
+                data-autoresize
+                spellCheck='false'
+                onFocus={openNote}
+                ref={titleTextRef}
+                placeholder='Title'
+                maxLength='100'
+                value={titleTextState}
+                onChange={handleTextareaChange}
+                onScroll={handleTextareaScroll}
+                className='note__head__titletext search textarea--mod'
+              ></textarea>
+            </div>
+          ) : (
+            <textarea
+              data-autoresize
+              spellCheck='false'
+              onFocus={openNote}
+              ref={titleTextRef}
+              placeholder='Title'
+              maxLength='100'
+              value={titleTextState}
+              onChange={handleTextareaChange}
+              className='note__head__titletext textarea--mod'
+            ></textarea>
+          )}
+
           <div
             data-img
             ref={pinimgRef}
@@ -319,7 +410,39 @@ const NewNote = ({
         </div>
         <div className='note__body'>
           <div className='note__body__content'>
-            <textarea
+            {isSearch ? (
+              <div className='note__body__container' ref={bodyTextContainer}>
+                <div className='note__body__backdrop' ref={bodyTextBackdrop}>
+                  <div
+                    className='note__body__highlights'
+                    ref={bodyTextHighlights}
+                  ></div>
+                </div>
+                <textarea
+                  data-autoresize
+                  spellCheck='false'
+                  onFocus={openNote}
+                  placeholder='Note'
+                  ref={contentTextRef}
+                  value={contentTextState}
+                  onScroll={handleTextareaScroll}
+                  onChange={handleTextareaChange}
+                  className='note__body__content__textarea search textarea--mod'
+                ></textarea>
+              </div>
+            ) : (
+              <textarea
+                data-autoresize
+                spellCheck='false'
+                onFocus={openNote}
+                placeholder='Note'
+                ref={contentTextRef}
+                value={contentTextState}
+                onChange={handleTextareaChange}
+                className='note__body__content__textarea textarea--mod'
+              ></textarea>
+            )}
+            {/* <textarea
               data-autoresize
               spellCheck='false'
               onFocus={openNote}
@@ -328,7 +451,7 @@ const NewNote = ({
               value={contentTextState}
               onChange={handleTextareaChange}
               className='note__body__content__textarea textarea--mod'
-            ></textarea>
+            ></textarea> */}
             <div className='note__body__content__label'>
               {noteLabel.data.map((d, i) =>
                 d ? (

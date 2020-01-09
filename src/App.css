@@ -110,3 +110,6 @@
 [data-imgname='profile'] {
   background-image: url(/image/icon/profile.svg);
 }
+[data-imgname='left_arrow'] {
+  background-image: url(/image/icon/left_arrow.svg);
+}

@@ -41,6 +41,7 @@ const Login = ({ fetchData, fetchUser }) => {
       fetchData();
       enqueueSnackbar('Welcome 😜');
     } catch (err) {
+      enqueueSnackbar('Something went wrong 😢');
       signinHeader.current.textContent = 'Signin With';
       loginButtons.current.classList.remove('hide');
       loaderIcon.current.classList.add('hide');

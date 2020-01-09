@@ -11,11 +11,14 @@ const Notes = ({
   withNewNote,
   deleteLocal,
   updateLocal,
-  labelForNewNote
+  labelForNewNote,
+  isSearch,
+  searchText,
 }) => {
   data = data.filter(d => (d.status === noteType ? d : undefined));
   const pinned = data.filter(d => (d.pinned ? d : undefined));
   const others = data.filter(d => (!d.pinned ? d : undefined));
+
 
   const sectionStyle = {
     fontWeight: 500,
@@ -48,10 +51,12 @@ const Notes = ({
                 pinned={isPinned}
                 status={d.status}
                 content={d.content}
+                isSearch={isSearch}
                 noteLabels={d.label}
                 fetchData={fetchData}
                 allLabels={allLabels}
                 updatedAt={d.updatedAt}
+                searchText={searchText}
                 key={`${k}-${d.title}`}
                 deleteLocal={deleteLocal}
                 updateLocal={updateLocal}

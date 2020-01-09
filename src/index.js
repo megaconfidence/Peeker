@@ -28,7 +28,8 @@ const imgSrc = [
   '/image/icon/bell.svg',
   '/image/icon/checkbox.svg',
   '/image/icon/checkbox_notchecked.svg',
-  '/image/icon/profile.svg'
+  '/image/icon/profile.svg',
+  '/image/icon/left_arrow.svg'
 ];
 
 ReactDOM.render(
