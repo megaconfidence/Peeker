@@ -19,6 +19,7 @@
 }
 .signin__action__btn {
   all: unset;
+  height: 40px;
   margin: 16px;
   color: #fff;
   cursor: pointer;
@@ -29,7 +30,6 @@
   padding: 10px 24px;
   border-radius: 4px;
   width: fit-content;
-  height: fit-content;
   letter-spacing: 0.5px;
   display: inline-block;
   letter-spacing: 0.15px;
