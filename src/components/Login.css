@@ -11,15 +11,14 @@
 }
 .signin__action {
   display: flex;
-  height: 100px;
   margin-top: 20px;
+  height: fit-content;
   align-items: center;
   flex-direction: column;
   justify-content: space-between;
 }
 .signin__action__btn {
   all: unset;
-  height: 40px;
   margin: 16px;
   color: #fff;
   cursor: pointer;
