@@ -6,35 +6,51 @@ const Notes = ({
   data,
   addLocal,
   noteType,
+  isSearch,
   fetchData,
   allLabels,
-  withNewNote,
-  deleteLocal,
-  updateLocal,
-  labelForNewNote,
-  isSearch,
   searchText,
+  deleteLocal,
+  withNewNote,
+  updateLocal,
+  labelForNewNote
 }) => {
-  data = data.filter(d => (d.status === noteType ? d : undefined));
-  const pinned = data.filter(d => (d.pinned ? d : undefined));
-  const others = data.filter(d => (!d.pinned ? d : undefined));
+  let note = [],
+    trash = [],
+    pinned = [],
+    others = [],
+    archive = [];
 
+  if (isSearch) {
+    note = data.filter(d => (d.status === 'note' ? d : undefined));
+    archive = data.filter(d => (d.status === 'archive' ? d : undefined));
+    trash = data.filter(d => (d.status === 'trash' ? d : undefined));
+  } else {
+    data = data.filter(d => (d.status === noteType ? d : undefined));
+    pinned = data.filter(d => (d.pinned ? d : undefined));
+    others = data.filter(d => (!d.pinned ? d : undefined));
+  }
 
   const sectionStyle = {
     fontWeight: 500,
     color: '#5f6368',
     margin: '21px 8px',
     fontSize: '0.725rem',
+    textTransform: 'uppercase',
     letterSpacing: '0.07272727em'
   };
 
-  const buildNotes = (noteArr, isPinned) => {
+  const buildNotes = (noteArr, isPinned, status) => {
     const fill = isPinned ? 'pinned' : 'others';
     return (
       <div className={`${fill}`}>
-        {noteType !== 'trash' ? (
+        {status ? (
           <div className={`${fill}__header`} style={sectionStyle}>
-            {isPinned ? 'PINNED' : pinned.length ? 'OTHERS' : undefined}
+            {status}
+          </div>
+        ) : noteType !== 'trash' ? (
+          <div className={`${fill}__header`} style={sectionStyle}>
+            {isPinned ? 'pinned' : pinned.length ? 'others' : undefined}
           </div>
         ) : (
           undefined
@@ -80,8 +96,12 @@ const Notes = ({
       ) : (
         undefined
       )}
+
       {pinned.length ? buildNotes(pinned, true) : undefined}
       {others.length ? buildNotes(others, false) : undefined}
+      {note.length ? buildNotes(note, false, 'notes') : undefined}
+      {archive.length ? buildNotes(archive, false, 'archive') : undefined}
+      {trash.length ? buildNotes(trash, false, 'trash') : undefined}
     </div>
   );
 };

@@ -29,22 +29,12 @@ const OmniBar = forwardRef(
     },
     ref
   ) => {
-    let currPath = location.pathname.split('/').pop();
-    const { enqueueSnackbar } = useSnackbar();
-    const [searchInput, setSearchInput] = useState('');
     const searchBar = useRef(null);
     const searchReset = useRef(null);
     const searchInputRef = useRef(null);
-
-    const handleRefresh = async ({ target }) => {
-      target.classList.add('spin-animation');
-      setTimeout(() => {
-        target.classList.remove('spin-animation');
-      }, 500);
-      await fetchUser();
-      await fetchData();
-      enqueueSnackbar('Updated');
-    };
+    const { enqueueSnackbar } = useSnackbar();
+    const [searchInput, setSearchInput] = useState('');
+    const currPath = location.pathname.split('/').pop();
 
     const handleSearchChange = ({ target: { value } }) => {
       setSearchInput(value);
@@ -57,7 +47,6 @@ const OmniBar = forwardRef(
     };
 
     const toggleSearch = () => {
-      console.log('running');
       searchBar.current.classList.toggle('hide');
       if (!searchBar.current.classList.contains('hide')) {
         searchInputRef.current.focus();
@@ -67,6 +56,21 @@ const OmniBar = forwardRef(
     const handleSearchReset = () => {
       setSearchInput('');
       searchReset.current.classList.add('disabled');
+    };
+
+    const handleRefresh = async ({ target }) => {
+      target.classList.add('spin-animation');
+      setTimeout(() => {
+        target.classList.remove('spin-animation');
+      }, 500);
+
+      try {
+        await fetchUser();
+        await fetchData();
+        enqueueSnackbar('Updated');
+      } catch (err) {
+        enqueueSnackbar("Couldn't refresh notes");
+      }
     };
 
     useEffect(() => {

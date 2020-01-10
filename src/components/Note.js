@@ -54,9 +54,13 @@ const NewNote = ({
   const autoGrowAfterPopulate = target => {
     target.style.boxSizing = 'border-box';
     const offset = target.offsetHeight - target.clientHeight;
-
     target.style.height = 'auto';
     target.style.height = target.scrollHeight + offset + 'px';
+
+    // target.style.height = `${target.scrollHeight}px`;
+    // if (!target.value) {
+    //   target.style.height = '45px';
+    // }
   };
 
   const openNote = () => {
@@ -67,8 +71,8 @@ const NewNote = ({
       noteOverlayRef.current.classList.remove('note__overlay--close');
 
       if (isSearch) {
-        autoGrowAfterPopulate(headTextHighlights.current);
         autoGrowAfterPopulate(titleTextRef.current);
+        autoGrowAfterPopulate(headTextHighlights.current);
         autoGrowAfterPopulate(headTextContainer.current);
 
         autoGrowAfterPopulate(bodyTextHighlights.current);
@@ -200,17 +204,11 @@ const NewNote = ({
     if (target.classList.contains('note__head__titletext')) {
       const scrollTop = target.scrollTop;
       headTextBackdrop.current.scrollTop = scrollTop;
-
-      const scrollLeft = target.scrollLeft;
-      headTextBackdrop.current.scrollLeft = scrollLeft;
     }
 
     if (target.classList.contains('note__body__content__textarea')) {
       const scrollTop = target.scrollTop;
       bodyTextHighlights.current.scrollTop = scrollTop;
-
-      const scrollLeft = target.scrollLeft;
-      bodyTextBackdrop.current.scrollLeft = scrollLeft;
     }
   };
 
@@ -297,22 +295,33 @@ const NewNote = ({
   };
 
   useEffect(() => {
-    (async () => {
-      // Autogrow notes after filling in content
-      await autoGrowAfterPopulate(titleTextRef.current);
-      await autoGrowAfterPopulate(contentTextRef.current);
+    // (async () => {
+    //   // Autogrow notes after filling in content
+    //   await autoGrowAfterPopulate(titleTextRef.current);
+    //   await autoGrowAfterPopulate(contentTextRef.current);
 
-      if (isSearch) {
-        autoGrowAfterPopulate(headTextHighlights.current);
-        autoGrowAfterPopulate(headTextBackdrop.current);
-        autoGrowAfterPopulate(headTextContainer.current);
+    //   if (isSearch) {
+    //     autoGrowAfterPopulate(headTextHighlights.current);
+    //     // autoGrowAfterPopulate(headTextBackdrop.current);
+    //     autoGrowAfterPopulate(headTextContainer.current);
 
-        autoGrowAfterPopulate(bodyTextHighlights.current);
-        autoGrowAfterPopulate(bodyTextBackdrop.current);
-        autoGrowAfterPopulate(bodyTextContainer.current);
-      }
-    })();
+    //     autoGrowAfterPopulate(bodyTextHighlights.current);
+    //     // autoGrowAfterPopulate(bodyTextBackdrop.current);
+    //     autoGrowAfterPopulate(bodyTextContainer.current);
+    //   }
+    // })();
+    // Autogrow notes after filling in content
+    autoGrowAfterPopulate(titleTextRef.current);
+    autoGrowAfterPopulate(contentTextRef.current);
+
     if (isSearch) {
+      autoGrowAfterPopulate(headTextHighlights.current);
+      autoGrowAfterPopulate(headTextContainer.current);
+
+      autoGrowAfterPopulate(bodyTextHighlights.current);
+      autoGrowAfterPopulate(bodyTextBackdrop.current);
+      autoGrowAfterPopulate(bodyTextContainer.current);
+
       applyHighlights(searchText);
     }
     return () => {};

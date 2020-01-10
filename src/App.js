@@ -38,10 +38,10 @@ const App = () => {
     data: []
   });
   const [userData, setUserData] = useState({});
-  const [redirectTo, setRedirectTo] = useState(null);
-  const [accountModalDisplay, setAccountModalDisplay] = useState(false);
-  const [search, setSearch] = useState({ data: [] });
   const [searchText, setSearchText] = useState('');
+  const [redirectTo, setRedirectTo] = useState(null);
+  const [search, setSearch] = useState({ data: [] });
+  const [accountModalDisplay, setAccountModalDisplay] = useState(false);
 
   let labels;
   labels = app.data.map(i => (i.status === 'note' ? i.label : undefined));
@@ -142,18 +142,18 @@ const App = () => {
       element.style.boxSizing = 'border-box';
       var offset = element.offsetHeight - element.clientHeight;
       document.addEventListener('input', function(event) {
-        const highlights = element.parentElement.children[0].children[0];
-        if (highlights) {
-          // console.log(highlights)
-          if (highlights.classList.contains('note__head__highlights')) {
-            element.parentElement.style.height = 'auto';
-            element.parentElement.style.height =
-              element.parentElement.scrollHeight + offset + 'px';
+        // const highlights = element.parentElement.children[0].children[0];
+        // if (highlights) {
+        //   // console.log(highlights)
+        //   if (highlights.classList.contains('note__head__highlights')) {
+        //     element.parentElement.style.height = 'auto';
+        //     element.parentElement.style.height =
+        //       element.parentElement.scrollHeight + offset + 'px';
 
-            highlights.style.height = 'auto';
-            highlights.style.height = highlights.scrollHeight + offset + 'px';
-          }
-        }
+        //     highlights.style.height = 'auto';
+        //     highlights.style.height = highlights.scrollHeight + offset + 'px';
+        //   }
+        // }
         event.target.style.height = 'auto';
         event.target.style.height = event.target.scrollHeight + offset + 'px';
       });
@@ -172,22 +172,23 @@ const App = () => {
   });
 
   const handleSearch = value => {
-    const search = app.data.map((d, i) => {
-      if (
-        d.title.toLowerCase().includes(value) ||
-        d.content.toLowerCase().includes(value)
-      ) {
-        return d;
-      }
-    });
-
-    setSearchText(value);
-    setSearch({ data: _.compact(search) });
-
-    // console.log(_.compact(search));
+    if (value) {
+      const search = app.data.map((d, i) => {
+        if (
+          d.title.toLowerCase().includes(value) ||
+          d.content.toLowerCase().includes(value)
+        ) {
+          return d;
+        }
+      });
+      setSearchText(value);
+      setSearch({ data: _.compact(search) });
+    } else {
+      setSearchText('');
+      setSearch({ data: [] });
+    }
   };
 
-  // if (true) return <></>;
   return (
     <Router>
       <div className='app'>
@@ -237,7 +238,7 @@ const App = () => {
               render={props => (
                 <Notes
                   {...props}
-                  noteType='note'
+                  noteType=''
                   isSearch={true}
                   allLabels={labels}
                   withNewNote={false}
