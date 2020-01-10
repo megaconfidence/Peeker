@@ -87,8 +87,10 @@ const OmniBar = forwardRef(
           <div
             data-img
             data-imgname='hamburger'
-            onClick={currPath !== 'signin' ? onClick : undefined}
-            className='omnibar__left__icon omnibar__left__icon--menutriger'
+            onClick={onClick}
+            className={`omnibar__left__icon omnibar__left__icon--menutriger ${
+              currPath === 'signin' ? 'disabled' : ''
+            }`}
           />
           <div className='omnibar__left__pagename'>
             {currPath ? currPath : 'Peeker'}
@@ -125,7 +127,9 @@ const OmniBar = forwardRef(
             <div
               data-img
               data-imgname='search'
-              className='omnibar__icon'
+              className={`omnibar__icon  ${
+                currPath === 'signin' ? 'disabled' : ''
+              }`}
               onClick={toggleSearch}
             />
           </Link>
@@ -133,7 +137,9 @@ const OmniBar = forwardRef(
             data-img
             data-imgname='refresh'
             onClick={handleRefresh}
-            className='omnibar__icon'
+            className={`omnibar__icon ${
+              currPath === 'signin' ? 'disabled' : ''
+            }`}
           />
           {profileImageURL === undefined || profileImageURL === 'no_image' ? (
             <div

@@ -63,7 +63,7 @@
 }
 
 .note__head__highlights,
-.note__body__highlight {
+.note__body__highlights {
   color: transparent !important;
   white-space: pre-wrap;
 }
