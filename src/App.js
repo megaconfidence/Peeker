@@ -16,6 +16,7 @@ import NavBar from './components/NavBar';
 import Reminders from './routes/Reminders';
 import OmniBar from './components/OmniBar';
 import Account from './components/Account';
+import { useSnackbar } from 'notistack';
 import React, { useRef, useEffect, useState } from 'react';
 
 const NoMatchPage = () => {
@@ -37,6 +38,8 @@ const App = () => {
   const [app, setApp] = useState({
     data: []
   });
+  const deferredPrompt = useRef();
+  const { enqueueSnackbar } = useSnackbar();
   const [userData, setUserData] = useState({});
   const [searchText, setSearchText] = useState('');
   const [redirectTo, setRedirectTo] = useState(null);
@@ -137,6 +140,25 @@ const App = () => {
     }
   };
 
+  const handleInstallBtnClick = ({ target }) => {
+    if (target.classList.contains('accept')) {
+      if (deferredPrompt.current) {
+        deferredPrompt.current.prompt();
+        deferredPrompt.current.userChoice.then(choiceResult => {
+          if (choiceResult.outcome === 'accepted') {
+            enqueueSnackbar('Awesome! Peeker is being installed');
+          } else {
+            enqueueSnackbar('😢');
+          }
+          deferredPrompt.current = null;
+        });
+      }
+    }
+    const installBanner = target.parentNode.parentNode.parentNode;
+    installBanner.classList.add('hide');
+    localStorage.setItem('isInstallPromptRespondedTo', true);
+  };
+
   function addAutoResize() {
     document.querySelectorAll('[data-autoresize]').forEach(function(element) {
       element.style.boxSizing = 'border-box';
@@ -166,6 +188,14 @@ const App = () => {
     fetchData();
     addAutoResize();
     window.addEventListener('scroll', handleScroll);
+
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt.current = e;
+    });
+    window.addEventListener('appinstalled', () => {
+      enqueueSnackbar('Peeker is installed! Check your homescreen');
+    });
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -211,7 +241,12 @@ const App = () => {
           profileImageURL={userData.profileImageURL}
           handleAccountModalDisalay={handleAccountModalDisalay}
         />
-        <NavBar labels={labels} ref={nav} onClick={handleNavClick} />
+        <NavBar
+          labels={labels}
+          ref={nav}
+          onClick={handleNavClick}
+          handleInstallBtnClick={handleInstallBtnClick}
+        />
         <div className='app__content'>
           <Switch>
             <Route

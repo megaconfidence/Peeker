@@ -1,8 +1,15 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import './NavBar.css';
 
-const NavBar = forwardRef(({ labels, onClick }, ref) => {
+const NavBar = forwardRef(({ labels, onClick, handleInstallBtnClick }, ref) => {
+  const isInstallPromptRespondedTo = useRef();
+  useEffect(() => {
+    isInstallPromptRespondedTo.current = localStorage.getItem(
+      'isInstallPromptRespondedTo'
+    );
+    return () => {};
+  });
   const getLabel = () => (
     <div className='nav__group nav__group--middle'>
       <ul className='nav__list'>
@@ -120,6 +127,38 @@ const NavBar = forwardRef(({ labels, onClick }, ref) => {
                 </NavLink>
               </li>
             </ul>
+          </div>
+          <div
+            className={`nav__install ${
+              isInstallPromptRespondedTo.current === 'true' ? 'hide' : ''
+            }`}
+          >
+            <div className='nav__install__head'>
+              <div
+                data-img
+                data-imgname='peeker'
+                className='nav__install__head__img'
+              />
+            </div>
+            <div className='nav__install__body'>
+              <div className='nav__install__body__text'>
+                Take notes faster with our free app!
+              </div>
+              <div className='nav__install__body__buttons'>
+                <div
+                  className='nav__install__body__buttons__reject reject'
+                  onClick={handleInstallBtnClick}
+                >
+                  Not now
+                </div>
+                <div
+                  className='nav__install__body__buttons__accept accept'
+                  onClick={handleInstallBtnClick}
+                >
+                  Install
+                </div>
+              </div>
+            </div>
           </div>
         </nav>
       </div>

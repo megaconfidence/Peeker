@@ -27,6 +27,7 @@
   display: flex;
   min-height: 100vh;
   padding-right: 5px;
+  position: relative;
   flex-direction: column;
   background-color: #fff;
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.28);
@@ -34,8 +35,8 @@
 }
 .nav__name {
   opacity: 1;
-  color: #5f6368;
   font-size: 22px;
+  color: #5f6368;
   line-height: 24px;
   padding-left: 16px;
   margin: 20px 0 10px 0;
@@ -55,13 +56,12 @@
 .nav__list__item {
   all: unset;
 }
-.nav__list__item__link {
+.nav__list__item__link {  
+  color: black;
   display: flex;
   align-items: center;
-  padding: 12px 0 12px 16px;
-
   text-decoration: none;
-  color: black;
+  padding: 12px 0 12px 16px;
   border-radius: 0 25px 25px 0;
 }
 .nav__list__item__link__icon {
@@ -73,13 +73,55 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   color: rgb(32, 33, 36);
+  width: calc(100% - 75px);
   text-transform: capitalize;
   font-family: 'Noto Sans', sans-serif;
-  width: calc(100% - 75px);
 }
 .selected {
   background-color: #feefc3;
 }
 .selected .nav__list__item__link__icon {
   opacity: 1;
+}
+.nav__install {
+  bottom: 0;
+  color: #fff;
+  display: flex;
+  position: absolute;
+  background-color: #000;
+}
+.nav__install__head {
+  width: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav__install__head__img {
+  width: 75px;
+  height: 75px;
+  background-size: 75px 75px;
+}
+.nav__install__body {
+  width: 70%;
+  padding: 15px 10px;
+  font-size: 14px;
+}
+.nav__install__body__text {
+  margin-bottom: 5px;
+}
+.nav__install__body__buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.nav__install__body__buttons__reject {
+  opacity: 0.5;
+  cursor: pointer;
+}
+.nav__install__body__buttons__accept {
+  color: #000;
+  cursor: pointer;
+  padding: 7px 15px;
+  border-radius: 20px;
+  background-color: #fff;
 }
