@@ -148,7 +148,7 @@ const App = () => {
           if (choiceResult.outcome === 'accepted') {
             enqueueSnackbar('Awesome! Peeker is being installed');
           } else {
-            enqueueSnackbar('😢');
+            enqueueSnackbar('Peeker is not installed 😢');
           }
           deferredPrompt.current = null;
         });
@@ -194,7 +194,7 @@ const App = () => {
       deferredPrompt.current = e;
     });
     window.addEventListener('appinstalled', () => {
-      enqueueSnackbar('Peeker is installed! Check your homescreen');
+      enqueueSnackbar('Peeker is installed, Check your homescreen!');
     });
     return () => {
       window.removeEventListener('scroll', handleScroll);

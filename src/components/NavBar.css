@@ -87,7 +87,8 @@
   bottom: 0;
   color: #fff;
   display: flex;
-  position: absolute;
+  position: sticky;
+  margin-right: -5px;
   background-color: #000;
 }
 .nav__install__head {
