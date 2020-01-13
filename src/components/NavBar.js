@@ -128,6 +128,7 @@ const NavBar = forwardRef(({ labels, onClick, handleInstallBtnClick }, ref) => {
               </li>
             </ul>
           </div>
+          </nav>
           <div
             className={`nav__install ${
               isInstallPromptRespondedTo.current === 'true' ? 'hide' : ''
@@ -160,7 +161,7 @@ const NavBar = forwardRef(({ labels, onClick, handleInstallBtnClick }, ref) => {
               </div>
             </div>
           </div>
-        </nav>
+        
       </div>
     </>
   );
