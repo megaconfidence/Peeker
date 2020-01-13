@@ -27,7 +27,6 @@
   display: flex;
   min-height: 100vh;
   padding-right: 5px;
-  /* position: absolute; */
   flex-direction: column;
   background-color: #fff;
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.28);
@@ -56,7 +55,7 @@
 .nav__list__item {
   all: unset;
 }
-.nav__list__item__link {  
+.nav__list__item__link {
   color: black;
   display: flex;
   align-items: center;
@@ -84,12 +83,11 @@
   opacity: 1;
 }
 .nav__install {
-  bottom: 0;
-  width: 269px;
   color: #fff;
   display: flex;
-  position: sticky;
+  margin-right: -5px;
   background-color: #000;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.28);
 }
 .nav__install__head {
   width: 30%;

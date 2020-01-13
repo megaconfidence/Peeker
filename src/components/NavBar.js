@@ -38,6 +38,39 @@ const NavBar = forwardRef(({ labels, onClick, handleInstallBtnClick }, ref) => {
       <div className='slidein' ref={ref} onClick={onClick}>
         <nav className=' nav no-select'>
           <div className='nav__name'>Peeker</div>
+          <div
+            className={`nav__install ${
+              isInstallPromptRespondedTo.current === 'true' ? 'hide' : ''
+            }`}
+          >
+            <div className='nav__install__head'>
+              <div
+                data-img
+                data-imgname='peeker'
+                className='nav__install__head__img'
+              />
+            </div>
+            <div className='nav__install__body'>
+              <div className='nav__install__body__text'>
+                Take notes faster with our free app!
+              </div>
+              <div className='nav__install__body__buttons'>
+                <div
+                  className='nav__install__body__buttons__reject reject'
+                  onClick={handleInstallBtnClick}
+                >
+                  Not now
+                </div>
+                <div
+                  className='nav__install__body__buttons__accept accept'
+                  onClick={handleInstallBtnClick}
+                >
+                  Install
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className='nav__group'>
             <ul className='nav__list'>
               <li className='nav__list__item'>
@@ -128,40 +161,7 @@ const NavBar = forwardRef(({ labels, onClick, handleInstallBtnClick }, ref) => {
               </li>
             </ul>
           </div>
-          </nav>
-          <div
-            className={`nav__install ${
-              isInstallPromptRespondedTo.current === 'true' ? 'hide' : ''
-            }`}
-          >
-            <div className='nav__install__head'>
-              <div
-                data-img
-                data-imgname='peeker'
-                className='nav__install__head__img'
-              />
-            </div>
-            <div className='nav__install__body'>
-              <div className='nav__install__body__text'>
-                Take notes faster with our free app!
-              </div>
-              <div className='nav__install__body__buttons'>
-                <div
-                  className='nav__install__body__buttons__reject reject'
-                  onClick={handleInstallBtnClick}
-                >
-                  Not now
-                </div>
-                <div
-                  className='nav__install__body__buttons__accept accept'
-                  onClick={handleInstallBtnClick}
-                >
-                  Install
-                </div>
-              </div>
-            </div>
-          </div>
-        
+        </nav>
       </div>
     </>
   );
