@@ -6,9 +6,9 @@ import request from '../helpers';
 import { useSnackbar } from 'notistack';
 // import { Button } from '@material-ui/core';
 import React, { useRef, useState, useEffect } from 'react';
-
 const NewNote = ({
   id,
+  due,
   title,
   status,
   pinned,
@@ -33,6 +33,8 @@ const NewNote = ({
   });
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [allNoteLabels, setAllNoteLabels] = useState(labels);
+
+  const [reminderDate, setReminderDate] = useState({ value: due });
 
   const noteRef = useRef(null);
   const pinimgRef = useRef(null);
@@ -95,18 +97,23 @@ const NewNote = ({
           title,
           pinned,
           content,
+          due,
           label: noteLabels
         };
         // Get note data to update
         const noteId = noteRef.current.getAttribute('data-note-id');
+        const subscription =
+          JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
 
         const payload = {
           label: noteLabel.data,
+          due: reminderDate.value,
           pinned: pinimgRef.current
             .getAttribute('data-imgname')
             .includes('pin_fill'),
           title: titleTextRef.current.textContent,
-          content: contentTextRef.current.textContent
+          content: contentTextRef.current.textContent,
+          subscription
         };
 
         if (!_.isEqual(originalData, payload)) {
@@ -294,6 +301,9 @@ const NewNote = ({
     createLabelOverlay.current.classList.toggle('hide');
   };
 
+  const handleReminderDateChange = ({ target: { value } }) => {
+    setReminderDate({ value });
+  };
   useEffect(() => {
     // (async () => {
     //   // Autogrow notes after filling in content
@@ -607,6 +617,11 @@ const NewNote = ({
               />
             </div>
           </div>
+          <input
+            type='datetime-local'
+            onChange={handleReminderDateChange}
+            value={reminderDate.value}
+          />
         </div>
         <div className='note__footer'>
           {status === 'trash' ? (

@@ -70,10 +70,11 @@ const Notes = ({
                 isSearch={isSearch}
                 noteLabels={d.label}
                 fetchData={fetchData}
+                due={d.due}
                 allLabels={allLabels}
                 updatedAt={d.updatedAt}
                 searchText={searchText}
-                key={`${k}-${d.title}`}
+                key={`${k}-${d._id}`}
                 deleteLocal={deleteLocal}
                 updateLocal={updateLocal}
               />

@@ -18,9 +18,9 @@
     "react-scripts": "3.2.0"
   },
   "scripts": {
-    "start": "cross-env CLIENT_ENV=dev craco start",
-    "prod": "cross-env CLIENT_ENV=prod craco start",
-    "build": "cross-env CLIENT_ENV=prod craco build",
+    "start": "cross-env CLIENT_ENV=dev craco start && cra-append-sw --mode dev ./custom-sw.js",
+    "prod": "cross-env CLIENT_ENV=dev craco build && cra-append-sw ./custom-sw.js",
+    "build": "cross-env CLIENT_ENV=prod craco build && cra-append-sw ./custom-sw.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "@craco/craco": "^5.6.2",
+    "cra-append-sw": "^2.7.0",
     "cross-env": "^6.0.3"
   }
 }
