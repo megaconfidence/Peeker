@@ -618,7 +618,7 @@ const NewNote = ({
             </div>
           </div>
           <input
-            type='datetime'
+            type='datetime-local'
             onChange={handleReminderDateChange}
             value={reminderDate.value}
           />
