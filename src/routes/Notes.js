@@ -25,6 +25,10 @@ const Notes = ({
     note = data.filter(d => (d.status === 'note' ? d : undefined));
     archive = data.filter(d => (d.status === 'archive' ? d : undefined));
     trash = data.filter(d => (d.status === 'trash' ? d : undefined));
+  } else if ((noteType = 'due')) {
+    data = data.filter(d => (d.due ? d : undefined));
+    pinned = data.filter(d => (d.pinned ? d : undefined));
+    others = data.filter(d => (!d.pinned ? d : undefined));
   } else {
     data = data.filter(d => (d.status === noteType ? d : undefined));
     pinned = data.filter(d => (d.pinned ? d : undefined));

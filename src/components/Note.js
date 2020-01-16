@@ -6,6 +6,8 @@ import request from '../helpers';
 import { useSnackbar } from 'notistack';
 // import { Button } from '@material-ui/core';
 import React, { useRef, useState, useEffect } from 'react';
+import DatePicker from './DatePicker';
+
 const NewNote = ({
   id,
   due,
@@ -34,7 +36,7 @@ const NewNote = ({
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [allNoteLabels, setAllNoteLabels] = useState(labels);
 
-  const [reminderDate, setReminderDate] = useState({ value: due });
+  const [reminderDate, setReminderDate] = useState(due);
 
   const noteRef = useRef(null);
   const pinimgRef = useRef(null);
@@ -64,6 +66,7 @@ const NewNote = ({
     //   target.style.height = '45px';
     // }
   };
+  const dpwrapper = useRef(null);
 
   const openNote = () => {
     const note = noteRef.current.classList;
@@ -106,8 +109,8 @@ const NewNote = ({
           JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
 
         const payload = {
+          due: reminderDate,
           label: noteLabel.data,
-          due: reminderDate.value,
           pinned: pinimgRef.current
             .getAttribute('data-imgname')
             .includes('pin_fill'),
@@ -301,9 +304,16 @@ const NewNote = ({
     createLabelOverlay.current.classList.toggle('hide');
   };
 
-  const handleReminderDateChange = ({ target: { value } }) => {
-    setReminderDate({ value });
+  const handleReminderDate = value => {
+    const newDate = moment(value).format('YYYY-MM-DDTHH:mm:ss');
+    setReminderDate(newDate);
   };
+  const handleAlarmiconClick = () => {
+    dpwrapper.current.classList.toggle('hide');
+  };
+  // const handleReminderDate = ({ target: { value } }) => {
+  //   setReminderDate({ value });
+  // };
   useEffect(() => {
     // (async () => {
     //   // Autogrow notes after filling in content
@@ -472,6 +482,19 @@ const NewNote = ({
               className='note__body__content__textarea textarea--mod'
             ></textarea> */}
             <div className='note__body__content__label'>
+              {due ? (
+                <div
+                  className='note__body__content__label__tag note__body__content__label__tag--reminder'
+                  onClick={handleAlarmiconClick}
+                >
+                  <div data-img data-imgname='alarm' />
+                  <span className='text'>
+                    {moment(reminderDate).format('MMMM Do YYYY, h:mm a')}
+                  </span>
+                </div>
+              ) : (
+                undefined
+              )}
               {noteLabel.data.map((d, i) =>
                 d ? (
                   <div key={i} className='note__body__content__label__tag'>
@@ -497,7 +520,8 @@ const NewNote = ({
               <div
                 data-img
                 data-imgname='alarm'
-                className='note__body__controls__item__image disabled'
+                className='note__body__controls__item__image'
+                onClick={handleAlarmiconClick}
               />
               <div className='note__body__controls__item__withmodal'>
                 <div
@@ -617,11 +641,7 @@ const NewNote = ({
               />
             </div>
           </div>
-          <input
-            type='datetime-local'
-            onChange={handleReminderDateChange}
-            value={reminderDate.value}
-          />
+          <DatePicker value={handleReminderDate} due={due} ref={dpwrapper} />
         </div>
         <div className='note__footer'>
           {status === 'trash' ? (

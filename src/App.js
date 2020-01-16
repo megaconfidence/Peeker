@@ -13,7 +13,6 @@ import Label from './routes/Label';
 import Signin from './routes/Signin';
 import Settings from './routes/Settings';
 import NavBar from './components/NavBar';
-import Reminders from './routes/Reminders';
 import OmniBar from './components/OmniBar';
 import Account from './components/Account';
 import { useSnackbar } from 'notistack';
@@ -290,7 +289,19 @@ const App = () => {
             <Route
               exact
               path='/reminders'
-              render={props => <Reminders {...props} />}
+              render={props => (
+                <Notes
+                  {...props}
+                  noteType='due'
+                  data={app.data}
+                  allLabels={labels}
+                  withNewNote={false}
+                  addLocal={addLocal}
+                  fetchData={fetchData}
+                  updateLocal={updateLocal}
+                  deleteLocal={deleteLocal}
+                />
+              )}
             />
             <Route
               exact

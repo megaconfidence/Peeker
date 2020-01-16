@@ -93,7 +93,7 @@ const NavBar = forwardRef(({ labels, onClick, handleInstallBtnClick }, ref) => {
                   exact
                   to='/reminders'
                   activeClassName='selected'
-                  className='nav__list__item__link disabled'
+                  className='nav__list__item__link'
                 >
                   <div
                     data-img

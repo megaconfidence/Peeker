@@ -133,6 +133,14 @@ img[alt='options'] {
   margin-left: 5px;
   background-size: 14px 14px;
 }
+.note__body__content__label__tag--reminder {
+
+}
+.note__body__content__label__tag--reminder [data-img] {
+  display: block !important;
+  margin-left: 0;
+  margin-right: 5px;
+}
 .note__body__controls {
   outline: none;
 }

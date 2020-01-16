@@ -116,3 +116,6 @@
 [data-imgname='peeker'] {
   background-image: url(/image/icon/peeker.png);
 }
+[data-imgname='repeat'] {
+  background-image: url(/image/icon/repeat.svg);
+}

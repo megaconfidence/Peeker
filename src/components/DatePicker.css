@@ -1,0 +1,34 @@
+.dpwrapper {
+  top: 10%;
+  left: -1px;
+  z-index: 5;
+  width: 101vw;
+  height: 130vh;
+  position: fixed;
+  transform: translateY(-13%);
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.dpwrapper__modal {
+  top: 20%;
+  left: 50%;
+  width: 300px;
+  position: relative;
+  text-align: center;
+  background: white;
+  transform: translate(-50%, -20%);
+}
+.dpwrapper__modal__head {
+  padding: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+.dpwrapper__modal__body {
+  padding: 20px 10px;
+}
+.dpwrapper__modal__footer {
+  display: flex;
+  padding: 10px 30px;
+  justify-content: space-between;
+}
+.dpwrapper__modal__btn {
+  opacity: 0.8;
+}
