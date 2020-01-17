@@ -108,8 +108,10 @@ const NewNote = ({
         const subscription =
           JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
 
+        console.log(moment(reminderDate).format('YYYY-MM-DD HH:mm:ss Z'));
+
         const payload = {
-          due: reminderDate,
+          due: moment(reminderDate).format(),
           label: noteLabel.data,
           pinned: pinimgRef.current
             .getAttribute('data-imgname')
