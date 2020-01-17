@@ -183,7 +183,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    fetchUser();
+    fetchUser(); 
     fetchData();
     addAutoResize();
     window.addEventListener('scroll', handleScroll);

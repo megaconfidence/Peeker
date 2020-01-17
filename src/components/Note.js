@@ -35,7 +35,6 @@ const NewNote = ({
   });
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [allNoteLabels, setAllNoteLabels] = useState(labels);
-
   const [reminderDate, setReminderDate] = useState(due);
 
   const noteRef = useRef(null);
@@ -108,10 +107,8 @@ const NewNote = ({
         const subscription =
           JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
 
-        console.log(moment(reminderDate).format(), moment().format());
-
         const payload = {
-          due: moment(reminderDate).format(),
+          due: reminderDate ? moment(reminderDate).format() : '',
           label: noteLabel.data,
           pinned: pinimgRef.current
             .getAttribute('data-imgname')
@@ -314,9 +311,11 @@ const NewNote = ({
   const handleAlarmiconClick = () => {
     dpwrapper.current.classList.toggle('hide');
   };
-  // const handleReminderDate = ({ target: { value } }) => {
-  //   setReminderDate({ value });
-  // };
+
+  const handleDeleteReminder = e => {
+    e.stopPropagation();
+    setReminderDate('');
+  };
   useEffect(() => {
     // (async () => {
     //   // Autogrow notes after filling in content
@@ -485,7 +484,7 @@ const NewNote = ({
               className='note__body__content__textarea textarea--mod'
             ></textarea> */}
             <div className='note__body__content__label'>
-              {due ? (
+              {reminderDate ? (
                 <div
                   className='note__body__content__label__tag note__body__content__label__tag--reminder'
                   onClick={handleAlarmiconClick}
@@ -494,6 +493,11 @@ const NewNote = ({
                   <span className='text'>
                     {moment(reminderDate).format('MMMM Do YYYY, h:mm a')}
                   </span>
+                  <div
+                    data-img
+                    data-imgname='close'
+                    onClick={handleDeleteReminder}
+                  />
                 </div>
               ) : (
                 undefined

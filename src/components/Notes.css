@@ -136,7 +136,7 @@ img[alt='options'] {
 .note__body__content__label__tag--reminder {
 
 }
-.note__body__content__label__tag--reminder [data-img] {
+.note__body__content__label__tag--reminder [data-imgname='alarm'] {
   display: block !important;
   margin-left: 0;
   margin-right: 5px;

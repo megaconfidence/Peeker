@@ -32,3 +32,6 @@
 .dpwrapper__modal__btn {
   opacity: 0.8;
 }
+.MuiInputBase-input {
+    text-align: center;
+}
