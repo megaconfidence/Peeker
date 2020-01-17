@@ -114,6 +114,7 @@ const NewNote = ({
           pinned: pinimgRef.current
             .getAttribute('data-imgname')
             .includes('pin_fill'),
+          clientNow: moment().format(),
           title: titleTextRef.current.textContent,
           content: contentTextRef.current.textContent,
           subscription
