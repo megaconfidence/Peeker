@@ -108,7 +108,7 @@ const NewNote = ({
         const subscription =
           JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
 
-        console.log(moment(reminderDate).format('YYYY-MM-DD HH:mm:ss Z'));
+        console.log(moment(reminderDate).format(), moment().format());
 
         const payload = {
           due: moment(reminderDate).format(),
