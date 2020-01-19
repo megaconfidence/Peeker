@@ -196,7 +196,7 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
           ref={titleTextRef}
           placeholder='Title'
           className='note__head__titletext textarea--mod'
-        ></textarea>
+        />
         <div
           data-img
           ref={pinimgRef}
@@ -214,7 +214,7 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
             ref={contentTextRef}
             placeholder='Take a note...'
             className='note__body__content__textarea textarea--mod'
-          ></textarea>
+          />
           <div className='note__body__content__label'>
             {noteLabel.data.map((d, i) =>
               d ? (

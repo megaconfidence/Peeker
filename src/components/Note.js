@@ -415,7 +415,7 @@ const NewNote = ({
                 onChange={handleTextareaChange}
                 onScroll={handleTextareaScroll}
                 className='note__head__titletext search textarea--mod'
-              ></textarea>
+              />
             </div>
           ) : (
             <textarea
@@ -428,7 +428,7 @@ const NewNote = ({
               value={titleTextState}
               onChange={handleTextareaChange}
               className='note__head__titletext textarea--mod'
-            ></textarea>
+            />
           )}
 
           <div
@@ -459,7 +459,7 @@ const NewNote = ({
                   onScroll={handleTextareaScroll}
                   onChange={handleTextareaChange}
                   className='note__body__content__textarea search textarea--mod'
-                ></textarea>
+                />
               </div>
             ) : (
               <textarea
@@ -471,18 +471,9 @@ const NewNote = ({
                 value={contentTextState}
                 onChange={handleTextareaChange}
                 className='note__body__content__textarea textarea--mod'
-              ></textarea>
+              />
             )}
-            {/* <textarea
-              data-autoresize
-              spellCheck='false'
-              onFocus={openNote}
-              placeholder='Note'
-              ref={contentTextRef}
-              value={contentTextState}
-              onChange={handleTextareaChange}
-              className='note__body__content__textarea textarea--mod'
-            ></textarea> */}
+           
             <div className='note__body__content__label'>
               {reminderDate ? (
                 <div
