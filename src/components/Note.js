@@ -201,7 +201,7 @@ const NewNote = ({
       .replace(/\n$/g, '\n\n')
       .replace(regex, '<mark>$&</mark>');
   };
-  const handleTextareaChange = ({ target }) => {
+  const handleTextareaInput = ({ target }) => {
     if (target.classList.contains('note__head__titletext')) {
       setTitleTextState(target.value);
     }
@@ -412,7 +412,7 @@ const NewNote = ({
                 placeholder='Title'
                 maxLength='100'
                 value={titleTextState}
-                onChange={handleTextareaChange}
+                onChange={handleTextareaInput}
                 onScroll={handleTextareaScroll}
                 className='note__head__titletext search textarea--mod'
               />
@@ -426,7 +426,7 @@ const NewNote = ({
               placeholder='Title'
               maxLength='100'
               value={titleTextState}
-              onChange={handleTextareaChange}
+              onChange={handleTextareaInput}
               className='note__head__titletext textarea--mod'
             />
           )}
@@ -457,7 +457,7 @@ const NewNote = ({
                   ref={contentTextRef}
                   value={contentTextState}
                   onScroll={handleTextareaScroll}
-                  onChange={handleTextareaChange}
+                  onChange={handleTextareaInput}
                   className='note__body__content__textarea search textarea--mod'
                 />
               </div>
@@ -469,11 +469,11 @@ const NewNote = ({
                 placeholder='Note'
                 ref={contentTextRef}
                 value={contentTextState}
-                onChange={handleTextareaChange}
+                onChange={handleTextareaInput}
                 className='note__body__content__textarea textarea--mod'
               />
             )}
-           
+
             <div className='note__body__content__label'>
               {reminderDate ? (
                 <div

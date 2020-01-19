@@ -13,6 +13,9 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
   const createNewLabel = useRef(null);
   const createLabelOverlay = useRef(null);
 
+  const [titleTextState, setTitleTextState] = useState('');
+  const [contentTextState, setContentTextState] = useState('');
+
   // holds all labels from db
   const [labels, setLabels] = useState(allLabels);
   const [labelSearchbox, setLabelSearchbox] = useState('');
@@ -73,7 +76,14 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
       fetchData();
     }
   };
-
+  const handleTextareaInput = ({ target }) => {
+    if (target.classList.contains('note__head__titletext')) {
+      setTitleTextState(target.value);
+    }
+    if (target.classList.contains('note__body__content__textarea')) {
+      setContentTextState(target.value);
+    }
+  };
   const pinNote = ({ target }) => {
     const src = target.getAttribute('data-imgname');
     if (src.includes('pin_fill')) {
@@ -195,6 +205,8 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
           spellCheck='false'
           ref={titleTextRef}
           placeholder='Title'
+          value={titleTextState}
+          onChange={handleTextareaInput}
           className='note__head__titletext textarea--mod'
         />
         <div
@@ -213,6 +225,8 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
             onFocus={openNote}
             ref={contentTextRef}
             placeholder='Take a note...'
+            value={contentTextState}
+            onChange={handleTextareaInput}
             className='note__body__content__textarea textarea--mod'
           />
           <div className='note__body__content__label'>
