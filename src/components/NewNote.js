@@ -1,9 +1,11 @@
 import './Notes.css';
 import './NewNote.css';
 import _ from 'lodash';
-import response from '../helpers';
+import request from '../helpers';
 import ObjectID from 'bson-objectid';
 import React, { useRef, useState } from 'react';
+import DatePicker from './DatePicker';
+import moment from 'moment';
 
 const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
   const noteRef = useRef(null);
@@ -15,6 +17,9 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
 
   const [titleTextState, setTitleTextState] = useState('');
   const [contentTextState, setContentTextState] = useState('');
+
+  const dpwrapper = useRef(null);
+  const [reminderDate, setReminderDate] = useState('');
 
   // holds all labels from db
   const [labels, setLabels] = useState(allLabels);
@@ -29,11 +34,11 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
     noteRef.current.classList.remove('nwnote--closed');
   };
 
-  const closeNote = async () => {
-    const noteTitle = titleTextRef.current.value;
+  const uploadChanges = async () => {
     noteRef.current.classList.add('nwnote--closed');
-    const noteContent = contentTextRef.current.value;
 
+    const noteTitle = titleTextRef.current.value;
+    const noteContent = contentTextRef.current.value;
     const pinned = pinimgRef.current
       .getAttribute('data-imgname')
       .includes('pin_fill');
@@ -43,6 +48,9 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
     setNoteLabel({
       data: []
     });
+    setReminderDate('');
+    setTitleTextState('');
+    setContentTextState('');
     titleTextRef.current.value = '';
     contentTextRef.current.value = '';
     titleTextRef.current.style.height = '45px';
@@ -57,6 +65,7 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
         label: labels,
         status: 'note',
         title: noteTitle || '',
+        due: reminderDate || '',
         content: noteContent || ''
       };
 
@@ -70,10 +79,10 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
         _id: ObjectID.generate()
       };
 
+      console.log('## saving note');
       // Updates state with local payload
       addLocal(fakePayload);
-      await response('post', 'api/note', payload);
-      fetchData();
+      await request('post', 'api/note', payload);
     }
   };
   const handleTextareaInput = ({ target }) => {
@@ -174,28 +183,31 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
     createLabelOverlay.current.classList.toggle('hide');
   };
 
+  const handleReminderDate = value => {
+    const newDate = moment(value).format();
+    setReminderDate(newDate);
+  };
+
+  const handleDeleteReminder = e => {
+    e.stopPropagation();
+    setReminderDate('');
+  };
+
+  const handleAlarmiconClick = () => {
+    dpwrapper.current.classList.toggle('hide');
+  };
+
   const labelModalListItems = allNoteLabels.map((d, i) => {
     // This function add checked class to the checkbox if the note has that label
     const m = _.find(noteLabel.data, i => (i === d ? d : undefined));
-    if (m) {
-      return (
-        <li key={i}>
-          <div className='label' onClick={handleLabelModalListItemClick}>
-            <div className='checkbox checked' value={d}></div>
-            <span className='text'>{d}</span>
-          </div>
-        </li>
-      );
-    } else {
-      return (
-        <li key={i}>
-          <div className='label' onClick={handleLabelModalListItemClick}>
-            <div className='checkbox' value={d}></div>
-            <span className='text'>{d}</span>
-          </div>
-        </li>
-      );
-    }
+    return (
+      <li key={i}>
+        <div className='label' onClick={handleLabelModalListItemClick}>
+          <div value={d} className={`checkbox ${m ? 'checked' : ''}`}></div>
+          <span className='text'>{d}</span>
+        </div>
+      </li>
+    );
   });
   return (
     <div className='note nwnote nwnote--closed' ref={noteRef}>
@@ -230,6 +242,24 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
             className='note__body__content__textarea textarea--mod'
           />
           <div className='note__body__content__label'>
+            {reminderDate ? (
+              <div
+                className='note__body__content__label__tag note__body__content__label__tag--reminder'
+                onClick={handleAlarmiconClick}
+              >
+                <div data-img data-imgname='alarm' />
+                <span className='text'>
+                  {moment(reminderDate).format('MMMM Do YYYY, h:mm a')}
+                </span>
+                <div
+                  data-img
+                  data-imgname='close'
+                  onClick={handleDeleteReminder}
+                />
+              </div>
+            ) : (
+              undefined
+            )}
             {noteLabel.data.map((d, i) =>
               d ? (
                 <div key={i} className='note__body__content__label__tag'>
@@ -252,7 +282,8 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
             <div
               data-img
               data-imgname='alarm'
-              className='note__body__controls__item__image disabled'
+              className='note__body__controls__item__image'
+              onClick={handleAlarmiconClick}
             />
             <div className='note__body__controls__item__withmodal'>
               <div
@@ -348,9 +379,10 @@ const NewNote = ({ addLocal, allLabels, fetchData, labelForNewNote }) => {
             />
           </div>
         </div>
+        <DatePicker value={handleReminderDate} ref={dpwrapper} />
       </div>
       <div className='note__footer'>
-        <button className='note__footer__closebtn' onClick={closeNote}>
+        <button className='note__footer__closebtn' onClick={uploadChanges}>
           Save
         </button>
       </div>

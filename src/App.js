@@ -16,7 +16,7 @@ import NavBar from './components/NavBar';
 import OmniBar from './components/OmniBar';
 import Account from './components/Account';
 import { useSnackbar } from 'notistack';
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 
 const NoMatchPage = () => {
   return (
@@ -111,20 +111,18 @@ const App = () => {
     }
   };
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     if (localStorage.getItem('PEEKER_TOKEN')) {
       const {
         data: { data }
       } = await request('get', 'api/user');
 
-      if (!_.isEqual(userData, data)) {
-        console.log('## updating user data');
-        setUserData(data);
-      }
+      console.log('## updating user data');
+      setUserData(data);
     }
-  };
+  }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!localStorage.getItem('PEEKER_TOKEN')) {
       return setRedirectTo('/signin');
     }
@@ -132,12 +130,9 @@ const App = () => {
       data: { data }
     } = await request('get', 'api/note');
 
-    // Makes update if there are any changes
-    if (!_.isEqual(app.data, data)) {
-      console.log('## app data is updated');
-      setApp({ data });
-    }
-  };
+    console.log('## app data is updated');
+    setApp({ data });
+  }, []);
 
   const handleInstallBtnClick = ({ target }) => {
     if (target.classList.contains('accept')) {
@@ -181,10 +176,15 @@ const App = () => {
       element.removeAttribute('data-autoresize');
     });
   }
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
-    fetchUser(); 
-    fetchData();
+    fetchUser();
+  }, [fetchUser]);
+
+  useEffect(() => {
     addAutoResize();
     window.addEventListener('scroll', handleScroll);
 
