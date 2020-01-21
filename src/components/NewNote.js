@@ -56,13 +56,17 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
     }
 
     if (noteTitle || noteContent || labels.length) {
+      const subscription =
+        JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
       const payload = {
         pinned,
+        subscription,
         label: labels,
         status: 'note',
         title: noteTitle || '',
         due: reminderDate || '',
-        content: noteContent || ''
+        content: noteContent || '',
+        clientNow: moment().format()
       };
 
       let date = new Date();

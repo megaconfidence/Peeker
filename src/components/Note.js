@@ -113,16 +113,11 @@ const Note = ({
       // Make update is data has changed
       if (!isEqual(originalData, payload) || isLabelUpdated) {
         colorLog('Uploading changes', 'success');
-
         const noteId = noteRef.current.getAttribute('data-note-id');
-        const subscription =
-          JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
 
         payload = {
           ...payload,
-          subscription,
-          label: noteLabel.data,
-          clientNow: moment().format()
+          label: noteLabel.data
         };
 
         updateLocal(noteId, payload);
@@ -246,10 +241,15 @@ const Note = ({
   const handleReminderDate = value => {
     const newDate = moment(value).format();
     const noteId = noteRef.current.getAttribute('data-note-id');
+    const subscription =
+      JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
 
     setReminderDate(newDate);
+    
     const payload = {
-      due: newDate
+      due: newDate,
+      subscription,
+      clientNow: moment().format()
     };
 
     request('put', `api/note/${noteId}`, payload);
