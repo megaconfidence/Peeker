@@ -2,14 +2,14 @@ import './Note.css';
 import './Notes.css';
 import moment from 'moment';
 import request from '../helpers';
-import { useSnackbar } from 'notistack';
-// import { Button } from '@material-ui/core';
-import React, { useRef, useState, useEffect } from 'react';
 import DatePicker from './DatePicker';
 import LabelModal from './LabelModal';
+import { useSnackbar } from 'notistack';
 import isEqual from '../helpers/isEual';
+import colorLog from '../helpers/colorLog';
+import React, { useRef, useState, useEffect } from 'react';
 
-const NewNote = ({
+const Note = ({
   id,
   due,
   title,
@@ -81,17 +81,17 @@ const NewNote = ({
     }
   };
 
-  const openNote = () => {
-    if (isSearch) {
-      autoGrowAfterPopulate(titleTextRef.current);
-      autoGrowAfterPopulate(headTextHighlights.current);
-      autoGrowAfterPopulate(headTextContainer.current);
+  // const openNote = () => {
+  //   if (isSearch) {
+  //     autoGrowAfterPopulate(titleTextRef.current);
+  //     autoGrowAfterPopulate(headTextHighlights.current);
+  //     autoGrowAfterPopulate(headTextContainer.current);
 
-      autoGrowAfterPopulate(bodyTextHighlights.current);
-      autoGrowAfterPopulate(bodyTextBackdrop.current);
-      autoGrowAfterPopulate(bodyTextContainer.current);
-    }
-  };
+  //     autoGrowAfterPopulate(bodyTextHighlights.current);
+  //     autoGrowAfterPopulate(bodyTextBackdrop.current);
+  //     autoGrowAfterPopulate(bodyTextContainer.current);
+  //   }
+  // };
 
   const uploadChanges = async () => {
     if (status === 'note' || status === 'archive') {
@@ -112,7 +112,8 @@ const NewNote = ({
 
       // Make update is data has changed
       if (!isEqual(originalData, payload) || isLabelUpdated) {
-        console.log('## uploading changes');
+        colorLog('Uploading changes', 'success');
+
         const noteId = noteRef.current.getAttribute('data-note-id');
         const subscription =
           JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
@@ -234,7 +235,12 @@ const NewNote = ({
   };
 
   const labelModalOpenCLose = () => {
-    createLabelOverlay.current.classList.toggle('hide');
+    const labelOverlay = createLabelOverlay.current;
+    labelOverlay.classList.toggle('hide');
+    if (!labelOverlay.classList.contains('hide')) {
+      const labelSearchbox = labelOverlay.querySelector('input');
+      labelSearchbox.focus();
+    }
   };
 
   const handleReminderDate = value => {
@@ -524,4 +530,4 @@ const NewNote = ({
   );
 };
 
-export default NewNote;
+export default Note;

@@ -1,10 +1,10 @@
 import './App.css';
 import {
-  HashRouter as Router,
-  Switch,
+  Link,
   Route,
+  Switch,
   Redirect,
-  Link
+  HashRouter as Router
 } from 'react-router-dom';
 import request from './helpers';
 import Notes from './routes/Notes';
@@ -12,6 +12,7 @@ import Label from './routes/Label';
 import Signin from './routes/Signin';
 import Settings from './routes/Settings';
 import NavBar from './components/NavBar';
+import colorLog from './helpers/colorLog';
 import OmniBar from './components/OmniBar';
 import Account from './components/Account';
 import { useSnackbar } from 'notistack';
@@ -20,7 +21,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 const NoMatchPage = () => {
   return (
     <>
-      <h3 className='notfound'>404 -Page not found</h3>
+      <h3 className='notfound'>404 - Page not found</h3>
       <div className='notfound__button'>
         <Link to='/' className='account__signout__button'>
           Back to App
@@ -42,7 +43,7 @@ const App = () => {
   const [searchText, setSearchText] = useState('');
   const [redirectTo, setRedirectTo] = useState(null);
   const [search, setSearch] = useState({ data: [] });
-  const [accountModalDisplay, setAccountModalDisplay] = useState(false);
+  const [showAccountModal, setShowAccountModal] = useState(false);
 
   const getLabels = () => {
     return [
@@ -80,12 +81,13 @@ const App = () => {
 
   const updateLocal = (id, payload) => {
     const { data } = app;
-    const oldData = data[data.findIndex(({ _id }) => _id === id)];
+    const i = data.findIndex(({ _id }) => _id === id);
+    const oldData = data[i];
+
     const newData = {
       ...oldData,
       ...payload
     };
-    const i = data.findIndex(({ _id }) => _id === id);
     data.splice(i, 1, newData);
     setApp({ data });
   };
@@ -113,34 +115,43 @@ const App = () => {
   };
 
   const handleAccountModalDisalay = () => {
-    if (accountModalDisplay) {
-      setAccountModalDisplay(false);
+    if (showAccountModal) {
+      setShowAccountModal(false);
     } else {
-      setAccountModalDisplay(true);
+      setShowAccountModal(true);
     }
   };
 
   const fetchUser = useCallback(async () => {
-    if (localStorage.getItem('PEEKER_TOKEN')) {
+    try {
+      if (!localStorage.getItem('PEEKER_TOKEN')) {
+        setRedirectTo('/signin');
+      }
       const {
         data: { data }
       } = await request('get', 'api/user');
 
-      console.log('## updating user data');
+      colorLog('Updating user data', 'success');
       setUserData(data);
+    } catch (err) {
+      colorLog('Could not get user data', 'error');
     }
   }, []);
 
   const fetchData = useCallback(async () => {
-    if (!localStorage.getItem('PEEKER_TOKEN')) {
-      return setRedirectTo('/signin');
-    }
-    const {
-      data: { data }
-    } = await request('get', 'api/note');
+    try {
+      if (!localStorage.getItem('PEEKER_TOKEN')) {
+        setRedirectTo('/signin');
+      }
+      const {
+        data: { data }
+      } = await request('get', 'api/note');
 
-    console.log('## app data is updated');
-    setApp({ data });
+      colorLog('App data is updated', 'success');
+      setApp({ data });
+    } catch (err) {
+      colorLog('Could not get app data', 'error');
+    }
   }, []);
 
   const handleInstallBtnClick = ({ target }) => {
@@ -162,29 +173,44 @@ const App = () => {
     localStorage.setItem('isInstallPromptRespondedTo', true);
   };
 
+  const handleSearch = value => {
+    if (value) {
+      const search = app.data.map((d, i) =>
+        d.title.toLowerCase().includes(value) ||
+        d.content.toLowerCase().includes(value)
+          ? d
+          : ''
+      );
+      setSearchText(value);
+      setSearch({
+        data: search.filter(function(n) {
+          return n != null;
+        })
+      });
+    } else {
+      setSearchText('');
+      setSearch({ data: [] });
+    }
+  };
+
   function addAutoResize() {
     document.querySelectorAll('[data-autoresize]').forEach(function(element) {
       element.style.boxSizing = 'border-box';
       var offset = element.offsetHeight - element.clientHeight;
       document.addEventListener('input', function(event) {
-        // const highlights = element.parentElement.children[0].children[0];
-        // if (highlights) {
-        //   // console.log(highlights)
-        //   if (highlights.classList.contains('note__head__highlights')) {
-        //     element.parentElement.style.height = 'auto';
-        //     element.parentElement.style.height =
-        //       element.parentElement.scrollHeight + offset + 'px';
-
-        //     highlights.style.height = 'auto';
-        //     highlights.style.height = highlights.scrollHeight + offset + 'px';
-        //   }
-        // }
         event.target.style.height = 'auto';
         event.target.style.height = event.target.scrollHeight + offset + 'px';
       });
       element.removeAttribute('data-autoresize');
     });
   }
+
+  const checkIfLoggedIn = () => {
+    if (!localStorage.getItem('PEEKER_TOKEN')) {
+      return (window.location.hash = '/signin');
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -209,33 +235,11 @@ const App = () => {
     };
   });
 
-  const handleSearch = value => {
-    if (value) {
-      const search = app.data.map((d, i) => {
-        if (
-          d.title.toLowerCase().includes(value) ||
-          d.content.toLowerCase().includes(value)
-        ) {
-          return d;
-        }
-      });
-      setSearchText(value);
-      setSearch({
-        data: search.filter(function(n) {
-          return n != null;
-        })
-      });
-    } else {
-      setSearchText('');
-      setSearch({ data: [] });
-    }
-  };
-
   return (
     <Router>
       <div className='app'>
         {redirectTo ? <Redirect to={redirectTo} /> : null}
-        {accountModalDisplay ? (
+        {showAccountModal ? (
           <Account
             userData={userData}
             resetGlobalAppState={resetGlobalAppState}
@@ -276,6 +280,7 @@ const App = () => {
                   fetchData={fetchData}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
+                  checkIfLoggedIn={checkIfLoggedIn}
                 />
               )}
             />
@@ -287,15 +292,16 @@ const App = () => {
                   {...props}
                   noteType=''
                   isSearch={true}
+                  data={search.data}
                   allLabels={labels}
                   withNewNote={false}
                   addLocal={addLocal}
                   labelForNewNote={[]}
                   fetchData={fetchData}
-                  data={search.data}
                   searchText={searchText}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
+                  checkIfLoggedIn={checkIfLoggedIn}
                 />
               )}
             />
@@ -313,6 +319,7 @@ const App = () => {
                   fetchData={fetchData}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
+                  checkIfLoggedIn={checkIfLoggedIn}
                 />
               )}
             />
@@ -328,6 +335,7 @@ const App = () => {
                   fetchData={fetchData}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
+                  checkIfLoggedIn={checkIfLoggedIn}
                 />
               )}
             />
@@ -338,13 +346,14 @@ const App = () => {
                 <Notes
                   {...props}
                   data={app.data}
-                  allLabels={labels}
                   noteType='archive'
+                  allLabels={labels}
                   addLocal={addLocal}
                   withNewNote={false}
                   fetchData={fetchData}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
+                  checkIfLoggedIn={checkIfLoggedIn}
                 />
               )}
             />
@@ -355,13 +364,14 @@ const App = () => {
                 <Notes
                   {...props}
                   data={app.data}
-                  allLabels={labels}
                   noteType='trash'
+                  allLabels={labels}
                   addLocal={addLocal}
                   withNewNote={false}
                   fetchData={fetchData}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
+                  checkIfLoggedIn={checkIfLoggedIn}
                 />
               )}
             />

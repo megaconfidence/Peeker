@@ -1,6 +1,7 @@
 import './Login.css';
 import request from '../helpers';
 import { useSnackbar } from 'notistack';
+import colorLog from '../helpers/colorLog'
 import { Redirect } from 'react-router-dom';
 import GoogleLogin from 'react-google-login';
 import React, { useState, useEffect, useRef } from 'react';
@@ -17,12 +18,14 @@ const Login = ({ fetchData, fetchUser }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const [redirectTo, setRedirectTo] = useState(null);
+
   useEffect(() => {
     if (localStorage.getItem('PEEKER_TOKEN')) {
       setRedirectTo('/');
     }
     return () => {};
   }, []);
+
   const saveToken = async (access_token, provider) => {
     try {
       signinHeader.current.textContent = 'Signing In';
@@ -45,7 +48,8 @@ const Login = ({ fetchData, fetchUser }) => {
       signinHeader.current.textContent = 'Signin With';
       loginButtons.current.classList.remove('hide');
       loaderIcon.current.classList.add('hide');
-      console.log('an error occured');
+      colorLog('An error occured', 'error');
+
     }
   };
   const responseGoogle = ({ accessToken }) => {

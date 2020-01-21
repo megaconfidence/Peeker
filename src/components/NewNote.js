@@ -5,6 +5,7 @@ import request from '../helpers';
 import ObjectID from 'bson-objectid';
 import DatePicker from './DatePicker';
 import LabelModal from './LabelModal';
+import colorLog from '../helpers/colorLog';
 import React, { useRef, useState } from 'react';
 
 const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
@@ -74,7 +75,8 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
         _id: ObjectID.generate()
       };
 
-      console.log('## saving note');
+      colorLog('Saving note', 'success');
+
       // Updates state with local payload
       addLocal(fakePayload);
       await request('post', 'api/note', payload);
@@ -114,7 +116,12 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
   };
 
   const labelModalOpenCLose = () => {
-    createLabelOverlay.current.classList.toggle('hide');
+    const labelOverlay = createLabelOverlay.current;
+    labelOverlay.classList.toggle('hide');
+    if (!labelOverlay.classList.contains('hide')) {
+      const labelSearchbox = labelOverlay.querySelector('input');
+      labelSearchbox.focus();
+    }
   };
 
   const handleReminderDate = value => {

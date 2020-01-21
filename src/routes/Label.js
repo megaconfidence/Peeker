@@ -8,7 +8,9 @@ const Label = ({
   fetchData,
   allLabels,
   updateLocal,
-  deleteLocal
+  deleteLocal,
+  checkIfLoggedIn
+
 }) => {
   const {
     params: { labelId }
@@ -25,6 +27,8 @@ const Label = ({
       updateLocal={updateLocal}
       deleteLocal={deleteLocal}
       labelForNewNote={[labelId]}
+      checkIfLoggedIn={checkIfLoggedIn}
+
     />
   );
 };

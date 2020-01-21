@@ -13,8 +13,10 @@ const Notes = ({
   deleteLocal,
   withNewNote,
   updateLocal,
-  labelForNewNote
+  labelForNewNote,
+  checkIfLoggedIn
 }) => {
+  checkIfLoggedIn();
   let note = [],
     trash = [],
     pinned = [],

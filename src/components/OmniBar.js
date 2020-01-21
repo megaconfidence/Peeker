@@ -18,9 +18,9 @@ const withRouterAndRef = Wrapped => {
 const OmniBar = forwardRef(
   (
     {
+      history,
       onClick,
       location,
-      history,
       fetchData,
       fetchUser,
       handleSearch,
@@ -36,6 +36,13 @@ const OmniBar = forwardRef(
     const [searchInput, setSearchInput] = useState('');
     const currPath = location.pathname.split('/').pop();
 
+    const toggleSearch = () => {
+      searchBar.current.classList.toggle('hide');
+      if (!searchBar.current.classList.contains('hide')) {
+        searchInputRef.current.focus();
+      }
+    };
+
     const handleSearchChange = ({ target: { value } }) => {
       setSearchInput(value);
       handleSearch(value.toLowerCase());
@@ -43,13 +50,6 @@ const OmniBar = forwardRef(
         searchReset.current.classList.remove('disabled');
       } else {
         searchReset.current.classList.add('disabled');
-      }
-    };
-
-    const toggleSearch = () => {
-      searchBar.current.classList.toggle('hide');
-      if (!searchBar.current.classList.contains('hide')) {
-        searchInputRef.current.focus();
       }
     };
 
@@ -86,8 +86,8 @@ const OmniBar = forwardRef(
         <div className='omnibar__left'>
           <div
             data-img
-            data-imgname='hamburger'
             onClick={onClick}
+            data-imgname='hamburger'
             className={`omnibar__left__icon omnibar__left__icon--menutriger ${
               currPath === 'signin' ? 'disabled' : ''
             }`}
@@ -108,18 +108,18 @@ const OmniBar = forwardRef(
           />
           <input
             type='text'
-            ref={searchInputRef}
-            className='omnibar__search__input'
-            placeholder='Search'
             value={searchInput}
+            placeholder='Search'
+            ref={searchInputRef}
             onChange={handleSearchChange}
+            className='omnibar__search__input'
           />
           <div
             data-img
-            data-imgname='close'
-            className='omnibar__search__reset disabled'
             ref={searchReset}
+            data-imgname='close'
             onClick={handleSearchReset}
+            className='omnibar__search__reset disabled'
           />
         </div>
         <div className='omnibar__right'>

@@ -47,6 +47,7 @@
 .account__signout__button {
   all: unset;
   margin: 16px;
+  cursor: pointer;
   font-size: 16px;
   color: #3c4043;
   font-weight: 500;

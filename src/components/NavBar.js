@@ -22,8 +22,8 @@ const NavBar = forwardRef(({ labels, onClick, handleInstallBtnClick }, ref) => {
               className='nav__list__item__link'
             >
               <img
-                src='/image/icon/badge.svg'
                 alt='icon'
+                src='/image/icon/badge.svg'
                 className='nav__list__item__link__icon'
               />
               <span className='nav__list__item__link__text'>{l}</span>
@@ -56,14 +56,14 @@ const NavBar = forwardRef(({ labels, onClick, handleInstallBtnClick }, ref) => {
               </div>
               <div className='nav__install__body__buttons'>
                 <div
-                  className='nav__install__body__buttons__reject reject'
                   onClick={handleInstallBtnClick}
+                  className='nav__install__body__buttons__reject reject'
                 >
                   Not now
                 </div>
                 <div
-                  className='nav__install__body__buttons__accept accept'
                   onClick={handleInstallBtnClick}
+                  className='nav__install__body__buttons__accept accept'
                 >
                   Install
                 </div>
@@ -149,7 +149,7 @@ const NavBar = forwardRef(({ labels, onClick, handleInstallBtnClick }, ref) => {
                   exact
                   to='/settings'
                   activeClassName='selected'
-                  className='nav__list__item__link disabled'
+                  className='nav__list__item__link'
                 >
                   <div
                     data-img

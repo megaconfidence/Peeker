@@ -7,8 +7,8 @@ const Account = ({
   resetGlobalAppState,
   handleAccountModalDisalay
 }) => {
-  const { _id, name, email, profileImageURL } = userData;
   const accountModal = useRef(null);
+  const { _id, name, email, profileImageURL } = userData;
 
   const handleSignout = () => {
     resetGlobalAppState();
@@ -17,8 +17,8 @@ const Account = ({
   };
   return (
     <div
-      className='account__wrapper'
       ref={accountModal}
+      className='account__wrapper'
       onClick={handleAccountModalDisalay}
     >
       <div className='account' onClick={e => e.stopPropagation()}>
