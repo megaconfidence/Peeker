@@ -6,7 +6,6 @@ import {
   Redirect,
   Link
 } from 'react-router-dom';
-import _ from 'lodash';
 import request from './helpers';
 import Notes from './routes/Notes';
 import Label from './routes/Label';
@@ -45,11 +44,21 @@ const App = () => {
   const [search, setSearch] = useState({ data: [] });
   const [accountModalDisplay, setAccountModalDisplay] = useState(false);
 
-  let labels;
-  labels = app.data.map(i => (i.status === 'note' ? i.label : undefined));
-  labels = _.reduce(labels, (acc, curr) => _.concat(acc, curr));
-  labels = _.compact(labels);
-  labels = _.uniq(labels);
+  const getLabels = () => {
+    return [
+      ...new Set(
+        [].concat.apply(
+          [],
+          app.data
+            .map(i => (i.status === 'note' ? i.label : undefined))
+            .filter(function(n) {
+              return n != null;
+            })
+        )
+      )
+    ];
+  };
+  const labels = getLabels();
 
   const resetGlobalAppState = () => {
     setUserData({});
@@ -64,19 +73,19 @@ const App = () => {
 
   const deleteLocal = id => {
     const { data } = app;
-    const i = _.findIndex(data, { _id: id });
+    const i = data.findIndex(({ _id }) => _id === id);
     data.splice(i, 1);
     setApp({ data });
   };
 
   const updateLocal = (id, payload) => {
     const { data } = app;
-    const oldData = _.find(data, { _id: id });
+    const oldData = data[data.findIndex(({ _id }) => _id === id)];
     const newData = {
       ...oldData,
       ...payload
     };
-    const i = _.findIndex(data, { _id: id });
+    const i = data.findIndex(({ _id }) => _id === id);
     data.splice(i, 1, newData);
     setApp({ data });
   };
@@ -211,7 +220,11 @@ const App = () => {
         }
       });
       setSearchText(value);
-      setSearch({ data: _.compact(search) });
+      setSearch({
+        data: search.filter(function(n) {
+          return n != null;
+        })
+      });
     } else {
       setSearchText('');
       setSearch({ data: [] });

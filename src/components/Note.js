@@ -1,6 +1,5 @@
 import './Note.css';
 import './Notes.css';
-import _ from 'lodash';
 import moment from 'moment';
 import request from '../helpers';
 import { useSnackbar } from 'notistack';
@@ -8,6 +7,7 @@ import { useSnackbar } from 'notistack';
 import React, { useRef, useState, useEffect } from 'react';
 import DatePicker from './DatePicker';
 import LabelModal from './LabelModal';
+import isEqual from '../helpers/isEual';
 
 const NewNote = ({
   id,
@@ -25,19 +25,19 @@ const NewNote = ({
   searchText,
   isSearch
 }) => {
-  const [labelSearchbox, setLabelSearchbox] = useState('');
   const [titleTextState, setTitleTextState] = useState(title);
   const [contentTextState, setContentTextState] = useState(content);
   // holds all labels from db
-  const [labels, setLabels] = useState(allLabels);
   // Holds only labels for this individual note
   const [noteLabel, setNoteLabel] = useState({
     data: oldNoteLabel
   });
-  const [tempLabels, setTempLabels] = useState(labels);
+
   const [reminderDate, setReminderDate] = useState(due);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isLabelUpdated, setIsLabelUpdated] = useState(false);
+
+  const createLabelOverlay = useRef(null);
 
   const noteRef = useRef(null);
   const dpwrapper = useRef(null);
@@ -45,8 +45,6 @@ const NewNote = ({
   const titleTextRef = useRef(null);
   const noteOverlayRef = useRef(null);
   const contentTextRef = useRef(null);
-  const createNewLabel = useRef(null);
-  const createLabelOverlay = useRef(null);
 
   const headTextContainer = useRef(null);
   const headTextBackdrop = useRef(null);
@@ -113,7 +111,7 @@ const NewNote = ({
       };
 
       // Make update is data has changed
-      if (!_.isEqual(originalData, payload) || isLabelUpdated) {
+      if (!isEqual(originalData, payload) || isLabelUpdated) {
         console.log('## uploading changes');
         const noteId = noteRef.current.getAttribute('data-note-id');
         const subscription =
@@ -217,87 +215,10 @@ const NewNote = ({
       bodyTextHighlights.current.scrollTop = scrollTop;
     }
   };
-  const handleLabelModalOpenCLose = () => {
-    createLabelOverlay.current.classList.toggle('hide');
-  };
 
-  const handleLabelSearchboxChange = ({ target: { value } }) => {
-    const matchArr = [];
-    let isAnyMatch = false;
-    setLabelSearchbox(value);
-
-    if (value) {
-      tempLabels.forEach(d => {
-        if (d.includes(value)) {
-          isAnyMatch = true;
-          matchArr.push(d);
-          setTempLabels(matchArr);
-        }
-      });
-
-      if (!isAnyMatch) {
-        setTempLabels([]);
-        labels.forEach(d => {
-          if (d.includes(value)) {
-            setTempLabels([d]);
-          }
-        });
-      }
-
-      if (!isAnyMatch) {
-        createNewLabel.current.classList.remove('hide');
-      }
-    } else {
-      createNewLabel.current.classList.add('hide');
-      setTempLabels(labels);
-    }
-  };
-
-  const handleLabelModalListItemClick = ({ target }) => {
-    let checkbox;
-    if (target.classList.contains('text')) {
-      checkbox = target.parentElement.childNodes[0];
-    } else if (target.classList.contains('checkbox')) {
-      checkbox = target;
-    } else if (target.classList.contains('label')) {
-      checkbox = target.childNodes[0];
-    }
-
-    checkbox.classList.toggle('checked');
-    const value = checkbox.getAttribute('value');
-    const { data } = noteLabel;
-
-    if (checkbox.classList.contains('checked')) {
-      data.push(value);
-      setNoteLabel({
-        data
-      });
-    } else {
-      const i = data.findIndex(d => d === value);
-      data.splice(i, 1);
-      setNoteLabel({
-        data
-      });
-    }
-    setIsLabelUpdated(true);
-  };
-
-  const handleCreateNewLabel = () => {
-    createNewLabel.current.classList.add('hide');
-    let { data } = noteLabel;
-
-    data.push(labelSearchbox);
-    setNoteLabel({
-      data
-    });
-
-    data = labels;
-    data.push(labelSearchbox);
-
-    setLabels(data);
-    setLabelSearchbox('');
-    setTempLabels(labels);
-    setIsLabelUpdated(true);
+  const updateNoteLabelAndStatus = (data, bool) => {
+    setNoteLabel({ data });
+    setIsLabelUpdated(bool);
   };
 
   const handleDeleteLabelClick = ({ target }) => {
@@ -310,6 +231,10 @@ const NewNote = ({
       data
     });
     setIsLabelUpdated(true);
+  };
+
+  const labelModalOpenCLose = () => {
+    createLabelOverlay.current.classList.toggle('hide');
   };
 
   const handleReminderDate = value => {
@@ -363,19 +288,6 @@ const NewNote = ({
       applyHighlights(searchText);
     }
     return () => {};
-  });
-
-  const labelModalListItems = tempLabels.map((d, i) => {
-    // This function add checked class to the checkbox if the note has that label
-    const m = _.find(noteLabel.data, i => (i === d ? d : undefined));
-    return (
-      <li key={i}>
-        <div className='label' onClick={handleLabelModalListItemClick}>
-          <div value={d} className={`checkbox ${m ? 'checked' : ''}`}></div>
-          <span className='text'>{d}</span>
-        </div>
-      </li>
-    );
   });
 
   return (
@@ -486,21 +398,17 @@ const NewNote = ({
               ) : (
                 undefined
               )}
-              {noteLabel.data.map((d, i) =>
-                d ? (
-                  <div key={i} className='note__body__content__label__tag'>
-                    <span className='text'>{d}</span>
-                    <div
-                      data-img
-                      data-value={d}
-                      data-imgname='close'
-                      onClick={handleDeleteLabelClick}
-                    />
-                  </div>
-                ) : (
-                  undefined
-                )
-              )}
+              {noteLabel.data.map((d, i) => (
+                <div key={i} className='note__body__content__label__tag'>
+                  <span className='text'>{d}</span>
+                  <div
+                    data-img
+                    data-value={d}
+                    data-imgname='close'
+                    onClick={handleDeleteLabelClick}
+                  />
+                </div>
+              ))}
             </div>
             <div className='note__body__content__edited'>
               Edited {moment(updatedAt).fromNow()}
@@ -518,10 +426,16 @@ const NewNote = ({
                 <div
                   data-img
                   data-imgname='badge'
-                  onClick={handleLabelModalOpenCLose}
+                  onClick={labelModalOpenCLose}
                   className='note__body__controls__item__image'
                 />
-                <LabelModal />
+                <LabelModal
+                  allLabels={allLabels}
+                  oldNoteLabel={oldNoteLabel}
+                  labelModalOpenCLose={labelModalOpenCLose}
+                  ref={createLabelOverlay}
+                  updateNoteLabelAndStatus={updateNoteLabelAndStatus}
+                />
               </div>
               <div
                 data-img
