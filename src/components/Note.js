@@ -255,8 +255,21 @@ const Note = ({
     request('put', `api/note/${noteId}`, payload);
   };
 
+  const [allowNotifSBKey, setAllowNotifSBKey] = useState(null);
   const handleAlarmiconClick = () => {
     dpwrapper.current.classList.toggle('hide');
+    if (
+      !dpwrapper.current.classList.contains('hide') &&
+      !localStorage.getItem('PEEKER_NOTIFICATION_ISPERMITTED')
+    ) {
+      const snackbarKey = enqueueSnackbar(
+        'Please allow notifications to use this feature',
+        {
+          persist: true
+        }
+      );
+      setAllowNotifSBKey(snackbarKey)
+    }
   };
 
   const handleDeleteReminder = e => {
@@ -492,7 +505,12 @@ const Note = ({
               />
             </div>
           </div>
-          <DatePicker value={handleReminderDate} due={due} ref={dpwrapper} />
+          <DatePicker
+            value={handleReminderDate}
+            due={due}
+            ref={dpwrapper}
+            allowNotifSBKey={allowNotifSBKey}
+          />
         </div>
         <div className='note__footer'>
           {status === 'trash' ? (
@@ -520,7 +538,7 @@ const Note = ({
           ) : (
             undefined
           )}
-          
+
           <button
             className='note__footer__closebtn'
             onClick={e => {
