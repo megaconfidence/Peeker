@@ -68,7 +68,7 @@ const App = () => {
 
   const addLocal = payload => {
     const { data } = app;
-    data.push(payload);
+    data.unshift(payload);
     setApp({ data });
   };
 

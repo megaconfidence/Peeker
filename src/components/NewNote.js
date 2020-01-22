@@ -125,9 +125,18 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
     if (!labelOverlay.classList.contains('hide')) {
       const labelSearchbox = labelOverlay.querySelector('input');
       labelSearchbox.focus();
+      clearLabelState();
     }
   };
 
+  const [labelState, setLabelState] = useState(false);
+
+  const clearLabelState = () => {
+    setLabelState(true);
+    setTimeout(() => {
+      setLabelState(false);
+    }, 1000);
+  };
   const handleReminderDate = value => {
     const newDate = moment(value).format();
     setReminderDate(newDate);
@@ -227,10 +236,11 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
               />
 
               <LabelModal
-                allLabels={allLabels}
                 oldNoteLabel={[]}
-                labelModalOpenCLose={labelModalOpenCLose}
+                fromNewNote={labelState}
+                allLabels={allLabels}
                 ref={createLabelOverlay}
+                labelModalOpenCLose={labelModalOpenCLose}
                 updateNoteLabelAndStatus={updateNoteLabelAndStatus}
               />
             </div>

@@ -3,17 +3,26 @@ import './LabelModal.css';
 
 const LabelModal = forwardRef(
   (
-    { allLabels, oldNoteLabel, labelModalOpenCLose, updateNoteLabelAndStatus },
+    {
+      allLabels,
+      oldNoteLabel,
+      fromNewNote,
+      labelModalOpenCLose,
+      updateNoteLabelAndStatus
+    },
     ref
   ) => {
+    const createNewLabel = useRef(null);
     const [noteLabel, setNoteLabel] = useState({
       data: oldNoteLabel
     });
     const [labels, setLabels] = useState(allLabels);
-    const [tempLabels, setTempLabels] = useState(labels);
     const [labelSearchbox, setLabelSearchbox] = useState('');
+    const [tempLabels, setTempLabels] = useState({ data: labels });
 
-    const createNewLabel = useRef(null);
+    if (fromNewNote) {
+      tempLabels.data = allLabels;
+    }
 
     const handleLabelSearchboxChange = ({ target: { value } }) => {
       const matchArr = [];
@@ -21,19 +30,19 @@ const LabelModal = forwardRef(
       setLabelSearchbox(value);
 
       if (value) {
-        tempLabels.forEach(d => {
+        tempLabels.data.forEach(d => {
           if (d.includes(value)) {
             isAnyMatch = true;
             matchArr.push(d);
-            setTempLabels(matchArr);
+            setTempLabels({ data: matchArr });
           }
         });
 
         if (!isAnyMatch) {
-          setTempLabels([]);
+          setTempLabels({ data: [] });
           labels.forEach(d => {
             if (d.includes(value)) {
-              setTempLabels([d]);
+              setTempLabels({ data: [d] });
             }
           });
         }
@@ -43,7 +52,7 @@ const LabelModal = forwardRef(
         }
       } else {
         createNewLabel.current.classList.add('hide');
-        setTempLabels(labels);
+        setTempLabels({ data: allLabels });
       }
     };
 
@@ -92,7 +101,7 @@ const LabelModal = forwardRef(
 
       setLabels(data);
       setLabelSearchbox('');
-      setTempLabels(labels);
+      setTempLabels({ data: labels });
     };
 
     return (
@@ -125,7 +134,7 @@ const LabelModal = forwardRef(
             </div>
             <div className='label__modal__labels'>
               <ul>
-                {labels.map((d, i) => {
+                {tempLabels.data.map((d, i) => {
                   return (
                     <li key={i}>
                       <div

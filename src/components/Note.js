@@ -245,7 +245,7 @@ const Note = ({
       JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
 
     setReminderDate(newDate);
-    
+
     const payload = {
       due: newDate,
       subscription,
@@ -506,15 +506,21 @@ const Note = ({
           ) : (
             undefined
           )}
-          <button
-            data-note-id={id}
-            className='note__footer__closebtn'
-            onClick={({ target }) => {
-              restoreNote(target.getAttribute('data-note-id'), `${status}`);
-            }}
-          >
-            Restore
-          </button>
+
+          {status === 'trash' || status === 'archive' ? (
+            <button
+              data-note-id={id}
+              className='note__footer__closebtn'
+              onClick={({ target }) => {
+                restoreNote(target.getAttribute('data-note-id'), `${status}`);
+              }}
+            >
+              Restore
+            </button>
+          ) : (
+            undefined
+          )}
+          
           <button
             className='note__footer__closebtn'
             onClick={e => {
