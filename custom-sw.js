@@ -1,18 +1,21 @@
 /* eslint-disable no-restricted-globals */
 self.addEventListener('push', e => {
-  const data = e.data.json();
-  self.registration.showNotification(data.title, {
-    body: `${data.body}... at ${data.time}`,
+  const { title, body } = e.data.json();
+  self.registration.showNotification(title, {
+    body: body,
     badge:
       'https://raw.githubusercontent.com/Confidence-Okoghenun/Peeker/master/public/logo512.png',
     icon:
-      'https://raw.githubusercontent.com/Confidence-Okoghenun/Peeker/master/public/logo512.png'
+      'https://raw.githubusercontent.com/Confidence-Okoghenun/Peeker/master/public/logo512_nobg.png',
+    actions: [{ action: 'view', title: 'View' }]
   });
 });
 
 self.addEventListener('notificationclick', event => {
+  event.notification.close();
   event.waitUntil(
     self.clients.matchAll().then(clientList => {
+      // default notification action
       if (clientList.length > 0) {
         return clientList[0]
           .navigate('/#/reminders')
@@ -69,4 +72,3 @@ self.addEventListener('fetch', event => {
     })
   );
 });
-
