@@ -58,8 +58,6 @@ function registerValidSW(swUrl, config) {
   navigator.serviceWorker
     .register(swUrl)
     .then(async registration => {
-      enablePush(registration).catch(err => console.error(err));
-
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
         if (installingWorker == null) {
@@ -91,6 +89,9 @@ function registerValidSW(swUrl, config) {
                 config.onSuccess(registration);
               }
             }
+          }
+          if (installingWorker.state === 'activated') {
+            enablePush(registration).catch(e => console.error(e));
           }
         };
       };
@@ -149,9 +150,7 @@ async function enablePush(registration) {
 
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
 
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);

@@ -101,7 +101,7 @@ const LabelModal = forwardRef(
 
       setLabels(data);
       setLabelSearchbox('');
-      setTempLabels({ data: labels });
+      setTempLabels({ data: allLabels.concat(data) });
     };
 
     return (
