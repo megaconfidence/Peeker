@@ -4,9 +4,9 @@ self.addEventListener('push', e => {
   self.registration.showNotification(title, {
     body: body,
     badge:
-      'https://raw.githubusercontent.com/Confidence-Okoghenun/Peeker/master/public/logo512.png',
-    icon:
       'https://raw.githubusercontent.com/Confidence-Okoghenun/Peeker/master/public/logo512_nobg.png',
+    icon:
+      'https://raw.githubusercontent.com/Confidence-Okoghenun/Peeker/master/public/logo512.png',
     actions: [{ action: 'view', title: 'View' }]
   });
 });
