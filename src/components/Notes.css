@@ -32,20 +32,24 @@
   -webkit-tap-highlight-color: transparent;
 }
 .textarea--mod {
-  all: unset;
   resize: none;
   outline: none;
   overflow: hidden;
   word-break: break-all;
   box-sizing: border-box;
 }
+[contentEditable='true']:empty:before {
+  content: attr(placeholder);
+  opacity: 0.55;
+}
+
 .note__head__titletext {
-  height: 45px;
+  min-height: 45px;
   font-size: 1rem;
   font-weight: 500;
   padding: 11px 15px;
   line-height: 1.5rem;
-  width: calc(100% - 25px);
+  width: calc(100% - 30px);
   letter-spacing: 0.00625em;
 }
 
@@ -57,6 +61,9 @@
   opacity: 0.71;
   position: absolute;
 }
+.trash .note__head__pin {
+  display: none;
+}
 .note__body__content {
   /* margin-bottom: 6px; */
   /* margin-top: 24px; */
@@ -67,10 +74,15 @@
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
 }
-.note__body__highlights,
+.note__head__titletext,
+.note__body__content__textarea {
+  user-select: unset;
+  -webkit-user-select: unset;
+  -webkit-tap-highlight-color: unset;
+}
 .note__body__content__textarea {
   width: 100%;
-  height: 45px;
+  min-height: 45px;
   font-weight: 500;
   padding: 12px 16px;
   font-size: 0.875rem;
@@ -113,6 +125,9 @@ img[alt='options'] {
 }
 .note__body__content__label__tag .text {
   max-width: calc(100% - 19px);
+}
+.trash .note__body__content__label__tag .text {
+  max-width: fit-content;
 }
 .note--closed .note__body__content__label__tag .text {
   max-width: unset;

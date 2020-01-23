@@ -7,7 +7,8 @@ import LabelModal from './LabelModal';
 import { useSnackbar } from 'notistack';
 import isEqual from '../helpers/isEual';
 import colorLog from '../helpers/colorLog';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import ContentEditable from 'react-contenteditable';
 
 const Note = ({
   id,
@@ -25,8 +26,27 @@ const Note = ({
   searchText,
   isSearch
 }) => {
-  const [titleTextState, setTitleTextState] = useState(title);
-  const [contentTextState, setContentTextState] = useState(content);
+  const [titleText, setTitleText] = useState({ value: title });
+  const [contentText, setContentText] = useState({ value: content });
+
+  const applySearch = useCallback(async () => {
+    const regex = new RegExp(searchText, 'gi');
+    const titleMark = title
+      .replace(/\n$/g, '\n\n')
+      .replace(regex, '<mark class="sea">$&</mark>');
+    setTitleText({ value: titleMark });
+
+    const contentMark = content
+      .replace(/\n$/g, '\n\n')
+      .replace(regex, '<mark>$&</mark>');
+    setContentText({ value: contentMark });
+  }, [content, searchText, title]);
+
+  useEffect(() => {
+    if (isSearch) {
+      applySearch();
+    }
+  }, [applySearch, isSearch]);
   // holds all labels from db
   // Holds only labels for this individual note
   const [noteLabel, setNoteLabel] = useState({
@@ -36,6 +56,7 @@ const Note = ({
   const [reminderDate, setReminderDate] = useState(due);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isLabelUpdated, setIsLabelUpdated] = useState(false);
+  const [allowNotifSBKey, setAllowNotifSBKey] = useState(null);
 
   const createLabelOverlay = useRef(null);
 
@@ -45,26 +66,6 @@ const Note = ({
   const titleTextRef = useRef(null);
   const noteOverlayRef = useRef(null);
   const contentTextRef = useRef(null);
-
-  const headTextContainer = useRef(null);
-  const headTextBackdrop = useRef(null);
-  const headTextHighlights = useRef(null);
-
-  const bodyTextContainer = useRef(null);
-  const bodyTextBackdrop = useRef(null);
-  const bodyTextHighlights = useRef(null);
-
-  const autoGrowAfterPopulate = target => {
-    target.style.boxSizing = 'border-box';
-    const offset = target.offsetHeight - target.clientHeight;
-    target.style.height = 'auto';
-    target.style.height = target.scrollHeight + offset + 'px';
-
-    // target.style.height = `${target.scrollHeight}px`;
-    // if (!target.value) {
-    //   target.style.height = '45px';
-    // }
-  };
 
   const toggleNoteOpenClose = () => {
     if (noteRef.current.classList.contains('note--opened')) {
@@ -81,18 +82,6 @@ const Note = ({
     }
   };
 
-  // const openNote = () => {
-  //   if (isSearch) {
-  //     autoGrowAfterPopulate(titleTextRef.current);
-  //     autoGrowAfterPopulate(headTextHighlights.current);
-  //     autoGrowAfterPopulate(headTextContainer.current);
-
-  //     autoGrowAfterPopulate(bodyTextHighlights.current);
-  //     autoGrowAfterPopulate(bodyTextBackdrop.current);
-  //     autoGrowAfterPopulate(bodyTextContainer.current);
-  //   }
-  // };
-
   const uploadChanges = async () => {
     if (status === 'note' || status === 'archive') {
       const originalData = {
@@ -106,8 +95,8 @@ const Note = ({
 
       let payload = {
         pinned: isPinned,
-        title: titleTextRef.current.textContent,
-        content: contentTextRef.current.textContent
+        title: titleText.value.replace(/<\/?mark>/gi, ''),
+        content: contentText.value.replace(/<\/?mark>/gi, '')
       };
 
       // Make update is data has changed
@@ -143,8 +132,16 @@ const Note = ({
   };
 
   const updateNoteStatus = async (noteId, status) => {
+    const isPinned = pinimgRef.current
+      .getAttribute('data-imgname')
+      .includes('pin_fill');
+
     const payload = {
-      status
+      status,
+      pinned: isPinned,
+      label: noteLabel.data,
+      title: titleText.value.replace(/<\/?mark>/gi, ''),
+      content: contentText.value.replace(/<\/?mark>/gi, '')
     };
     updateLocal(noteId, payload);
     await request('put', `api/note/${noteId}`, payload);
@@ -179,37 +176,16 @@ const Note = ({
     });
   };
 
-  const applyHighlights = text => {
-    const regex = new RegExp(text, 'gi');
-
-    headTextHighlights.current.innerHTML = titleTextState
-      .replace(/\n$/g, '\n\n')
-      .replace(regex, '<mark>$&</mark>');
-
-    bodyTextHighlights.current.innerHTML = contentTextState
-      .replace(/\n$/g, '\n\n')
-      .replace(regex, '<mark>$&</mark>');
-  };
-
-  const handleTextareaInput = ({ target }) => {
-    if (target.classList.contains('note__head__titletext')) {
-      setTitleTextState(target.value);
-    }
-    if (target.classList.contains('note__body__content__textarea')) {
-      setContentTextState(target.value);
+  const handleTitleInput = ({ target: { value } }) => {
+    if (value.length < 70) {
+      setTitleText({ value });
+    } else {
+      setTitleText({ value: value.substring(0, 70) });
     }
   };
 
-  const handleTextareaScroll = ({ target }) => {
-    if (target.classList.contains('note__head__titletext')) {
-      const scrollTop = target.scrollTop;
-      headTextBackdrop.current.scrollTop = scrollTop;
-    }
-
-    if (target.classList.contains('note__body__content__textarea')) {
-      const scrollTop = target.scrollTop;
-      bodyTextHighlights.current.scrollTop = scrollTop;
-    }
+  const handleContentInput = ({ target: { value } }) => {
+    setContentText({ value });
   };
 
   const updateNoteLabelAndStatus = (data, bool) => {
@@ -255,7 +231,6 @@ const Note = ({
     request('put', `api/note/${noteId}`, payload);
   };
 
-  const [allowNotifSBKey, setAllowNotifSBKey] = useState(null);
   const handleAlarmiconClick = () => {
     dpwrapper.current.classList.toggle('hide');
     if (
@@ -268,7 +243,7 @@ const Note = ({
           persist: true
         }
       );
-      setAllowNotifSBKey(snackbarKey)
+      setAllowNotifSBKey(snackbarKey);
     }
   };
 
@@ -276,38 +251,6 @@ const Note = ({
     e.stopPropagation();
     setReminderDate('');
   };
-  useEffect(() => {
-    // (async () => {
-    //   // Autogrow notes after filling in content
-    //   await autoGrowAfterPopulate(titleTextRef.current);
-    //   await autoGrowAfterPopulate(contentTextRef.current);
-
-    //   if (isSearch) {
-    //     autoGrowAfterPopulate(headTextHighlights.current);
-    //     // autoGrowAfterPopulate(headTextBackdrop.current);
-    //     autoGrowAfterPopulate(headTextContainer.current);
-
-    //     autoGrowAfterPopulate(bodyTextHighlights.current);
-    //     // autoGrowAfterPopulate(bodyTextBackdrop.current);
-    //     autoGrowAfterPopulate(bodyTextContainer.current);
-    //   }
-    // })();
-    // Autogrow notes after filling in content
-    autoGrowAfterPopulate(titleTextRef.current);
-    autoGrowAfterPopulate(contentTextRef.current);
-
-    if (isSearch) {
-      autoGrowAfterPopulate(headTextHighlights.current);
-      autoGrowAfterPopulate(headTextContainer.current);
-
-      autoGrowAfterPopulate(bodyTextHighlights.current);
-      autoGrowAfterPopulate(bodyTextBackdrop.current);
-      autoGrowAfterPopulate(bodyTextContainer.current);
-
-      applyHighlights(searchText);
-    }
-    return () => {};
-  });
 
   return (
     <div
@@ -324,39 +267,14 @@ const Note = ({
         onClick={noteOvrlayCheck}
       >
         <div className='note__head'>
-          {isSearch ? (
-            <div className='note__head__container' ref={headTextContainer}>
-              <div className='note__head__backdrop' ref={headTextBackdrop}>
-                <div
-                  className='note__head__highlights'
-                  ref={headTextHighlights}
-                ></div>
-              </div>
-              <textarea
-                data-autoresize
-                spellCheck='false'
-                ref={titleTextRef}
-                placeholder='Title'
-                maxLength='100'
-                value={titleTextState}
-                onChange={handleTextareaInput}
-                onScroll={handleTextareaScroll}
-                className='note__head__titletext search textarea--mod'
-              />
-            </div>
-          ) : (
-            <textarea
-              data-autoresize
-              spellCheck='false'
-              ref={titleTextRef}
-              placeholder='Title'
-              maxLength='100'
-              value={titleTextState}
-              onChange={handleTextareaInput}
-              className='note__head__titletext textarea--mod'
-            />
-          )}
-
+          <ContentEditable
+            placeholder='Title'
+            spellCheck='false'
+            html={titleText.value}
+            innerRef={titleTextRef}
+            onChange={handleTitleInput}
+            className='note__head__titletext textarea--mod'
+          />
           <div
             data-img
             ref={pinimgRef}
@@ -367,37 +285,14 @@ const Note = ({
         </div>
         <div className='note__body'>
           <div className='note__body__content'>
-            {isSearch ? (
-              <div className='note__body__container' ref={bodyTextContainer}>
-                <div className='note__body__backdrop' ref={bodyTextBackdrop}>
-                  <div
-                    className='note__body__highlights'
-                    ref={bodyTextHighlights}
-                  ></div>
-                </div>
-                <textarea
-                  data-autoresize
-                  spellCheck='false'
-                  placeholder='Note'
-                  ref={contentTextRef}
-                  value={contentTextState}
-                  onScroll={handleTextareaScroll}
-                  onChange={handleTextareaInput}
-                  className='note__body__content__textarea search textarea--mod'
-                />
-              </div>
-            ) : (
-              <textarea
-                data-autoresize
-                spellCheck='false'
-                placeholder='Note'
-                ref={contentTextRef}
-                value={contentTextState}
-                onChange={handleTextareaInput}
-                className='note__body__content__textarea textarea--mod'
-              />
-            )}
-
+            <ContentEditable
+              spellCheck='false'
+              placeholder='Note'
+              html={contentText.value}
+              innerRef={contentTextRef}
+              onChange={handleContentInput}
+              className='note__body__content__textarea textarea--mod'
+            />
             <div className='note__body__content__label'>
               {reminderDate ? (
                 <div
@@ -430,7 +325,8 @@ const Note = ({
               ))}
             </div>
             <div className='note__body__content__edited'>
-              Edited {moment(updatedAt).fromNow()}
+              {status === 'trash' ? 'Note in Trash •' : ''} Edited{' '}
+              {moment(updatedAt).fromNow()}
             </div>
           </div>
           <div className='note__body__controls' tabIndex='0'>
@@ -506,9 +402,9 @@ const Note = ({
             </div>
           </div>
           <DatePicker
-            value={handleReminderDate}
             due={due}
             ref={dpwrapper}
+            value={handleReminderDate}
             allowNotifSBKey={allowNotifSBKey}
           />
         </div>

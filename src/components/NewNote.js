@@ -5,8 +5,10 @@ import request from '../helpers';
 import ObjectID from 'bson-objectid';
 import DatePicker from './DatePicker';
 import LabelModal from './LabelModal';
+import { useSnackbar } from 'notistack';
 import colorLog from '../helpers/colorLog';
 import React, { useRef, useState } from 'react';
+import ContentEditable from 'react-contenteditable';
 
 const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
   const noteRef = useRef(null);
@@ -20,8 +22,10 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
     data: []
   });
   const [reminderDate, setReminderDate] = useState('');
-  const [titleTextState, setTitleTextState] = useState('');
-  const [contentTextState, setContentTextState] = useState('');
+  const [titleText, setTitleText] = useState({ value: '' });
+  const { enqueueSnackbar } = useSnackbar();
+  const [contentText, setContentText] = useState({ value: '' });
+  const [allowNotifSBKey, setAllowNotifSBKey] = useState(null);
 
   // holds all labels from db
   // Holds only labels for this individual note
@@ -33,8 +37,8 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
   const uploadChanges = async () => {
     noteRef.current.classList.add('nwnote--closed');
 
-    const noteTitle = titleTextRef.current.value;
-    const noteContent = contentTextRef.current.value;
+    const noteTitle = titleText.value;
+    const noteContent = contentText.value;
     const pinned = pinimgRef.current
       .getAttribute('data-imgname')
       .includes('pin_fill');
@@ -45,10 +49,10 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
       data: []
     });
     setReminderDate('');
-    setTitleTextState('');
-    setContentTextState('');
-    titleTextRef.current.value = '';
-    contentTextRef.current.value = '';
+    setTitleText({ value: '' });
+    setContentText({ value: '' });
+    contentTextRef.current.textContent = '';
+    titleTextRef.current.textContent = '';
     titleTextRef.current.style.height = '45px';
     contentTextRef.current.style.height = '45px';
     if (pinned) {
@@ -86,13 +90,15 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
       await request('post', 'api/note', payload);
     }
   };
-  const handleTextareaInput = ({ target }) => {
-    if (target.classList.contains('note__head__titletext')) {
-      setTitleTextState(target.value);
+  const handleTitleInput = ({ target: { value } }) => {
+    if (value.length < 70) {
+      setTitleText({ value });
+    } else {
+      setTitleText({ value: value.substring(0, 70) });
     }
-    if (target.classList.contains('note__body__content__textarea')) {
-      setContentTextState(target.value);
-    }
+  };
+  const handleContentInput = ({ target: { value } }) => {
+    setContentText({ value });
   };
 
   const pinNote = ({ target }) => {
@@ -149,18 +155,29 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
 
   const handleAlarmiconClick = () => {
     dpwrapper.current.classList.toggle('hide');
+    if (
+      !dpwrapper.current.classList.contains('hide') &&
+      !localStorage.getItem('PEEKER_NOTIFICATION_ISPERMITTED')
+    ) {
+      const snackbarKey = enqueueSnackbar(
+        'Please allow notifications to use this feature',
+        {
+          persist: true
+        }
+      );
+      setAllowNotifSBKey(snackbarKey);
+    }
   };
 
   return (
     <div className='note nwnote nwnote--closed' ref={noteRef}>
       <div className='note__head'>
-        <textarea
-          data-autoresize
-          spellCheck='false'
-          ref={titleTextRef}
+        <ContentEditable
           placeholder='Title'
-          value={titleTextState}
-          onChange={handleTextareaInput}
+          spellCheck='false'
+          html={titleText.value}
+          innerRef={titleTextRef}
+          onChange={handleTitleInput}
           className='note__head__titletext textarea--mod'
         />
         <div
@@ -173,14 +190,13 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
       </div>
       <div className='note__body'>
         <div className='note__body__content'>
-          <textarea
-            data-autoresize
+          <ContentEditable
             spellCheck='false'
             onFocus={openNote}
-            ref={contentTextRef}
+            html={contentText.value}
+            innerRef={contentTextRef}
             placeholder='Take a note...'
-            value={contentTextState}
-            onChange={handleTextareaInput}
+            onChange={handleContentInput}
             className='note__body__content__textarea textarea--mod'
           />
           <div className='note__body__content__label'>
@@ -281,7 +297,11 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
             />
           </div>
         </div>
-        <DatePicker value={handleReminderDate} ref={dpwrapper} />
+        <DatePicker
+          ref={dpwrapper}
+          value={handleReminderDate}
+          allowNotifSBKey={allowNotifSBKey}
+        />
       </div>
       <div className='note__footer'>
         <button className='note__footer__closebtn' onClick={uploadChanges}>

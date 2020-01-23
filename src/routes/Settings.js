@@ -10,7 +10,7 @@ const Settings = () => {
         </span>
         <br /> Settings will live here soon.
       </p>
-      <p style={{ wordBreak: 'break-all' }}>
+      <p style={{ wordBreak: 'break-word' }}>
         Why not take a moment to drop your thoughts on the app email: &nbsp;
         <a
           href='mailto:confidenceboi@gmail.com'
