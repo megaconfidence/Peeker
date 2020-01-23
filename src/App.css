@@ -119,3 +119,9 @@
 [data-imgname='repeat'] {
   background-image: url(/image/icon/repeat.svg);
 }
+[data-imgname='note'] {
+  background-image: url(/image/icon/note.svg);
+}
+[data-imgname='reminders'] {
+  background-image: url(/image/icon/bulb.svg);
+}

@@ -14,7 +14,8 @@ const Notes = ({
   withNewNote,
   updateLocal,
   labelForNewNote,
-  checkIfLoggedIn
+  checkIfLoggedIn,
+  location
 }) => {
   checkIfLoggedIn();
   let note = [],
@@ -91,6 +92,10 @@ const Notes = ({
     );
   };
 
+  const path = location
+    ? location.pathname.substring(1, location.pathname.length)
+    : undefined;
+
   return (
     <div>
       {withNewNote ? (
@@ -109,6 +114,27 @@ const Notes = ({
       {note.length ? buildNotes(note, false, 'notes') : undefined}
       {archive.length ? buildNotes(archive, false, 'archive') : undefined}
       {trash.length ? buildNotes(trash, false, 'trash') : undefined}
+
+      {(location && !pinned.length && !others.length && !isSearch) ||
+      (isSearch && !note.length && !archive.length && !trash.length) ? (
+        <div className='no__note'>
+          <div
+            data-img
+            data-imgname={path || 'note'}
+            className='no__note__image'
+          />
+          {isSearch ? (
+            <div className='no__note__text'>No results found</div>
+          ) : (
+            <div className='no__note__text'>
+              No notes {path ? 'in ' : ''}
+              <span className='no__note__text__location'>{path || 'here'}</span>
+            </div>
+          )}
+        </div>
+      ) : (
+        undefined
+      )}
     </div>
   );
 };

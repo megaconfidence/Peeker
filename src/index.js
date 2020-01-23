@@ -31,7 +31,8 @@ const imgSrc = [
   '/image/icon/profile.svg',
   '/image/icon/left_arrow.svg',
   '/image/icon/peeker.png',
-  '/image/icon/repeat.svg'
+  '/image/icon/repeat.svg',
+  '/image/icon/note.svg'
 ];
 
 ReactDOM.render(

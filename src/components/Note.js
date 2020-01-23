@@ -410,17 +410,15 @@ const Note = ({
           />
         </div>
         <div className='note__footer'>
-          {status === 'trash' ? (
-            <button
-              className='note__footer__closebtn'
-              data-note-id={id}
-              onClick={deleteNote}
-            >
-              Delete
-            </button>
-          ) : (
-            undefined
-          )}
+          <button
+            className='note__footer__closebtn'
+            onClick={e => {
+              e.stopPropagation();
+              toggleNoteOpenClose();
+            }}
+          >
+            Close
+          </button>
 
           {status === 'trash' || status === 'archive' ? (
             <button
@@ -436,15 +434,18 @@ const Note = ({
             undefined
           )}
 
-          <button
-            className='note__footer__closebtn'
-            onClick={e => {
-              e.stopPropagation();
-              toggleNoteOpenClose();
-            }}
-          >
-            Close
-          </button>
+          {status === 'trash' ? (
+            <button
+              data-note-id={id}
+              onClick={deleteNote}
+              className='note__footer__closebtn'
+              style={{ color: 'rgba(255, 0, 0, 0.75)' }}
+            >
+              Delete
+            </button>
+          ) : (
+            undefined
+          )}
         </div>
       </div>
     </div>
