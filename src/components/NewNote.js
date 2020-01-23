@@ -12,11 +12,11 @@ import ContentEditable from 'react-contenteditable';
 
 const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
   const noteRef = useRef(null);
-  const pinimgRef = useRef(null);
   const dpwrapper = useRef(null);
   const titleTextRef = useRef(null);
   const contentTextRef = useRef(null);
   const createLabelOverlay = useRef(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   const [noteLabel, setNoteLabel] = useState({
     data: []
@@ -24,7 +24,7 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
   const [labelState, setLabelState] = useState(false);
   const [reminderDate, setReminderDate] = useState('');
   const [titleText, setTitleText] = useState({ value: '' });
-  const { enqueueSnackbar } = useSnackbar();
+  const [pinState, setPinState] = useState({ value: false });
   const [contentText, setContentText] = useState({ value: '' });
   const [allowNotifSBKey, setAllowNotifSBKey] = useState(null);
 
@@ -40,9 +40,6 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
 
     const noteTitle = titleText.value;
     const noteContent = contentText.value;
-    const pinned = pinimgRef.current
-      .getAttribute('data-imgname')
-      .includes('pin_fill');
     const labels = labelForNewNote.concat(noteLabel.data);
 
     // Reset the fields
@@ -52,22 +49,20 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
     setReminderDate('');
     setTitleText({ value: '' });
     setContentText({ value: '' });
+    setPinState({ value: false });
     contentTextRef.current.textContent = '';
     titleTextRef.current.textContent = '';
     titleTextRef.current.style.height = '45px';
     contentTextRef.current.style.height = '45px';
-    if (pinned) {
-      pinimgRef.current.setAttribute('data-imgname', 'pin');
-    }
 
     if (noteTitle || noteContent || labels.length) {
       const subscription =
         JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
       const payload = {
-        pinned,
         subscription,
         label: labels,
         status: 'note',
+        pinned: pinState.value,
         title: noteTitle || '',
         due: reminderDate || '',
         content: noteContent || '',
@@ -104,13 +99,8 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
     setContentText({ value });
   };
 
-  const pinNote = ({ target }) => {
-    const src = target.getAttribute('data-imgname');
-    if (src.includes('pin_fill')) {
-      target.setAttribute('data-imgname', src.split('pin_fill').join('pin'));
-    } else {
-      target.setAttribute('data-imgname', src.split('pin').join('pin_fill'));
-    }
+  const pinNote = () => {
+    setPinState(() => ({ value: !pinState.value }));
   };
 
   const updateNoteLabelAndStatus = (data, bool) => {
@@ -184,10 +174,9 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
         />
         <div
           data-img
-          ref={pinimgRef}
           onClick={pinNote}
-          data-imgname='pin'
           className='note__head__pin'
+          data-imgname={`pin${pinState.value ? '_fill' : ''}`}
         />
       </div>
       <div className='note__body'>
