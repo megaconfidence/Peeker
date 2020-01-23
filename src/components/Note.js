@@ -118,38 +118,39 @@ const Note = ({
     setPinState(() => ({ value: !pinState.value }));
   };
 
-  const updateNoteStatus = async (noteId, pinned, status) => {
+  const updateNoteStatus = async (noteId, status) => {
     const payload = {
       status,
-      pinned,
       label: noteLabel.data,
+      pinned: pinState.value,
       title: titleText.value.replace(/<\/?mark>/gi, ''),
       content: contentText.value.replace(/<\/?mark>/gi, '')
     };
+
     updateLocal(noteId, payload);
     await request('put', `api/note/${noteId}`, payload);
     fetchData();
   };
-  const restoreNote = (noteId, pinned, initSatus) => {
-    updateNoteStatus(noteId, pinned, 'note');
-    undo(noteId, pinned, initSatus, 'Note restored');
+  const restoreNote = (noteId, initSatus) => {
+    updateNoteStatus(noteId, 'note');
+    undo(noteId, initSatus, 'Note restored');
   };
-  const archiveNote = (noteId, pinned) => {
-    updateNoteStatus(noteId, pinned, 'archive');
-    undo(noteId, pinned, 'note', 'Note archived');
+  const archiveNote = noteId => {
+    updateNoteStatus(noteId, 'archive');
+    undo(noteId, 'note', 'Note archived');
   };
-  const trashNote = (noteId, pinned, initSatus) => {
-    updateNoteStatus(noteId, pinned, 'trash');
-    undo(noteId, pinned, initSatus, 'Note trashed');
+  const trashNote = (noteId, initSatus) => {
+    updateNoteStatus(noteId, 'trash');
+    undo(noteId, initSatus, 'Note trashed');
   };
 
-  const undo = (noteId, pinned, status, msg) => {
+  const undo = (noteId, status, msg) => {
     enqueueSnackbar(msg, {
       action: key => (
         <div
           style={{ color: '#ffeb3b', marginRight: '8px' }}
           onClick={() => {
-            updateNoteStatus(noteId, pinned, status);
+            updateNoteStatus(noteId, status);
             closeSnackbar(key);
           }}
         >
@@ -354,13 +355,9 @@ const Note = ({
                 <div
                   data-img
                   data-note-id={id}
-                  data-pinned={pinState.value}
                   data-imgname='archive'
                   onClick={({ target }) => {
-                    archiveNote(
-                      target.getAttribute('data-note-id'),
-                      target.getAttribute('data-pinned')
-                    );
+                    archiveNote(target.getAttribute('data-note-id'));
                   }}
                   className='note__body__controls__item__image'
                 />
@@ -371,13 +368,8 @@ const Note = ({
                 data-img
                 data-note-id={id}
                 data-imgname='trash'
-                data-pinned={pinState.value}
                 onClick={({ target }) => {
-                  trashNote(
-                    target.getAttribute('data-note-id'),
-                    target.getAttribute('data-pinned'),
-                    `${status}`
-                  );
+                  trashNote(target.getAttribute('data-note-id'), `${status}`);
                 }}
                 className='note__body__controls__item__image'
               />
@@ -419,14 +411,9 @@ const Note = ({
           {status === 'trash' || status === 'archive' ? (
             <button
               data-note-id={id}
-              data-pinned={pinState.value}
               className='note__footer__closebtn'
               onClick={({ target }) => {
-                restoreNote(
-                  target.getAttribute('data-note-id'),
-                  target.getAttribute('data-pinned'),
-                  `${status}`
-                );
+                restoreNote(target.getAttribute('data-note-id'), `${status}`);
               }}
             >
               Restore
