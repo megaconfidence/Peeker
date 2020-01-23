@@ -12,16 +12,15 @@ self.addEventListener('push', e => {
 });
 
 self.addEventListener('notificationclick', event => {
-  event.notification.close();
   event.waitUntil(
     self.clients.matchAll().then(clientList => {
       // default notification action
       if (clientList.length > 0) {
-        return clientList[0]
-          .navigate('/#/reminders')
-          .then(client => client.focus());
+        clientList[0].navigate('/#/reminders').then(client => client.focus());
+        return event.notification.close();
       }
-      return self.clients.openWindow('/#/reminders');
+      self.clients.openWindow('/#/reminders');
+      return event.notification.close();
     })
   );
 });

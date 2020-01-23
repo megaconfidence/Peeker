@@ -65,9 +65,13 @@ const OmniBar = forwardRef(
       }, 500);
 
       try {
-        await fetchUser();
+        const isFetch = await fetchUser();
         await fetchData();
-        enqueueSnackbar('Updated');
+        if (isFetch === false) {
+          enqueueSnackbar("You're offline");
+        } else {
+          enqueueSnackbar('Updated');
+        }
       } catch (err) {
         enqueueSnackbar("Couldn't refresh notes");
       }

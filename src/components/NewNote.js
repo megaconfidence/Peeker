@@ -21,6 +21,7 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
   const [noteLabel, setNoteLabel] = useState({
     data: []
   });
+  const [labelState, setLabelState] = useState(false);
   const [reminderDate, setReminderDate] = useState('');
   const [titleText, setTitleText] = useState({ value: '' });
   const { enqueueSnackbar } = useSnackbar();
@@ -90,6 +91,7 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
       await request('post', 'api/note', payload);
     }
   };
+
   const handleTitleInput = ({ target: { value } }) => {
     if (value.length < 70) {
       setTitleText({ value });
@@ -97,6 +99,7 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
       setTitleText({ value: value.substring(0, 70) });
     }
   };
+
   const handleContentInput = ({ target: { value } }) => {
     setContentText({ value });
   };
@@ -135,14 +138,13 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
     }
   };
 
-  const [labelState, setLabelState] = useState(false);
-
   const clearLabelState = () => {
     setLabelState(true);
     setTimeout(() => {
       setLabelState(false);
     }, 1000);
   };
+
   const handleReminderDate = value => {
     const newDate = moment(value).format();
     setReminderDate(newDate);
@@ -253,8 +255,8 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
 
               <LabelModal
                 oldNoteLabel={[]}
-                fromNewNote={labelState}
                 allLabels={allLabels}
+                fromNewNote={labelState}
                 ref={createLabelOverlay}
                 labelModalOpenCLose={labelModalOpenCLose}
                 updateNoteLabelAndStatus={updateNoteLabelAndStatus}

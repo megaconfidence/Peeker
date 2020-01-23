@@ -11,6 +11,7 @@
   width: 100%;
   z-index: initial;
   position: initial;
+  margin-bottom: 8px;
   height: fit-content;
   background-color: transparent;
 }
@@ -63,7 +64,7 @@ mark {
 .note--opened .note__body__content__textarea {
   color: #000;
   font-size: 1rem;
-  max-height: 300px;
+  max-height: 210px;
   overflow-y: scroll;
 }
 .note--opened .note__body__content__edited {

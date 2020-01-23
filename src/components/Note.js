@@ -33,7 +33,7 @@ const Note = ({
     const regex = new RegExp(searchText, 'gi');
     const titleMark = title
       .replace(/\n$/g, '\n\n')
-      .replace(regex, '<mark class="sea">$&</mark>');
+      .replace(regex, '<mark>$&</mark>');
     setTitleText({ value: titleMark });
 
     const contentMark = content
@@ -42,11 +42,6 @@ const Note = ({
     setContentText({ value: contentMark });
   }, [content, searchText, title]);
 
-  useEffect(() => {
-    if (isSearch) {
-      applySearch();
-    }
-  }, [applySearch, isSearch]);
   // holds all labels from db
   // Holds only labels for this individual note
   const [noteLabel, setNoteLabel] = useState({
@@ -252,6 +247,12 @@ const Note = ({
     setReminderDate('');
   };
 
+  useEffect(() => {
+    if (isSearch) {
+      applySearch();
+    }
+  }, [applySearch, isSearch]);
+
   return (
     <div
       className={`note__overlay note__overlay--close ${
@@ -346,9 +347,9 @@ const Note = ({
                 />
                 <LabelModal
                   allLabels={allLabels}
+                  ref={createLabelOverlay}
                   oldNoteLabel={oldNoteLabel}
                   labelModalOpenCLose={labelModalOpenCLose}
-                  ref={createLabelOverlay}
                   updateNoteLabelAndStatus={updateNoteLabelAndStatus}
                 />
               </div>

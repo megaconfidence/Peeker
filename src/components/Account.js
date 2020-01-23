@@ -13,7 +13,6 @@ const Account = ({
   const handleSignout = () => {
     resetGlobalAppState();
     handleAccountModalDisalay();
-    localStorage.removeItem('PEEKER_TOKEN');
   };
   return (
     <div

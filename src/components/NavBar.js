@@ -3,10 +3,10 @@ import { NavLink } from 'react-router-dom';
 import './NavBar.css';
 
 const NavBar = forwardRef(({ labels, onClick, handleInstallBtnClick }, ref) => {
-  const isInstallPromptRespondedTo = useRef();
+  const isInstallResponded = useRef();
   useEffect(() => {
-    isInstallPromptRespondedTo.current = localStorage.getItem(
-      'isInstallPromptRespondedTo'
+    isInstallResponded.current = localStorage.getItem(
+      'PEEKER_ISINSTALL_RESPONDED'
     );
     return () => {};
   });
@@ -40,7 +40,7 @@ const NavBar = forwardRef(({ labels, onClick, handleInstallBtnClick }, ref) => {
           <div className='nav__name'>Peeker</div>
           <div
             className={`nav__install ${
-              isInstallPromptRespondedTo.current === 'true' ? 'hide' : ''
+              isInstallResponded.current === 'true' ? 'hide' : ''
             }`}
           >
             <div className='nav__install__head'>

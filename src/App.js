@@ -31,6 +31,21 @@ const NoMatchPage = () => {
   );
 };
 
+window.addEventListener('online', () => {
+  try {
+    const data = JSON.parse(localStorage.getItem('PEEKER_DATA'));
+    if (data) {
+      data.forEach(d => {
+        request('put', `api/note/${d._id}`, d);
+      });
+      localStorage.removeItem('PEEKER_DATA');
+      colorLog('Sync successful', 'success');
+    }
+  } catch (err) {
+    colorLog('Could not sync', 'error');
+  }
+});
+
 const App = () => {
   const nav = useRef(null);
   const omniBarRef = useRef(null);
@@ -64,12 +79,19 @@ const App = () => {
   const resetGlobalAppState = () => {
     setUserData({});
     setApp({ data: [] });
+    localStorage.removeItem('PEEKER_DATA');
+    localStorage.removeItem('PEEKER_USER');
+    localStorage.removeItem('PEEKER_TOKEN');
+    localStorage.removeItem('PEEKER_SUBSCRIPTION');
+    localStorage.removeItem('PEEKER_ISINSTALL_RESPONDED');
+    localStorage.removeItem('PEEKER_NOTIFICATION_ISPERMITTED');
   };
 
   const addLocal = payload => {
     const { data } = app;
     data.unshift(payload);
     setApp({ data });
+    localStorage.setItem('PEEKER_DATA', JSON.stringify(data));
   };
 
   const deleteLocal = id => {
@@ -77,6 +99,7 @@ const App = () => {
     const i = data.findIndex(({ _id }) => _id === id);
     data.splice(i, 1);
     setApp({ data });
+    localStorage.setItem('PEEKER_DATA', JSON.stringify(data));
   };
 
   const updateLocal = (id, payload) => {
@@ -90,6 +113,7 @@ const App = () => {
     };
     data.splice(i, 1, newData);
     setApp({ data });
+    localStorage.setItem('PEEKER_DATA', JSON.stringify(data));
   };
 
   const handleScroll = () => {
@@ -133,8 +157,20 @@ const App = () => {
 
       colorLog('Updating user data', 'success');
       setUserData(data);
+      const { name, email } = data;
+      const tempUser = {
+        _id: 1,
+        name,
+        email
+      };
+      localStorage.setItem('PEEKER_USER', JSON.stringify(tempUser));
     } catch (err) {
+      const data = JSON.parse(localStorage.getItem('PEEKER_USER'));
+      if (data) {
+        setUserData(data);
+      }
       colorLog('Could not get user data', 'error');
+      return false;
     }
   }, []);
 
@@ -149,7 +185,12 @@ const App = () => {
 
       colorLog('App data is updated', 'success');
       setApp({ data });
+      localStorage.setItem('PEEKER_DATA', JSON.stringify(data));
     } catch (err) {
+      const data = JSON.parse(localStorage.getItem('PEEKER_DATA'));
+      if (data) {
+        setApp({ data });
+      }
       colorLog('Could not get app data', 'error');
     }
   }, []);
@@ -170,7 +211,7 @@ const App = () => {
     }
     const installBanner = target.parentNode.parentNode.parentNode;
     installBanner.classList.add('hide');
-    localStorage.setItem('isInstallPromptRespondedTo', true);
+    localStorage.setItem('PEEKER_ISINSTALL_RESPONDED', true);
   };
 
   const handleSearch = value => {
