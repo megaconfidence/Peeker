@@ -209,7 +209,9 @@ const Note = ({
     const payload = {
       due: newDate,
       subscription,
-      clientNow: moment().format()
+      clientNow: moment().format(),
+      title: titleText.value.replace(/<\/?mark>/gi, ''),
+      content: contentText.value.replace(/<\/?mark>/gi, '')
     };
 
     request('put', `api/note/${noteId}`, payload);
