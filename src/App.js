@@ -200,17 +200,6 @@ const App = () => {
       if (deferredPrompt.current) {
         deferredPrompt.current.prompt();
         deferredPrompt.current.userChoice.then(choiceResult => {
-          window.ga('send', 'event', {
-            eventAction: 'click',
-            eventLabel: 'install',
-            eventValue:
-              choiceResult.outcome === 'denied'
-                ? 0
-                : choiceResult.outcome === 'accepted'
-                ? 1
-                : 2,
-            eventCategory: 'add_to_homescreen'
-          });
           if (choiceResult.outcome === 'accepted') {
             enqueueSnackbar('Awesome! Peeker is being installed');
           } else {
