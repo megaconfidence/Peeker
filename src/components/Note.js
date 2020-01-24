@@ -207,13 +207,17 @@ const Note = ({
     setReminderDate(newDate);
 
     const payload = {
+      status,
       due: newDate,
       subscription,
+      label: noteLabel.data,
+      pinned: pinState.value,
       clientNow: moment().format(),
       title: titleText.value.replace(/<\/?mark>/gi, ''),
       content: contentText.value.replace(/<\/?mark>/gi, '')
     };
 
+    updateLocal(noteId, payload);
     request('put', `api/note/${noteId}`, payload);
   };
 
