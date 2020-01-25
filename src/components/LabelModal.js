@@ -101,7 +101,9 @@ const LabelModal = forwardRef(
 
       setLabels(data);
       setLabelSearchbox('');
-      setTempLabels({ data: allLabels.concat(data) });
+      // remove duplicates
+      data = [...new Set(allLabels.concat(data))];
+      setTempLabels({ data });
     };
 
     return (
@@ -166,7 +168,7 @@ const LabelModal = forwardRef(
               data-imgname='plus'
               className='label__modal__createlabel__icon'
             />
-            <span>Create &nbsp;</span>
+            <span>Create</span>
             <span className='label__modal__createlabel__text'>
               "{labelSearchbox}"
             </span>

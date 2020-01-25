@@ -112,6 +112,7 @@
   .label__modal__createlabel__text {
     width: 133px;
     overflow: hidden;
+    margin-left: 5px;
     font-weight: bold;
     white-space: nowrap;
     text-overflow: ellipsis;
