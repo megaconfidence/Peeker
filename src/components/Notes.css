@@ -75,8 +75,11 @@
 }
 .note__head__titletext,
 .note__body__content__textarea {
-  user-select: unset;
-  -webkit-user-select: unset;
+  user-select: initial;
+  -ms-user-select: initial;
+  -moz-user-select: initial;
+  -webkit-user-select: initial;
+  -webkit-user-select: initial;
   -webkit-tap-highlight-color: unset;
 }
 .note__body__content__textarea {
@@ -90,6 +93,7 @@
   word-break: break-word;
   letter-spacing: 0.01428571em;
   font-family: Roboto, Arial, sans-serif;
+  
 }
 .trash .note__body__content__textarea {
   pointer-events: none;
