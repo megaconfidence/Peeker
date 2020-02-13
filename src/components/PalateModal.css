@@ -1,51 +1,48 @@
 .palate {
+  opacity: 0;
+  top: -125px;
+  width: 150px;
+  z-index: 10;
   display: flex;
   flex-wrap: wrap;
-  width: 150px;
-
+  visibility: hidden;
+  position: absolute;
+  padding: 5px 7px 3px;
   background-color: #fff;
   box-sizing: border-box;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  padding: 5px 7px 3px;
-  position: absolute;
-  top: -125px;
-  opacity: 0;
-  -webkit-transition: visibility 0s ease 0.218s, opacity 0.218s linear;
   transition: visibility 0s ease 0.218s, opacity 0.218s linear;
-  visibility: hidden;
-  z-index: 10;
+  -webkit-transition: visibility 0s ease 0.218s, opacity 0.218s linear;
 }
 .palate:focus {
   outline: none;
 }
 .palate.open {
   opacity: 1;
-  -webkit-transition: visibility 0s ease 0ms, opacity 0.218s linear;
-  transition: visibility 0s ease 0ms, opacity 0.218s linear;
   visibility: visible;
+  transition: visibility 0s ease 0ms, opacity 0.218s linear;
+  -webkit-transition: visibility 0s ease 0ms, opacity 0.218s linear;
 }
 .palate__colorpreview {
   all: unset;
-  height: 26px;
   width: 26px;
-
+  height: 26px;
+  cursor: pointer;
   margin: 5px 2px;
+  overflow: hidden;
   border-radius: 50%;
   border: 2px solid transparent;
-  /* box-sizing: border-box; */
-  overflow: hidden;
-  cursor: pointer;
 }
 .palate__colorpreview:checked {
   border-color: rgba(0, 0, 0, 0.87) !important;
 }
 .palate__colorpreview:checked::before {
-  content: "✔";
-  color: rgba(0, 0, 0, 0.87);
-  position: relative;
   top: 2px;
-  left: 6px;
-  font-size: 18px;
+  left: 28%;
+  content: "✔";
+  font-size: 1em;
+  position: relative;
+  color: rgba(0, 0, 0, 0.87);
 }
 .palate__colorpreview.white {
   border: 2px solid #e0e0e0;

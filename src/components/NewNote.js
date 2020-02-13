@@ -289,6 +289,7 @@ const NewNote = ({ addLocal, allLabels, labelForNewNote }) => {
               />
               <PalateModal
                 ref={palateModalRef}
+                currentColor={noteColor.value}
                 changeBackgroundColor={changeBackgroundColor}
               />
             </div>
