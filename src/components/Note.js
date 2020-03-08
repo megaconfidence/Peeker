@@ -60,6 +60,7 @@ const Note = ({
   const createLabelOverlay = useRef(null);
 
   const noteRef = useRef(null);
+  const noteHead = useRef(null);
   const dpwrapper = useRef(null);
   const titleTextRef = useRef(null);
   const noteOverlayRef = useRef(null);
@@ -179,6 +180,14 @@ const Note = ({
     setContentText({ value });
   };
 
+  const handleContentScroll = ({ target }) => {
+    if (target.scrollTop > 0) {
+      noteHead.current.classList.add('content__scrolling');
+    } else {
+      noteHead.current.classList.remove('content__scrolling');
+    }
+  };
+
   const updateNoteLabelAndStatus = (data, bool) => {
     setNoteLabel({ data });
     setIsLabelUpdated(bool);
@@ -289,7 +298,7 @@ const Note = ({
         className='note note--closed'
         onClick={noteOvrlayCheck}
       >
-        <div className='note__head'>
+        <div className='note__head' ref={noteHead}>
           <ContentEditable
             placeholder='Title'
             spellCheck='false'
@@ -313,6 +322,7 @@ const Note = ({
               html={contentText.value}
               innerRef={contentTextRef}
               onChange={handleContentInput}
+              onScroll={handleContentScroll}
               className='note__body__content__textarea textarea--mod'
             />
             <div className='note__body__content__label'>
