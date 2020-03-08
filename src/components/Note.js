@@ -281,7 +281,10 @@ const Note = ({
         data-note-id={id}
         style={{
           background: noteColor.value,
-          border: noteColor.value === '#fff' ? '1px solid #e0e0e0' : ''
+          border:
+            noteColor.value === '#fff' || !noteColor.value
+              ? '1px solid #e0e0e0'
+              : ''
         }}
         className='note note--closed'
         onClick={noteOvrlayCheck}
