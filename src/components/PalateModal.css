@@ -34,15 +34,17 @@
   border: 2px solid transparent;
 }
 .palate__colorpreview:checked {
+  position: relative;
   border-color: rgba(0, 0, 0, 0.87) !important;
 }
 .palate__colorpreview:checked::before {
-  top: 2px;
-  left: 28%;
+  top: 50%;
+  left: 50%;
   content: "✔";
   font-size: 1em;
-  position: relative;
+  position: absolute;
   color: rgba(0, 0, 0, 0.87);
+  transform: translate(-50%, -50%);
 }
 .palate__colorpreview.white {
   border: 2px solid #e0e0e0;
