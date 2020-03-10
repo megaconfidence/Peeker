@@ -32,6 +32,9 @@ const imgSrc = [
   '/image/icon/left_arrow.svg',
   '/image/icon/peeker.png',
   '/image/icon/repeat.svg',
+  '/image/icon/caret_right.svg',
+  '/image/icon/trash_white.svg',
+  '/image/icon/left_arrow_white.svg',
   '/image/icon/note.svg'
 ];
 

@@ -298,6 +298,10 @@ const Note = ({
         className='note note--closed'
         onClick={noteOvrlayCheck}
       >
+        <div className='note__image'>
+          <img src='/image/note_image.jpg' alt='' />
+          <img src='/image/note_image.jpg' alt='' />
+        </div>
         <div className='note__head' ref={noteHead}>
           <ContentEditable
             placeholder='Title'

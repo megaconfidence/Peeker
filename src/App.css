@@ -125,3 +125,16 @@
 [data-imgname='reminders'] {
   background-image: url(/image/icon/bulb.svg);
 }
+[data-imgname='caret_right'] {
+  background-image: url(/image/icon/caret_right.svg);
+}
+[data-imgname='caret_left'] {
+  transform: rotate(180deg);
+  background-image: url(/image/icon/caret_right.svg);
+}
+[data-imgname='trash_white'] {
+  background-image: url(/image/icon/trash_white.svg);
+}
+[data-imgname='left_arrow_white'] {
+  background-image: url(/image/icon/left_arrow_white.svg);
+}

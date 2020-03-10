@@ -17,6 +17,7 @@ import OmniBar from './components/OmniBar';
 import Account from './components/Account';
 import { useSnackbar } from 'notistack';
 import React, { useRef, useEffect, useState, useCallback } from 'react';
+import ImageViewer from './components/ImageViewer';
 
 const NoMatchPage = () => {
   return (
@@ -291,6 +292,7 @@ const App = () => {
           onClick={handleNavClick}
           handleInstallBtnClick={handleInstallBtnClick}
         />
+        <ImageViewer />
         <div className='app__content'>
           <Switch>
             <Route

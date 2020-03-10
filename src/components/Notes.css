@@ -18,6 +18,19 @@
   transition-timing-function: ease-in;
   transition-property: background, border, opacity, box-shadow, transform;
 }
+.note__image {
+  display: flex;
+  justify-content: space-between;
+}
+.note__image img {
+  width: calc(50% - 1px);
+}
+.note__image img:first-of-type {
+  border-top-left-radius: 8px;
+}
+.note__image img:last-of-type {
+  border-top-right-radius: 8px;
+}
 .note__head {
   display: flex;
   align-items: center;
