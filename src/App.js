@@ -162,11 +162,12 @@ const App = () => {
 
       colorLog('Updating user data', 'success');
       setUserData(data);
-      const { name, email } = data;
+      const { name, email, profileImageURL } = data;
       const tempUser = {
         _id: 1,
         name,
-        email
+        email,
+        profileImageURL
       };
       localStorage.setItem('PEEKER_USER', JSON.stringify(tempUser));
     } catch (err) {
