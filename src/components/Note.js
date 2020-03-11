@@ -53,7 +53,6 @@ const Note = ({
   });
   const [noteImages, setNoteImages] = useState({ value: images || [] });
 
-  const [isImagesUpdated, setIsImagesUpdated] = useState(false);
   const [reminderDate, setReminderDate] = useState(due);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isLabelUpdated, setIsLabelUpdated] = useState(false);
@@ -103,11 +102,7 @@ const Note = ({
       };
 
       // Make update if data has changed
-      if (
-        !isEqual(originalData, payload) ||
-        isLabelUpdated ||
-        isImagesUpdated
-      ) {
+      if (!isEqual(originalData, payload) || isLabelUpdated) {
         colorLog('Uploading changes', 'success');
         const noteId = noteRef.current.getAttribute('data-note-id');
 
@@ -119,7 +114,6 @@ const Note = ({
 
         updateLocal(noteId, payload);
         await request('put', `api/note/${noteId}`, payload);
-        setIsImagesUpdated(false);
         setIsLabelUpdated(false);
       }
     }
@@ -307,6 +301,8 @@ const Note = ({
   };
 
   const handleImageUpload = async ({ target }) => {
+    enqueueSnackbar('Uploading image... please wait');
+
     const formData = new FormData();
     formData.append(
       'upload_preset',
@@ -322,14 +318,20 @@ const Note = ({
       }
     )
       .then(response => response.json())
-      .then(result => {
+      .then(async result => {
         const { public_id, secure_url } = result;
         if (public_id && secure_url) {
-          setIsImagesUpdated(true);
           const data = noteImages.value;
           data.push({ id: public_id, url: secure_url });
           setNoteImages({ value: data });
-          uploadChanges();
+
+          colorLog('Uploading changes', 'success');
+          const payload = {
+            image: noteImages.value
+          };
+          const noteId = noteRef.current.getAttribute('data-note-id');
+          updateLocal(noteId, payload);
+          await request('put', `api/note/${noteId}`, payload);
           enqueueSnackbar('Image Uploaded');
         }
       })

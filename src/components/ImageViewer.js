@@ -120,7 +120,10 @@ const ImageViewer = forwardRef(
             <div data-img data-imgname='trash_white' onClick={deleteImage} />
           </div>
           <div className='viewer__preview' ref={viewerPreview}>
-            <div className='viewer__navigation viewer__navigation--left'>
+            <div
+              className='viewer__navigation viewer__navigation--left'
+              style={{ opacity: image.length === 1 ? '0.5' : '1' }}
+            >
               <div
                 data-img
                 data-imgname='caret_left'
@@ -131,7 +134,10 @@ const ImageViewer = forwardRef(
               src={currImage.value ? currImage.value : image[startIndex].url}
               alt=''
             />
-            <div className='viewer__navigation viewer__navigation--right'>
+            <div
+              className='viewer__navigation viewer__navigation--right'
+              style={{ opacity: image.length === 1 ? '0.5' : '1' }}
+            >
               <div
                 data-img
                 data-imgname='caret_right'
