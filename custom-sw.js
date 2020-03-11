@@ -76,7 +76,11 @@ self.addEventListener('fetch', event => {
       } else {
         const url = event.request.url;
         const res = fetch(event.request);
-        if (url.includes('https://res.cloudinary.com/peeker/image/')) {
+        if (
+          url.includes('https://res.cloudinary.com/peeker/image/') ||
+          url.includes('https://graph.facebook.com/') ||
+          url.includes('https://lh3.googleusercontent.com/')
+        ) {
           caches.open(cacheName).then(cache => {
             console.log(url);
             return cache.add(url);
