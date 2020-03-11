@@ -290,14 +290,14 @@ const Note = ({
     }
   }, [applySearch, isSearch]);
 
-  const handleNoteImageClick = ({target}) => {
+  const handleNoteImageClick = ({ target }) => {
     const noteData = {
       status,
       label: noteLabel.data,
       pinned: pinState.value,
       color: noteColor.value,
       image: noteImages.value,
-      startIndex: target.getAttribute('data-index'),
+      startIndex: Number(target.getAttribute('data-index')),
       title: titleText.value.replace(/<\/?mark>/gi, ''),
       noteId: noteRef.current.getAttribute('data-note-id'),
       content: contentText.value.replace(/<\/?mark>/gi, '')
@@ -475,11 +475,12 @@ const Note = ({
                   changeBackgroundColor={changeBackgroundColor}
                 />
               </div>
-              <div
-                data-img
-                data-imgname='picture'
-                className='note__body__controls__item__image'
-              >
+              <label>
+                <div
+                  data-img
+                  data-imgname='picture'
+                  className='note__body__controls__item__image'
+                />
                 <input
                   type='file'
                   name='myImage'
@@ -487,7 +488,7 @@ const Note = ({
                   className='note__body__controls__item__image__upload'
                   onChange={handleImageUpload}
                 />
-              </div>
+              </label>
               {status !== 'archive' ? (
                 <div
                   data-img

@@ -245,10 +245,6 @@ const App = () => {
   const showViewImage = noteData => {
     setViewImageData({ value: noteData });
     ImageViewerRef.current.classList.toggle('hide');
-    setTimeout(() => {
-      ImageViewerRef.current.querySelector('.viewer__preview img').src =
-        noteData.image[noteData.startIndex].url;
-    }, 500);
   };
 
   const checkIfLoggedIn = () => {

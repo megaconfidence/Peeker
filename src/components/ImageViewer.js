@@ -1,60 +1,96 @@
 import './ImageViewer.css';
 import { useSnackbar } from 'notistack';
 import request from '../helpers';
-import React, { useState, useRef, forwardRef } from 'react';
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  forwardRef,
+  useCallback
+} from 'react';
 
 const ImageViewer = forwardRef(
-  ({ noteData, updateLocal, fetchData, resetViewImageData }, ref) => {
+  ({ noteData, fetchData, updateLocal, resetViewImageData }, ref) => {
     let { image, startIndex } = noteData;
     const viewerPreview = useRef(null);
     const { enqueueSnackbar } = useSnackbar();
     const [imageIndex, setImageIndex] = useState({ value: startIndex });
     const [currImage, setCurrImage] = useState({
-      value: image[startIndex].url
+      value: image[imageIndex.value].url
     });
 
-    const handleViewControlLeft = ({ target }) => {
+    const updateImageIndex = useCallback(() => {
+      setImageIndex({ value: startIndex });
+    }, [startIndex]);
+    useEffect(() => {
+      updateImageIndex();
+    }, [updateImageIndex]);
+
+    // console.log(startIndex, imageIndex.value, image.length);
+
+    const closeImageViewer = () => {
+      ref.current.classList.toggle('hide');
+    };
+
+    const handleViewControlLeft = () => {
       if (imageIndex.value > 0) {
-        setImageIndex(imageIndex => {
-          return { value: imageIndex.value - 1 };
-        });
-        setCurrImage({ value: image[imageIndex.value - 1].url });
-      } else if (imageIndex.value === 0) {
-        setImageIndex({ value: image.length - 1 });
-        setCurrImage({ value: image[image.length - 1].url });
+        const i = imageIndex.value - 1;
+        setImageIndex({ value: i });
+        setCurrImage({ value: image[i].url });
+      } else {
+        const i = image.length - 1;
+        setImageIndex({ value: i });
+        setCurrImage({ value: image[i].url });
       }
     };
 
-    const handleViewControlRight = ({ target }) => {
+    const handleViewControlRight = () => {
       if (imageIndex.value < image.length - 1) {
-        setImageIndex(imageIndex => {
-          return { value: imageIndex.value + 1 };
-        });
-        setCurrImage({ value: image[imageIndex.value + 1].url });
+        const i = imageIndex.value + 1;
+        setImageIndex({ value: i });
+        setCurrImage({ value: image[i].url });
       } else {
         setImageIndex({ value: 0 });
         setCurrImage({ value: image[0].url });
       }
     };
-    const closeImageViewer = () => {
-      ref.current.classList.toggle('hide');
-    };
-    const deleteImage = async () => {
+
+    const deleteImage = async ({ target }) => {
+      target.style.opacity = '0.5';
+      target.style.pointerEvents = 'none';
+
       if (image.length > 1) {
-        setCurrImage({ value: image[0].url });
-      }
-      if (image.length === 1) {
+        const prevIndex = imageIndex.value - 1;
+        if (prevIndex < image.length) {
+          setCurrImage({ value: image[prevIndex].url });
+        } else {
+          setCurrImage({ value: image[0].url });
+        }
+      } else {
         ref.current.classList.toggle('hide');
         resetViewImageData();
       }
 
-      //Delete image form cloudnary using my api as admin
-      await request('delete', 'api/image', {public_id: image[imageIndex.value].id});
+      //Delete image form cache and cloudnary using my api as admin
+      caches.open('PEEKER_CACHE').then(function(cache) {
+        cache.delete(image[imageIndex.value].url).then(res => {});
+      });
+      await request('delete', 'api/image', {
+        public_id: image[imageIndex.value].id
+      });
 
-      startIndex = 0;
-      setImageIndex({ value: 0 });
+      //Don't change the order!
       image.splice(imageIndex.value, 1);
-
+      if (image.length > 1) {
+        const prevIndex = imageIndex.value - 1;
+        if (prevIndex < image.length) {
+          startIndex = prevIndex;
+          setImageIndex({ value: prevIndex });
+        }
+      } else {
+        startIndex = 0;
+        setImageIndex({ value: 0 });
+      }
 
       const payload = {
         ...noteData,
@@ -64,10 +100,13 @@ const ImageViewer = forwardRef(
       //Delete image form DB and update ui
       updateLocal(noteData.noteId, payload);
       await request('put', `api/note/${noteData.noteId}`, payload);
+
       fetchData();
       enqueueSnackbar('Image deleted');
+
+      target.style.opacity = '1';
+      target.style.pointerEvents = 'unset';
     };
-    // style={{ backgroundImage: `url(${currImage.value?currImage.value:image[startIndex]})` }}
 
     return (
       <div className='viewer hide' ref={ref}>
@@ -89,7 +128,7 @@ const ImageViewer = forwardRef(
               />
             </div>
             <img
-              src={currImage.value ? currImage.value : image[startIndex]}
+              src={currImage.value ? currImage.value : image[startIndex].url}
               alt=''
             />
             <div className='viewer__navigation viewer__navigation--right'>

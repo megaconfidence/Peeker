@@ -68,7 +68,19 @@ self.addEventListener('install', event => {
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(response => {
-      return response || fetch(event.request);
+      if (response) {
+        return response;
+      } else {
+        const url = event.request.url;
+        const res = fetch(event.request);
+        if (url.includes('https://res.cloudinary.com/peeker/image/')) {
+          caches.open(cacheName).then(cache => {
+            console.log(url);
+            return cache.add(url);
+          });
+        }
+        return res;
+      }
     })
   );
 });

@@ -197,13 +197,7 @@ img[alt='options'] {
   background-size: 19px 34px;
 }
 input.note__body__controls__item__image__upload {
-  all: unset;
-  width: 26px;
-  height: 29px;
-  opacity: 0;
-  margin-top: 6px;
-  margin-left: -4px;
-  background-size: 19px 34px;
+ display: none;
 }
 
 .control--disabled {

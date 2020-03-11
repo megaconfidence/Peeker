@@ -38,9 +38,9 @@ mark {
 }
 
 .note--opened.note {
-  /* top: 70px; */
-  top: 18%;
+  /* top: 40px; */
   min-width: 632px;
+  top: 18%;
   transform: translateY(-18%);
 }
 .note.note--opened {
