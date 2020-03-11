@@ -54,6 +54,10 @@ const App = () => {
     data: []
   });
   const deferredPrompt = useRef();
+  const ImageViewerRef = useRef(null);
+  const [viewImageData, setViewImageData] = useState({
+    value: { image: [{ url: '' }], startIndex: 0 }
+  });
   const { enqueueSnackbar } = useSnackbar();
   const [userData, setUserData] = useState({});
   const [searchText, setSearchText] = useState('');
@@ -235,6 +239,18 @@ const App = () => {
     }
   };
 
+  const resetViewImageData = () => {
+    setViewImageData({ value: { image: [{ url: '' }], startIndex: 0 } });
+  };
+  const showViewImage = noteData => {
+    setViewImageData({ value: noteData });
+    ImageViewerRef.current.classList.toggle('hide');
+    setTimeout(() => {
+      ImageViewerRef.current.querySelector('.viewer__preview img').src =
+        noteData.image[noteData.startIndex].url;
+    }, 500);
+  };
+
   const checkIfLoggedIn = () => {
     if (!localStorage.getItem('PEEKER_TOKEN')) {
       return (window.location.hash = '/signin');
@@ -292,7 +308,13 @@ const App = () => {
           onClick={handleNavClick}
           handleInstallBtnClick={handleInstallBtnClick}
         />
-        <ImageViewer />
+        <ImageViewer
+          noteData={viewImageData.value}
+          ref={ImageViewerRef}
+          resetViewImageData={resetViewImageData}
+          updateLocal={updateLocal}
+          fetchData={fetchData}
+        />
         <div className='app__content'>
           <Switch>
             <Route
@@ -310,6 +332,7 @@ const App = () => {
                   fetchData={fetchData}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
+                  showViewImage={showViewImage}
                   checkIfLoggedIn={checkIfLoggedIn}
                 />
               )}
@@ -331,6 +354,7 @@ const App = () => {
                   searchText={searchText}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
+                  showViewImage={showViewImage}
                   checkIfLoggedIn={checkIfLoggedIn}
                 />
               )}
@@ -349,6 +373,7 @@ const App = () => {
                   fetchData={fetchData}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
+                  showViewImage={showViewImage}
                   checkIfLoggedIn={checkIfLoggedIn}
                 />
               )}
@@ -383,6 +408,7 @@ const App = () => {
                   fetchData={fetchData}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
+                  showViewImage={showViewImage}
                   checkIfLoggedIn={checkIfLoggedIn}
                 />
               )}
@@ -401,6 +427,7 @@ const App = () => {
                   fetchData={fetchData}
                   updateLocal={updateLocal}
                   deleteLocal={deleteLocal}
+                  showViewImage={showViewImage}
                   checkIfLoggedIn={checkIfLoggedIn}
                 />
               )}

@@ -10,6 +10,7 @@
   width: 100%;
   /* overflow: hidden; */
   border: none;
+  padding-top: 2px;
   position: relative;
   border-radius: 8px;
   box-sizing: border-box;
@@ -20,10 +21,12 @@
 }
 .note__image {
   display: flex;
+  margin: 0 2px;
   justify-content: space-between;
 }
 .note__image img {
-  width: calc(50% - 1px);
+  max-height: 150px;
+  object-fit: cover;
 }
 .note__image img:first-of-type {
   border-top-left-radius: 8px;
@@ -49,7 +52,7 @@
   word-break: break-all;
   box-sizing: border-box;
 }
-[contentEditable="true"]:empty:before {
+[contentEditable='true']:empty:before {
   content: attr(placeholder);
   opacity: 0.55;
 }
@@ -65,7 +68,7 @@
 }
 
 .note__head__pin {
-  top: 11px;
+  /* top: 11px; */
   width: 26px;
   right: 18px;
   height: 26px;
@@ -115,9 +118,9 @@
 
 .note__body__content__textarea::placeholder {
   letter-spacing: 0;
-  font-family: "Work Sans", sans-serif;
+  font-family: 'Work Sans', sans-serif;
 }
-img[alt="options"] {
+img[alt='options'] {
   height: 34px;
   width: 18px !important;
 }
@@ -162,7 +165,7 @@ img[alt="options"] {
   margin-left: 5px;
   background-size: 14px 14px;
 }
-.note__body__content__label__tag--reminder [data-imgname="alarm"] {
+.note__body__content__label__tag--reminder [data-imgname='alarm'] {
   display: block !important;
   margin-left: 0;
   margin-right: 5px;
@@ -193,6 +196,15 @@ img[alt="options"] {
   margin: 0px 10.5px;
   background-size: 19px 34px;
 }
+input.note__body__controls__item__image__upload {
+  all: unset;
+  width: 26px;
+  height: 29px;
+  opacity: 0;
+  margin-top: 6px;
+  margin-left: -4px;
+  background-size: 19px 34px;
+}
 
 .control--disabled {
   opacity: 0.25;
@@ -213,7 +225,7 @@ img[alt="options"] {
   line-height: 1.25rem;
   color: rgba(0, 0, 0, 0.87);
   letter-spacing: 0.01785714em;
-  font-family: "Work Sans", sans-serif;
+  font-family: 'Work Sans', sans-serif;
 }
 .note__footer__closebtn:first-of-type {
   align-self: flex-end;

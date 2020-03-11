@@ -18,6 +18,7 @@ const Note = ({
   color,
   status,
   pinned,
+  images,
   content,
   updatedAt,
   fetchData,
@@ -25,6 +26,7 @@ const Note = ({
   oldNoteLabel,
   updateLocal,
   deleteLocal,
+  showViewImage,
   searchText,
   isSearch
 }) => {
@@ -49,7 +51,9 @@ const Note = ({
   const [noteLabel, setNoteLabel] = useState({
     data: oldNoteLabel
   });
+  const [noteImages, setNoteImages] = useState({ value: images || [] });
 
+  const [isImagesUpdated, setIsImagesUpdated] = useState(false);
   const [reminderDate, setReminderDate] = useState(due);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isLabelUpdated, setIsLabelUpdated] = useState(false);
@@ -98,18 +102,25 @@ const Note = ({
         content: contentText.value.replace(/<\/?mark>/gi, '')
       };
 
-      // Make update is data has changed
-      if (!isEqual(originalData, payload) || isLabelUpdated) {
+      // Make update if data has changed
+      if (
+        !isEqual(originalData, payload) ||
+        isLabelUpdated ||
+        isImagesUpdated
+      ) {
         colorLog('Uploading changes', 'success');
         const noteId = noteRef.current.getAttribute('data-note-id');
 
         payload = {
           ...payload,
-          label: noteLabel.data
+          label: noteLabel.data,
+          image: noteImages.value
         };
 
         updateLocal(noteId, payload);
         await request('put', `api/note/${noteId}`, payload);
+        setIsImagesUpdated(false);
+        setIsLabelUpdated(false);
       }
     }
   };
@@ -131,6 +142,7 @@ const Note = ({
       label: noteLabel.data,
       pinned: pinState.value,
       color: noteColor.value,
+      image: noteImages.value,
       title: titleText.value.replace(/<\/?mark>/gi, ''),
       content: contentText.value.replace(/<\/?mark>/gi, '')
     };
@@ -228,6 +240,7 @@ const Note = ({
       subscription,
       label: noteLabel.data,
       pinned: pinState.value,
+      image: noteImages.value,
       clientNow: moment().format(),
       title: titleText.value.replace(/<\/?mark>/gi, ''),
       content: contentText.value.replace(/<\/?mark>/gi, '')
@@ -277,6 +290,55 @@ const Note = ({
     }
   }, [applySearch, isSearch]);
 
+  const handleNoteImageClick = ({target}) => {
+    const noteData = {
+      status,
+      label: noteLabel.data,
+      pinned: pinState.value,
+      color: noteColor.value,
+      image: noteImages.value,
+      startIndex: target.getAttribute('data-index'),
+      title: titleText.value.replace(/<\/?mark>/gi, ''),
+      noteId: noteRef.current.getAttribute('data-note-id'),
+      content: contentText.value.replace(/<\/?mark>/gi, '')
+    };
+
+    showViewImage(noteData);
+  };
+
+  const handleImageUpload = async ({ target }) => {
+    const formData = new FormData();
+    formData.append(
+      'upload_preset',
+      process.env.REACT_APP_cloudinary_upload_preset
+    );
+    formData.append('file', target.files[0]);
+
+    fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_cloudinary_cloud_name}/upload`,
+      {
+        method: 'POST',
+        body: formData
+      }
+    )
+      .then(response => response.json())
+      .then(result => {
+        const { public_id, secure_url } = result;
+        if (public_id && secure_url) {
+          setIsImagesUpdated(true);
+          const data = noteImages.value;
+          data.push({ id: public_id, url: secure_url });
+          setNoteImages({ value: data });
+          uploadChanges();
+          enqueueSnackbar('Image Uploaded');
+        }
+      })
+      .catch(error => {
+        enqueueSnackbar('Could not upload image');
+        colorLog('Uploading changes', 'error');
+      });
+  };
+
   return (
     <div
       className={`note__overlay note__overlay--close ${
@@ -299,8 +361,20 @@ const Note = ({
         onClick={noteOvrlayCheck}
       >
         <div className='note__image'>
-          <img src='/image/note_image.jpg' alt='' />
-          <img src='/image/note_image.jpg' alt='' />
+          {noteImages.value.length
+            ? noteImages.value.map((img, i) => (
+                <img
+                  alt=''
+                  key={img.id}
+                  src={img.url}
+                  data-index={i}
+                  onClick={handleNoteImageClick}
+                  style={{
+                    width: `calc(${100 / noteImages.value.length}% - 1px)`
+                  }}
+                />
+              ))
+            : undefined}
         </div>
         <div className='note__head' ref={noteHead}>
           <ContentEditable
@@ -404,8 +478,16 @@ const Note = ({
               <div
                 data-img
                 data-imgname='picture'
-                className='note__body__controls__item__image disabled'
-              />
+                className='note__body__controls__item__image'
+              >
+                <input
+                  type='file'
+                  name='myImage'
+                  accept='image/*'
+                  className='note__body__controls__item__image__upload'
+                  onChange={handleImageUpload}
+                />
+              </div>
               {status !== 'archive' ? (
                 <div
                   data-img
