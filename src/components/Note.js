@@ -2,6 +2,7 @@ import './Note.css';
 import './Notes.css';
 import moment from 'moment';
 import request from '../helpers';
+import config from 'environment';
 import DatePicker from './DatePicker';
 import LabelModal from './LabelModal';
 import PalateModal from './PalateModal';
@@ -326,7 +327,7 @@ const Note = ({
     const formData = new FormData();
     formData.append(
       'upload_preset',
-      process.env.REACT_APP_cloudinary_upload_preset
+      config.cloudinaryUploadPreset
     );
     formData.append('file', target.files[0]);
 

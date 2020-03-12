@@ -1,6 +1,7 @@
 import environment from './index';
 const baseApi = 'https://peeker-api.herokuapp.com';
-const env = environment(baseApi);
+const cloudinaryUploadPreset = 'peeker';
+const env = environment(baseApi, cloudinaryUploadPreset);
 export default {
   ...env
 };

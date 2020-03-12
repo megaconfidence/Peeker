@@ -10,6 +10,7 @@ import { useSnackbar } from 'notistack';
 import colorLog from '../helpers/colorLog';
 import React, { useRef, useState } from 'react';
 import ContentEditable from 'react-contenteditable';
+import config from 'environment';
 
 const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
   const noteRef = useRef(null);
@@ -197,7 +198,7 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
     const formData = new FormData();
     formData.append(
       'upload_preset',
-      process.env.REACT_APP_cloudinary_upload_preset
+      config.cloudinaryUploadPreset
     );
     formData.append('file', target.files[0]);
 
@@ -217,12 +218,6 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
           setNoteImages({ value: data });
 
           colorLog('Image not uploaded', 'success');
-          // const payload = {
-          //   image: noteImages.value
-          // };
-          // const noteId = noteRef.current.getAttribute('data-note-id');
-          // addLocal(noteId, payload);
-          // await request('put', `api/note/${noteId}`, payload);
           enqueueSnackbar('Image Uploaded');
         }
       })
