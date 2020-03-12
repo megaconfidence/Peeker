@@ -124,6 +124,26 @@ const Note = ({
     deleteLocal(noteId);
     await request('delete', `api/note/${noteId}`);
     fetchData();
+
+    if (images.length) {
+      if (!navigator.onLine) {
+        const deleteImage =
+          JSON.parse(localStorage.getItem('PEEKER_DELETE_IMAGE')) || [];
+        images.forEach(image => {
+          deleteImage.push(image.id);
+        });
+        localStorage.setItem(
+          'PEEKER_DELETE_IMAGE',
+          JSON.stringify(deleteImage)
+        );
+      } else {
+        images.forEach(image => {
+          request('delete', 'api/image', {
+            public_id: image.id
+          });
+        });
+      }
+    }
   };
 
   const pinNote = () => {
@@ -372,6 +392,7 @@ const Note = ({
                   data-index={i}
                   onClick={handleNoteImageClick}
                   style={{
+                    pointerEvents: status === 'trash' ? 'none' : 'unset',
                     width: `calc(${100 / noteImages.value.length}% - 1px)`
                   }}
                 />

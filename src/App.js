@@ -32,11 +32,11 @@ const NoMatchPage = () => {
   );
 };
 
-window.addEventListener('online', () => {
+window.addEventListener('online', async () => {
   try {
     const data = JSON.parse(localStorage.getItem('PEEKER_DATA'));
     if (data) {
-      data.forEach(d => {
+      await data.forEach(d => {
         request('put', `api/note/${d._id}`, d);
       });
       localStorage.removeItem('PEEKER_DATA');
@@ -44,6 +44,20 @@ window.addEventListener('online', () => {
     }
   } catch (err) {
     colorLog('Could not sync', 'error');
+  }
+  try {
+    const data = JSON.parse(localStorage.getItem('PEEKER_DELETE_IMAGE'));
+    if (data) {
+      await data.forEach(d => {
+        request('delete', 'api/image', {
+          public_id: d
+        });
+      });
+      localStorage.removeItem('PEEKER_DELETE_IMAGE');
+      colorLog('Image sync successful', 'success');
+    }
+  } catch (err) {
+    colorLog('Could not images', 'error');
   }
 });
 

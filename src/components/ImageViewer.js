@@ -75,6 +75,15 @@ const ImageViewer = forwardRef(
       caches.open('PEEKER_CACHE').then(function(cache) {
         cache.delete(image[imageIndex.value].url).then(res => {});
       });
+      if (!navigator.onLine) {
+        const deleteImage =
+          JSON.parse(localStorage.getItem('PEEKER_DELETE_IMAGE')) || [];
+        deleteImage.push(image[imageIndex.value].id);
+        localStorage.setItem(
+          'PEEKER_DELETE_IMAGE',
+          JSON.stringify(deleteImage)
+        );
+      }
       await request('delete', 'api/image', {
         public_id: image[imageIndex.value].id
       });
