@@ -51,14 +51,14 @@ const Note = ({
   const [noteLabel, setNoteLabel] = useState({
     data: oldNoteLabel
   });
-  const [noteImages, setNoteImages] = useState({ value: images || [] });
-
+  
   const [reminderDate, setReminderDate] = useState(due);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isLabelUpdated, setIsLabelUpdated] = useState(false);
   const [pinState, setPinState] = useState({ value: pinned });
   const [allowNotifSBKey, setAllowNotifSBKey] = useState(null);
   const [noteColor, setNoteColor] = useState({ value: color });
+  const [noteImages, setNoteImages] = useState({ value: images || [] });
 
   const createLabelOverlay = useRef(null);
 
@@ -345,7 +345,7 @@ const Note = ({
           data.push({ id: public_id, url: secure_url });
           setNoteImages({ value: data });
 
-          colorLog('Uploading changes', 'success');
+          colorLog('Image not uploaded', 'success');
           const payload = {
             image: noteImages.value
           };
@@ -357,7 +357,7 @@ const Note = ({
       })
       .catch(error => {
         enqueueSnackbar('Could not upload image');
-        colorLog('Uploading changes', 'error');
+        colorLog('Image not uploaded', 'error');
       });
   };
 

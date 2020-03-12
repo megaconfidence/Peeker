@@ -259,7 +259,10 @@ const App = () => {
   };
   const showViewImage = noteData => {
     setViewImageData({ value: noteData });
-    ImageViewerRef.current.classList.toggle('hide');
+    //This timeout make sure that the component has been updated with new notedata before displaying
+    setTimeout(() => {
+      ImageViewerRef.current.classList.toggle('hide');
+    }, 100);
   };
 
   const checkIfLoggedIn = () => {

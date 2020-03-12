@@ -11,13 +11,10 @@ import React, {
 
 const ImageViewer = forwardRef(
   ({ noteData, fetchData, updateLocal, resetViewImageData }, ref) => {
-    let { image, startIndex } = noteData;
+    const { image, startIndex } = noteData;
     const viewerPreview = useRef(null);
     const { enqueueSnackbar } = useSnackbar();
     const [imageIndex, setImageIndex] = useState({ value: startIndex });
-    const [currImage, setCurrImage] = useState({
-      value: image[imageIndex.value].url
-    });
 
     const updateImageIndex = useCallback(() => {
       setImageIndex({ value: startIndex });
@@ -26,21 +23,19 @@ const ImageViewer = forwardRef(
       updateImageIndex();
     }, [updateImageIndex]);
 
-    // console.log(startIndex, imageIndex.value, image.length);
-
     const closeImageViewer = () => {
+      setImageIndex({ value: 0 });
       ref.current.classList.toggle('hide');
+      resetViewImageData();
     };
 
     const handleViewControlLeft = () => {
       if (imageIndex.value > 0) {
         const i = imageIndex.value - 1;
         setImageIndex({ value: i });
-        setCurrImage({ value: image[i].url });
       } else {
         const i = image.length - 1;
         setImageIndex({ value: i });
-        setCurrImage({ value: image[i].url });
       }
     };
 
@@ -48,10 +43,8 @@ const ImageViewer = forwardRef(
       if (imageIndex.value < image.length - 1) {
         const i = imageIndex.value + 1;
         setImageIndex({ value: i });
-        setCurrImage({ value: image[i].url });
       } else {
         setImageIndex({ value: 0 });
-        setCurrImage({ value: image[0].url });
       }
     };
 
@@ -59,15 +52,9 @@ const ImageViewer = forwardRef(
       target.style.opacity = '0.5';
       target.style.pointerEvents = 'none';
 
-      if (image.length > 1) {
-        const prevIndex = imageIndex.value - 1;
-        if (prevIndex < image.length) {
-          setCurrImage({ value: image[prevIndex].url });
-        } else {
-          setCurrImage({ value: image[0].url });
-        }
-      } else {
-        ref.current.classList.toggle('hide');
+      //If there is only one image in the array close the modal before deleting
+      if (image.length === 1) {
+        closeImageViewer();
         resetViewImageData();
       }
 
@@ -83,36 +70,36 @@ const ImageViewer = forwardRef(
           'PEEKER_DELETE_IMAGE',
           JSON.stringify(deleteImage)
         );
+      } else {
+        await request('delete', 'api/image', {
+          public_id: image[imageIndex.value].id
+        });
       }
-      await request('delete', 'api/image', {
-        public_id: image[imageIndex.value].id
-      });
 
       //Don't change the order!
       image.splice(imageIndex.value, 1);
-      if (image.length > 1) {
+      if (image.length > 1 && imageIndex.value !== 0) {
         const prevIndex = imageIndex.value - 1;
         if (prevIndex < image.length) {
-          startIndex = prevIndex;
           setImageIndex({ value: prevIndex });
         }
       } else {
-        startIndex = 0;
         setImageIndex({ value: 0 });
       }
 
-      const payload = {
-        ...noteData,
-        image
-      };
+      if (noteData.noteType !== 'newnote') {
+        const payload = {
+          ...noteData,
+          image
+        };
 
-      //Delete image form DB and update ui
-      updateLocal(noteData.noteId, payload);
-      await request('put', `api/note/${noteData.noteId}`, payload);
-
+        //Delete image form DB and update ui
+        updateLocal(noteData.noteId, payload);
+        await request('put', `api/note/${noteData.noteId}`, payload);
+      }
       fetchData();
-      enqueueSnackbar('Image deleted');
 
+      enqueueSnackbar('Image deleted');
       target.style.opacity = '1';
       target.style.pointerEvents = 'unset';
     };
@@ -139,10 +126,7 @@ const ImageViewer = forwardRef(
                 onClick={handleViewControlLeft}
               />
             </div>
-            <img
-              src={currImage.value ? currImage.value : image[startIndex].url}
-              alt=''
-            />
+            <img src={image[imageIndex.value].url} alt='' />
             <div
               className='viewer__navigation viewer__navigation--right'
               style={{ opacity: image.length === 1 ? '0.5' : '1' }}

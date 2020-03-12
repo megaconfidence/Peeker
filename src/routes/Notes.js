@@ -107,6 +107,7 @@ const Notes = ({
           addLocal={addLocal}
           allLabels={allLabels}
           fetchData={fetchData}
+          showViewImage={showViewImage}
           labelForNewNote={labelForNewNote}
         />
       ) : (
