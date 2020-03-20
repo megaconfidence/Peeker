@@ -52,7 +52,7 @@ const Note = ({
   const [noteLabel, setNoteLabel] = useState({
     data: oldNoteLabel
   });
-  
+
   const [reminderDate, setReminderDate] = useState(due);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isLabelUpdated, setIsLabelUpdated] = useState(false);
@@ -322,13 +322,12 @@ const Note = ({
   };
 
   const handleImageUpload = async ({ target }) => {
-    enqueueSnackbar('Uploading image... please wait');
+    const key = enqueueSnackbar('Uploading image...', {
+      persist: true
+    });
 
     const formData = new FormData();
-    formData.append(
-      'upload_preset',
-      config.cloudinaryUploadPreset
-    );
+    formData.append('upload_preset', config.cloudinaryUploadPreset);
     formData.append('file', target.files[0]);
 
     fetch(
@@ -341,24 +340,27 @@ const Note = ({
       .then(response => response.json())
       .then(async result => {
         const { public_id, secure_url } = result;
-        if (public_id && secure_url) {
-          const data = noteImages.value;
-          data.push({ id: public_id, url: secure_url });
-          setNoteImages({ value: data });
+        const data = noteImages.value;
+        data.push({
+          id: public_id,
+          url: secure_url.split('upload/').join('upload/q_auto/')
+        });
+        setNoteImages({ value: data });
 
-          colorLog('Image not uploaded', 'success');
-          const payload = {
-            image: noteImages.value
-          };
-          const noteId = noteRef.current.getAttribute('data-note-id');
-          updateLocal(noteId, payload);
-          await request('put', `api/note/${noteId}`, payload);
-          enqueueSnackbar('Image Uploaded');
-        }
+        const payload = {
+          image: noteImages.value
+        };
+
+        const noteId = noteRef.current.getAttribute('data-note-id');
+        updateLocal(noteId, payload);
+        await request('put', `api/note/${noteId}`, payload);
+
+        closeSnackbar(key);
+        enqueueSnackbar('Image Uploaded');
       })
       .catch(error => {
-        enqueueSnackbar('Could not upload image');
-        colorLog('Image not uploaded', 'error');
+        closeSnackbar(key);
+        enqueueSnackbar('Error uploading image');
       });
   };
 

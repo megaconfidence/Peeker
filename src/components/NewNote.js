@@ -7,7 +7,6 @@ import DatePicker from './DatePicker';
 import LabelModal from './LabelModal';
 import PalateModal from './PalateModal';
 import { useSnackbar } from 'notistack';
-import colorLog from '../helpers/colorLog';
 import React, { useRef, useState } from 'react';
 import ContentEditable from 'react-contenteditable';
 import config from 'environment';
@@ -89,7 +88,7 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
         };
 
         // Updates state with local payload
-        colorLog('Saving note', 'success');
+        enqueueSnackbar('Note saved');
         addLocal(fakePayload);
         await request('post', 'api/note', payload);
       }
@@ -110,7 +109,10 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
                 .then(response => response.json())
                 .then(result => {
                   const { public_id, secure_url } = result;
-                  resolve({ id: public_id, url: secure_url });
+                  resolve({
+                    id: public_id,
+                    url: secure_url.split('upload/').join('upload/q_auto/')
+                  });
                 })
                 .catch(error => {
                   reject(error);
@@ -127,14 +129,16 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
     };
 
     if (imgArr.length) {
-      const key = enqueueSnackbar('Saving note');
+      const key = enqueueSnackbar('Saving note...', {
+        persist: true
+      });
       const uploadedImagesData = await uploadToCloudinary();
       if (uploadedImagesData.length) {
+        closeSnackbar(key);
         uploadToApi(uploadedImagesData);
       } else {
         closeSnackbar(key);
         enqueueSnackbar('Error saving note');
-        colorLog('Error saving note', 'error');
       }
     } else {
       uploadToApi([]);

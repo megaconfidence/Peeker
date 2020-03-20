@@ -1,7 +1,6 @@
 import './Login.css';
 import request from '../helpers';
 import { useSnackbar } from 'notistack';
-import colorLog from '../helpers/colorLog'
 import { Redirect } from 'react-router-dom';
 import GoogleLogin from 'react-google-login';
 import React, { useState, useEffect, useRef } from 'react';
@@ -48,8 +47,6 @@ const Login = ({ fetchData, fetchUser }) => {
       signinHeader.current.textContent = 'Signin With';
       loginButtons.current.classList.remove('hide');
       loaderIcon.current.classList.add('hide');
-      colorLog('An error occured', 'error');
-
     }
   };
   const responseGoogle = ({ accessToken }) => {
