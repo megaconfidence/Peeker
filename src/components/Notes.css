@@ -24,7 +24,7 @@
   justify-content: space-between;
 }
 .note__image img {
-  max-height: 150px;
+  max-height: 120px;
   object-fit: cover;
 }
 .note__image img:first-of-type {

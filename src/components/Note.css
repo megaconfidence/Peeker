@@ -63,6 +63,9 @@ mark {
   line-height: 1.3;
   font-size: 1.35rem;
 }
+.note--opened .note__body__content__textarea.note__body__content__textarea--with-image {
+  max-height: 150px;
+}
 .note--opened .note__body__content__textarea {
   color: #000;
   font-size: 1rem;

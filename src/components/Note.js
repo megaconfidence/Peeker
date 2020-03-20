@@ -427,7 +427,11 @@ const Note = ({
               innerRef={contentTextRef}
               onChange={handleContentInput}
               onScroll={handleContentScroll}
-              className='note__body__content__textarea textarea--mod'
+              className={`note__body__content__textarea textarea--mod ${
+                noteImages.value.length
+                  ? 'note__body__content__textarea--with-image'
+                  : ''
+              }`}
             />
             <div className='note__body__content__label'>
               {reminderDate ? (

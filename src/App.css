@@ -56,6 +56,9 @@
   div.viewer__preview {
     height: 400px;
   }
+  div.note__image img {
+    max-height: 160px;
+  }
   ::-webkit-scrollbar {
     width: 7px;
   }
@@ -69,6 +72,16 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
+}
+::-webkit-scrollbar {
+  width: 2px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f100;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #2c2b2bd4;
 }
 [data-img] {
   width: 24px;
