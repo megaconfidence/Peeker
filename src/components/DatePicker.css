@@ -1,11 +1,10 @@
 .dpwrapper {
-  top: 10%;
-  left: -1px;
+  top: 0;
+  left: 0;
   z-index: 5;
-  width: 101vw;
-  height: 130vh;
+  width: 100vw;
+  height: 100vh;
   position: fixed;
-  transform: translateY(-13%);
   background-color: rgba(0, 0, 0, 0.6);
 }
 .dpwrapper__modal {

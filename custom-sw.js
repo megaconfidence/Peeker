@@ -82,7 +82,6 @@ self.addEventListener('fetch', event => {
           url.includes('https://lh3.googleusercontent.com/')
         ) {
           caches.open(cacheName).then(cache => {
-            console.log(url);
             return cache.add(url);
           });
         }

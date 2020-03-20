@@ -29,6 +29,47 @@
 .notfound__button {
   text-align: center;
 }
+@media (min-width: 880px) {
+  div.app__content {
+    width: 600px;
+    margin: 15px auto 0;
+  }
+  div.note {
+    width: 600px;
+    transition-property: background, border, opacity, box-shadow;
+  }
+  div.note--opened.note {
+    min-width: 0;
+    margin-top: 150px;
+  }
+  div.note__overlay--close {
+    margin-bottom: 20px;
+  }
+  div.omnibar__search {
+    width: 600px;
+  }
+  div.account {
+    top: 150px;
+    width: 400px;
+    transform: translateX(-50%);
+  }
+  div.viewer__preview {
+    height: 400px;
+  }
+  ::-webkit-scrollbar {
+    width: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f1f1f100;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
 [data-img] {
   width: 24px;
   height: 24px;

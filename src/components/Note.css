@@ -38,10 +38,8 @@ mark {
 }
 
 .note--opened.note {
-  /* top: 40px; */
   min-width: 632px;
-  top: 18%;
-  transform: translateY(-18%);
+  margin: 40px auto 0;
 }
 .note.note--opened {
   border: none;
@@ -57,7 +55,7 @@ mark {
   display: block;
 }
 .note--opened .note__head.content__scrolling {
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 .note--opened .note__head__titletext {
   color: #000000;

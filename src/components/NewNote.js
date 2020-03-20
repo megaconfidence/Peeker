@@ -57,8 +57,6 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
     setNoteColor({ value: '#fff' });
     contentTextRef.current.textContent = '';
     titleTextRef.current.textContent = '';
-    titleTextRef.current.style.height = '45px';
-    contentTextRef.current.style.height = '45px';
 
     const uploadToApi = async imagesData => {
       if (noteTitle || noteContent || labels.length || imagesData.length) {

@@ -8,11 +8,10 @@
 }
 .note {
   width: 100%;
-  /* overflow: hidden; */
   border: none;
   padding-top: 2px;
-  position: relative;
   border-radius: 8px;
+  height: fit-content;
   box-sizing: border-box;
   background-color: #fff;
   transition-duration: 0.218s;
@@ -73,7 +72,7 @@
   right: 18px;
   height: 26px;
   opacity: 0.71;
-  position: absolute;
+  position: relative;
 }
 .trash .note__head__pin {
   display: none;
@@ -197,7 +196,7 @@ img[alt='options'] {
   background-size: 19px 34px;
 }
 input.note__body__controls__item__image__upload {
- display: none;
+  display: none;
 }
 
 .control--disabled {
