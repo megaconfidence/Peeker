@@ -59,21 +59,23 @@ const ImageViewer = forwardRef(
       }
 
       //Delete image form cache and cloudnary using my api as admin
-      caches.open('PEEKER_CACHE').then(function(cache) {
-        cache.delete(image[imageIndex.value].url).then(res => {});
-      });
-      if (!navigator.onLine) {
-        const deleteImage =
-          JSON.parse(localStorage.getItem('PEEKER_DELETE_IMAGE')) || [];
-        deleteImage.push(image[imageIndex.value].id);
-        localStorage.setItem(
-          'PEEKER_DELETE_IMAGE',
-          JSON.stringify(deleteImage)
-        );
-      } else {
-        await request('delete', 'api/image', {
-          public_id: image[imageIndex.value].id
+      if (noteData.noteType !== 'newnote') {
+        caches.open('PEEKER_CACHE').then(function(cache) {
+          cache.delete(image[imageIndex.value].url).then(res => {});
         });
+        if (!navigator.onLine) {
+          const deleteImage =
+            JSON.parse(localStorage.getItem('PEEKER_DELETE_IMAGE')) || [];
+          deleteImage.push(image[imageIndex.value].id);
+          localStorage.setItem(
+            'PEEKER_DELETE_IMAGE',
+            JSON.stringify(deleteImage)
+          );
+        } else {
+          await request('delete', 'api/image', {
+            public_id: image[imageIndex.value].id
+          });
+        }
       }
 
       //Don't change the order!
@@ -92,7 +94,6 @@ const ImageViewer = forwardRef(
           ...noteData,
           image
         };
-
         //Delete image form DB and update ui
         updateLocal(noteData.noteId, payload);
         await request('put', `api/note/${noteData.noteId}`, payload);

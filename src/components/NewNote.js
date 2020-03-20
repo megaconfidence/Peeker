@@ -20,7 +20,7 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
   const contentTextRef = useRef(null);
   const createLabelOverlay = useRef(null);
 
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const [noteLabel, setNoteLabel] = useState({
     data: []
@@ -34,9 +34,6 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
   const [noteColor, setNoteColor] = useState({ value: '#fff' });
   const [noteImages, setNoteImages] = useState({ value: [] });
 
-  // holds all labels from db
-  // Holds only labels for this individual note
-
   const openNote = () => {
     noteRef.current.classList.remove('nwnote--closed');
   };
@@ -44,6 +41,7 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
   const uploadChanges = async () => {
     noteRef.current.classList.add('nwnote--closed');
 
+    const imgArr = noteImages.value;
     const noteTitle = titleText.value;
     const noteContent = contentText.value;
     const labels = labelForNewNote.concat(noteLabel.data);
@@ -54,6 +52,7 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
     });
     setReminderDate('');
     setTitleText({ value: '' });
+    setNoteImages({ value: [] });
     setContentText({ value: '' });
     setPinState({ value: false });
     setNoteColor({ value: '#fff' });
@@ -62,38 +61,83 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
     titleTextRef.current.style.height = '45px';
     contentTextRef.current.style.height = '45px';
 
-    if (noteTitle || noteContent || labels.length || noteImages.value.length) {
-      const subscription =
-        JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
-      const payload = {
-        subscription,
-        label: labels,
-        status: 'note',
-        pinned: pinState.value,
-        color: noteColor.value,
-        title: noteTitle || '',
-        due: reminderDate || '',
-        image: noteImages.value,
-        content: noteContent || '',
-        clientNow: moment().format()
-      };
-      setNoteImages({ value: [] });
+    const uploadToApi = async imagesData => {
+      if (noteTitle || noteContent || labels.length || imagesData.length) {
+        const subscription =
+          JSON.parse(localStorage.getItem('PEEKER_SUBSCRIPTION')) || '';
+        const payload = {
+          subscription,
+          label: labels,
+          status: 'note',
+          image: imagesData,
+          pinned: pinState.value,
+          color: noteColor.value,
+          title: noteTitle || '',
+          due: reminderDate || '',
+          content: noteContent || '',
+          clientNow: moment().format()
+        };
 
-      let date = new Date();
-      date = date.toISOString();
+        let date = new Date();
+        date = date.toISOString();
 
-      // Creates a local copy of payload to update app state
-      const fakePayload = {
-        ...payload,
-        updatedAt: date,
-        _id: ObjectID.generate()
-      };
+        // Creates a local copy of payload to update app state
+        const fakePayload = {
+          ...payload,
+          updatedAt: date,
+          _id: ObjectID.generate()
+        };
 
-      colorLog('Saving note', 'success');
+        // Updates state with local payload
+        colorLog('Saving note', 'success');
+        addLocal(fakePayload);
+        await request('post', 'api/note', payload);
+      }
+    };
 
-      // Updates state with local payload
-      addLocal(fakePayload);
-      await request('post', 'api/note', payload);
+    const uploadToCloudinary = () => {
+      return new Promise(async resolve => {
+        const uploadedResult = imgArr.map(
+          (imgItem, i) =>
+            new Promise((resolve, reject) => {
+              fetch(
+                `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_cloudinary_cloud_name}/upload`,
+                {
+                  method: 'POST',
+                  body: imgItem.formData
+                }
+              )
+                .then(response => response.json())
+                .then(result => {
+                  const { public_id, secure_url } = result;
+                  resolve({ id: public_id, url: secure_url });
+                })
+                .catch(error => {
+                  reject(error);
+                });
+            })
+        );
+
+        Promise.all(uploadedResult)
+          .then(result => {
+            resolve(result);
+          })
+          .catch(error => resolve([]));
+      });
+    };
+
+    if (imgArr.length) {
+      const key = enqueueSnackbar('Saving note');
+      const uploadedImagesData = await uploadToCloudinary();
+      if (uploadedImagesData.length) {
+        uploadToApi(uploadedImagesData);
+      } else {
+        closeSnackbar(key);
+        enqueueSnackbar('Error saving note');
+        colorLog('Error saving note', 'error');
+      }
+    } else {
+      uploadToApi([]);
     }
   };
 
@@ -193,38 +237,23 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
   };
 
   const handleImageUpload = async ({ target }) => {
-    enqueueSnackbar('Uploading image... please wait');
+    const file = target.files[0];
 
     const formData = new FormData();
-    formData.append(
-      'upload_preset',
-      config.cloudinaryUploadPreset
-    );
-    formData.append('file', target.files[0]);
+    formData.append('upload_preset', config.cloudinaryUploadPreset);
+    formData.append('file', file);
 
-    fetch(
-      `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_cloudinary_cloud_name}/upload`,
-      {
-        method: 'POST',
-        body: formData
-      }
-    )
-      .then(response => response.json())
-      .then(async result => {
-        const { public_id, secure_url } = result;
-        if (public_id && secure_url) {
-          const data = noteImages.value;
-          data.push({ id: public_id, url: secure_url });
-          setNoteImages({ value: data });
+    const reader = new FileReader();
 
-          colorLog('Image not uploaded', 'success');
-          enqueueSnackbar('Image Uploaded');
-        }
-      })
-      .catch(error => {
-        enqueueSnackbar('Could not upload image');
-        colorLog('Image not uploaded', 'error');
-      });
+    reader.onloadend = function() {
+      const data = noteImages.value;
+      data.push({ id: '', url: reader.result, formData });
+      setNoteImages({ value: data });
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -241,7 +270,7 @@ const NewNote = ({ addLocal, allLabels, showViewImage, labelForNewNote }) => {
           ? noteImages.value.map((img, i) => (
               <img
                 alt=''
-                key={img.id}
+                key={i}
                 src={img.url}
                 data-index={i}
                 onClick={handleNoteImageClick}
