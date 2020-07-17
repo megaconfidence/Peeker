@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-self.addEventListener('push', e => {
+self.addEventListener('push', (e) => {
   const { title, body } = e.data.json();
   self.registration.showNotification(title, {
     body: body,
@@ -7,16 +7,16 @@ self.addEventListener('push', e => {
       'https://raw.githubusercontent.com/Confidence-Okoghenun/Peeker/master/public/logo512_nobg.png',
     icon:
       'https://raw.githubusercontent.com/Confidence-Okoghenun/Peeker/master/public/logo512.png',
-    actions: [{ action: 'view', title: 'View' }]
+    actions: [{ action: 'view', title: 'View' }],
   });
 });
 
-self.addEventListener('notificationclick', event => {
+self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
-    self.clients.matchAll().then(clientList => {
+    self.clients.matchAll().then((clientList) => {
       // default notification action
       if (clientList.length > 0) {
-        clientList[0].navigate('/#/reminders').then(client => client.focus());
+        clientList[0].navigate('/#/reminders').then((client) => client.focus());
         return event.notification.close();
       }
       self.clients.openWindow('/#/reminders');
@@ -27,11 +27,11 @@ self.addEventListener('notificationclick', event => {
 
 const cacheName = 'PEEKER_CACHE';
 
-self.addEventListener('install', event => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches
       .open(cacheName)
-      .then(cache =>
+      .then((cache) =>
         cache.addAll([
           '/image/icon/badge.svg',
           '/image/icon/alarm.svg',
@@ -62,15 +62,25 @@ self.addEventListener('install', event => {
           '/image/icon/caret_right.svg',
           '/image/icon/trash_white.svg',
           '/image/icon/left_arrow_white.svg',
-          '/image/icon/note.svg'
+          '/image/icon/note.svg',
+          '/image/audio.jpg',
+          '/image/footer-bg.jpg',
+          '/image/getSvg.js',
+          '/image/hero-bg.jpg',
+          '/image/lists.jpg',
+          '/image/market-bg.jpg',
+          '/image/notes.jpg',
+          '/image/photos.jpg',
+          '/image/reminder.gif',
+          '/image/search.gif',
         ])
       )
   );
 });
 
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then(response => {
+    caches.match(event.request).then((response) => {
       if (response) {
         return response;
       } else {
@@ -81,7 +91,7 @@ self.addEventListener('fetch', event => {
           url.includes('https://graph.facebook.com/') ||
           url.includes('https://lh3.googleusercontent.com/')
         ) {
-          caches.open(cacheName).then(cache => {
+          caches.open(cacheName).then((cache) => {
             return cache.add(url);
           });
         }
