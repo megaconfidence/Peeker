@@ -57,10 +57,10 @@ const Login = ({ fetchData, fetchUser }) => {
   };
 
   return (
-    <>
+    <div className='login'>
       <div className='signin'>
         <div className='signin__header' ref={signinHeader}>
-          Signin With
+          Sign in With
         </div>
         <div className='signin__action' ref={loginButtons}>
           <GoogleLogin
@@ -109,7 +109,7 @@ const Login = ({ fetchData, fetchUser }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

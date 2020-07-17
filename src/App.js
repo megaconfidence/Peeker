@@ -4,7 +4,7 @@ import {
   Route,
   Switch,
   Redirect,
-  HashRouter as Router
+  HashRouter as Router,
 } from 'react-router-dom';
 import request from './helpers';
 import Notes from './routes/Notes';
@@ -18,6 +18,7 @@ import Account from './components/Account';
 import { useSnackbar } from 'notistack';
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import ImageViewer from './components/ImageViewer';
+import Landing from './routes/Landing';
 
 const NoMatchPage = () => {
   return (
@@ -36,7 +37,7 @@ window.addEventListener('online', async () => {
   try {
     const data = JSON.parse(localStorage.getItem('PEEKER_DATA'));
     if (data) {
-      await data.forEach(d => {
+      await data.forEach((d) => {
         request('put', `api/note/${d._id}`, d);
       });
       localStorage.removeItem('PEEKER_DATA');
@@ -48,9 +49,9 @@ window.addEventListener('online', async () => {
   try {
     const data = JSON.parse(localStorage.getItem('PEEKER_DELETE_IMAGE'));
     if (data) {
-      await data.forEach(d => {
+      await data.forEach((d) => {
         request('delete', 'api/image', {
-          public_id: d
+          public_id: d,
         });
       });
       localStorage.removeItem('PEEKER_DELETE_IMAGE');
@@ -65,12 +66,12 @@ const App = () => {
   const nav = useRef(null);
   const omniBarRef = useRef(null);
   const [app, setApp] = useState({
-    data: []
+    data: [],
   });
   const deferredPrompt = useRef();
   const ImageViewerRef = useRef(null);
   const [viewImageData, setViewImageData] = useState({
-    value: { image: [{ url: '' }], startIndex: 0 }
+    value: { image: [{ url: '' }], startIndex: 0 },
   });
   const { enqueueSnackbar } = useSnackbar();
   const [userData, setUserData] = useState({});
@@ -85,12 +86,12 @@ const App = () => {
         [].concat.apply(
           [],
           app.data
-            .map(i => (i.status === 'note' ? i.label : undefined))
-            .filter(function(n) {
+            .map((i) => (i.status === 'note' ? i.label : undefined))
+            .filter(function (n) {
               return n != null;
             })
         )
-      )
+      ),
     ];
   };
   const labels = getLabels();
@@ -106,14 +107,14 @@ const App = () => {
     localStorage.removeItem('PEEKER_NOTIFICATION_ISPERMITTED');
   };
 
-  const addLocal = payload => {
+  const addLocal = (payload) => {
     const { data } = app;
     data.unshift(payload);
     setApp({ data });
     localStorage.setItem('PEEKER_DATA', JSON.stringify(data));
   };
 
-  const deleteLocal = id => {
+  const deleteLocal = (id) => {
     const { data } = app;
     const i = data.findIndex(({ _id }) => _id === id);
     data.splice(i, 1);
@@ -128,7 +129,7 @@ const App = () => {
 
     const newData = {
       ...oldData,
-      ...payload
+      ...payload,
     };
     data.splice(i, 1, newData);
     setApp({ data });
@@ -143,7 +144,7 @@ const App = () => {
     }
   };
 
-  const handleNavClick = e => {
+  const handleNavClick = (e) => {
     if (e.target.classList.contains('omnibar__left__icon--menutriger')) {
       nav.current.classList.add('slidein--active');
     }
@@ -168,10 +169,10 @@ const App = () => {
   const fetchUser = useCallback(async () => {
     try {
       if (!localStorage.getItem('PEEKER_TOKEN')) {
-        setRedirectTo('/signin');
+        setRedirectTo('/landing');
       }
       const {
-        data: { data }
+        data: { data },
       } = await request('get', 'api/user');
 
       colorLog('Updating user data', 'success');
@@ -181,7 +182,7 @@ const App = () => {
         _id: 1,
         name,
         email,
-        profileImageURL
+        profileImageURL,
       };
       localStorage.setItem('PEEKER_USER', JSON.stringify(tempUser));
     } catch (err) {
@@ -197,10 +198,10 @@ const App = () => {
   const fetchData = useCallback(async () => {
     try {
       if (!localStorage.getItem('PEEKER_TOKEN')) {
-        setRedirectTo('/signin');
+        setRedirectTo('/landing');
       }
       const {
-        data: { data }
+        data: { data },
       } = await request('get', 'api/note');
 
       colorLog('App data is updated', 'success');
@@ -219,7 +220,7 @@ const App = () => {
     if (target.classList.contains('accept')) {
       if (deferredPrompt.current) {
         deferredPrompt.current.prompt();
-        deferredPrompt.current.userChoice.then(choiceResult => {
+        deferredPrompt.current.userChoice.then((choiceResult) => {
           if (choiceResult.outcome === 'accepted') {
             enqueueSnackbar('Awesome! Peeker is being installed');
           } else {
@@ -234,7 +235,7 @@ const App = () => {
     localStorage.setItem('PEEKER_ISINSTALL_RESPONDED', true);
   };
 
-  const handleSearch = value => {
+  const handleSearch = (value) => {
     if (value) {
       const search = app.data.map((d, i) =>
         d.title.toLowerCase().includes(value) ||
@@ -244,9 +245,9 @@ const App = () => {
       );
       setSearchText(value);
       setSearch({
-        data: search.filter(function(n) {
+        data: search.filter(function (n) {
           return n != null;
-        })
+        }),
       });
     } else {
       setSearchText('');
@@ -257,7 +258,7 @@ const App = () => {
   const resetViewImageData = () => {
     setViewImageData({ value: { image: [{ url: '' }], startIndex: 0 } });
   };
-  const showViewImage = noteData => {
+  const showViewImage = (noteData) => {
     setViewImageData({ value: noteData });
     //This timeout make sure that the component has been updated with new notedata before displaying
     setTimeout(() => {
@@ -267,7 +268,7 @@ const App = () => {
 
   const checkIfLoggedIn = () => {
     if (!localStorage.getItem('PEEKER_TOKEN')) {
-      return (window.location.hash = '/signin');
+      return (window.location.hash = '/landing');
     }
   };
 
@@ -282,7 +283,7 @@ const App = () => {
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
 
-    window.addEventListener('beforeinstallprompt', e => {
+    window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt.current = e;
     });
@@ -304,9 +305,7 @@ const App = () => {
             resetGlobalAppState={resetGlobalAppState}
             handleAccountModalDisalay={handleAccountModalDisalay}
           />
-        ) : (
-          undefined
-        )}
+        ) : undefined}
         <OmniBar
           ref={omniBarRef}
           fetchData={fetchData}
@@ -334,7 +333,7 @@ const App = () => {
             <Route
               exact
               path='/'
-              render={props => (
+              render={(props) => (
                 <Notes
                   {...props}
                   noteType='note'
@@ -354,7 +353,7 @@ const App = () => {
             <Route
               exact
               path='/search'
-              render={props => (
+              render={(props) => (
                 <Notes
                   {...props}
                   noteType=''
@@ -376,7 +375,7 @@ const App = () => {
             <Route
               exact
               path='/reminders'
-              render={props => (
+              render={(props) => (
                 <Notes
                   {...props}
                   noteType='due'
@@ -395,7 +394,7 @@ const App = () => {
             <Route
               exact
               path='/label/:labelId'
-              render={props => (
+              render={(props) => (
                 <Label
                   {...props}
                   data={app.data}
@@ -411,7 +410,7 @@ const App = () => {
             <Route
               exact
               path='/archive'
-              render={props => (
+              render={(props) => (
                 <Notes
                   {...props}
                   data={app.data}
@@ -430,7 +429,7 @@ const App = () => {
             <Route
               exact
               path='/trash'
-              render={props => (
+              render={(props) => (
                 <Notes
                   {...props}
                   data={app.data}
@@ -449,12 +448,18 @@ const App = () => {
             <Route
               exact
               path='/settings'
-              render={props => <Settings {...props} />}
+              render={(props) => <Settings {...props} />}
+            />{' '}
+            />
+            <Route
+              exact
+              path='/landing'
+              render={(props) => <Landing {...props} />}
             />
             <Route
               exact
               path='/signin'
-              render={props => (
+              render={(props) => (
                 <Signin
                   {...props}
                   fetchData={fetchData}
